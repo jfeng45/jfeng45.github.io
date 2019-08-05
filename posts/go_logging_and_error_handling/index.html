@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Application Logging" />
+<meta property="og:description" content="Described Best practice for logging and error handling in Go Microservice gRPC project, and compared two different logging libraries ZAP and Logrus." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/posts/go_logging_and_error_handling/" />
+<meta property="article:published_time" content="2019-07-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-25T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Logging"/>
+<meta name="twitter:description" content="Described Best practice for logging and error handling in Go Microservice gRPC project, and compared two different logging libraries ZAP and Logrus."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">
+    
+
+    
+       <meta name="description" content="Described Best practice for logging and error handling in Go Microservice gRPC project, and compared two different logging libraries ZAP and Logrus.">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Application Logging | Software Craftsman
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+    <a class="text-dark" href="/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a>
+</h2>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-25">2019-07-25</time>
+    
+    
+        by <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/logging">Logging</a>
+    
+        <a class="badge badge-primary" href="/tags/error-handling">Error Handling</a>
+    
+        <a class="badge badge-primary" href="/tags/microservice">Microservice</a>
+    
+        <a class="badge badge-primary" href="/tags/application-design">Application Design</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    <p>Good logging can provide informative log data and make it easy to find problems when doing debugging, thus greatly improve coding efficiency. The more automated information provided by the logger the better it is, also the log information needs to be presented in a concise way, so it is easy to find the important data.</p>
+
+<h2 id="logging-requirement"><strong>Logging Requirement:</strong></h2>
+
+<ol>
+<li><p>Be able to switch to other log library without modifying the business code</p></li>
+
+<li><p>No direct dependency on any log library</p></li>
+
+<li><p>Need one global instance of the logger for the whole application, so you can change the log configuration in one place and apply it to the whole app.</p></li>
+
+<li><p>Can change logging behavior easily without modifying code, for example, log level</p></li>
+
+<li><p>Be able to change log level dynamically when the programming is running</p></li>
+</ol>
+
+<h2 id="resource-handler-why-logging-is-different-from-database">Resource handler: Why logging is different from database</h2>
+
+<p>When an application needs to deal with an outside resource, such as database, file system, network connection or SMTP server, it usually needs a handler. In dependency Injection, the container creates a handler and inject it into each business function, so it can use the handler to access the underlying resource. In this application, the handler is an interface, so the business layer won’t have a direct dependency on any concrete implementation of a handler. Databases and gRPC connections are all handled this way.</p>
+
+<p>However, logging is a little different, because almost every function needs it but database is not. In Java, we initialize an instance of a logger for each Java class. Java logging framework uses a hierarchical relationship to manage different loggers, so they inherit the same log configuration from a parent log. In Go, it doesn’t work that way and there is no hierarchical relationship among different loggers, so you either create one logger or have many different loggers which are not related to each other. In order to have consistent logging configuration, it is better to create one logger and use it for every function. We can create a global logger and pass it around, but it is a lot of work to pass a logger to every function, so I decide to create a global logger in a central place and have it available to every function.</p>
+
+<p>In order to not tight the application to a particular logger, I created a generic logger interface, so the application is transparent to the underline logging library. The following is the “Logger” interface.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Log is a package level variable, every program should access logging function through &#34;Log&#34;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">Log</span> <span style="color:#a6e22e">Logger</span>
+
+<span style="color:#75715e">// Logger represent common interface for logging function
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Logger</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Errorf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Fatalf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Infof</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Info</span>( <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Warnf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Debugf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+	<span style="color:#a6e22e">Debug</span>(<span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{})
+}</code></pre></td></tr></table>
+</div>
+</div></p>
+
+<p>Because very file depends on logging, it is easy to have circular dependency, so I created a separate sub-package “logger” inside “container” package to avoid the problem. It only has a “Log” variable and “Logger” interface. Every file accesses logging function through the variable and the interface.</p>
+
+<h2 id="logger-wrapper">Logger Wrapper:</h2>
+
+<p>The standard way to support a log library (For example, <a href="https://github.com/uber-go/zap">ZAP</a>¹ or <a href="https://github.com/sirupsen/logrus">Logrus</a>²) is to create a wrapper to implement the logger interface we already created. It is pretty straight forward to do, and the following is the code.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">loggerWrapper</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">lw</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">zap</span>.<span style="color:#a6e22e">SugaredLogger</span>
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Errorf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Fatalf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Infof</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Warnf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Warnf</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Debugf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Debugf</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Printf</span>(<span style="color:#a6e22e">format</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#a6e22e">format</span>, <span style="color:#a6e22e">args</span>)
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">loggerWrapper</span>) <span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) {
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">lw</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#a6e22e">args</span>, <span style="color:#e6db74">&#34;\n&#34;</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/>
+However, there is one problem for logging. One feature of logging is to print caller name in the log message. After you write a wrapper, the caller of a method is not the program that print the log, but the wrapper program. To fix that problem, you can directly change the source code of the log library, but it causes a compatibility issue when the log lib is upgraded. The ultimate solution is to ask logging libraries to create a new feature that can return the caller of a method based on whether it uses a wrapper or not.</p>
+
+<p>In order to get the code work now, I took a short cut. Because most of the function signatures between ZAP and Logrus are similar, I extracted the common ones and created a shared interface, since both log libraries already have those functions, they automatically implemented those interfaces. The beauty of Go’s interface is that you can create the concrete implementation first and later on, creating the interface, if the function signature matches each other, then the interface is automatically implemented. It is a bit cheating, but works for now. In case the logger doesn’t support the common interface, you may have to implement it.</p>
+
+<h2 id="comparison-of-log-library"><strong>Comparison of log library:</strong></h2>
+
+<p>Different log libraries provide different features, some are important for debugging.</p>
+
+<p>Logging information that is important ( the following data are required):</p>
+
+<ol>
+<li><p>File name and line number</p></li>
+
+<li><p>Method name and caller name</p></li>
+
+<li><p>Message logging level</p></li>
+
+<li><p>Timestamp</p></li>
+
+<li><p>Error stack trace</p></li>
+
+<li><p>Automatically logging each function call with parameters and results</p></li>
+</ol>
+
+<p>I want the logging lib provides those data automatically, for example, the calling method name, without writing explicit code asking for them. For the above 6 features, currently no library is providing#6, but they all provides 1 to 5 more or less. I tried two popular ones Logrus and ZAP. Logrus provides all features, but I the format on my console is not right (It displays “\n\t” instead of a new line on my Windows console) and the layout is not as clean as ZAP. ZAP doesn’t provide #2, but everything else looks good, so I decided to use it for now.</p>
+
+<p>A surprise is that the application turned out to be a pretty good tool to test different log libraries because you can switch to different ones and comparing results by changing one line in the configuration file. That is not the intention of the project, but a side-effect, a good one though.</p>
+
+<p>Actually, the feature that I needed most is automatically logging function calls with input and output value(#6), but no lib provides that yet. I hope to get it in the future.</p>
+
+<h2 id="error-handing"><strong>Error Handing:</strong></h2>
+
+<p>Error handling is directly related to logging, so I also discuss it here. The followings are the rules I followed to handle errors.</p>
+
+<ol>
+<li><p>Create error with stack trace
+An error message needs to include the stack trace information in itself. If the error originates in your application, you can import “github.com/pkg/errors” library to create the error to have the stack trace included.** **But if it is generated from another library and that lib didn’t use “pkg/errors”, then you need to wrap that error with “errors.Wrap(err, message)” statement in order to obtain stack trace information. Since we don’t have control on third party libraries, the best solution is to wrap all errors in our application. Please find details <a href="https://dave.cheney.net/2016/06/12/stack-traces-and-the-errors-package">here</a>³.</p></li>
+
+<li><p>Log error with stack trace
+You need to use “logger.Log.Errorf(<strong>“%+v\n”</strong>, err)” or “fmt.Printf(<strong>“%+v\n”</strong>, err)” in order to print the stack trace info, the key is the “+v” option ( I assume you already followed #1).</p></li>
+
+<li><p>Only the top level functions handle the error
+“Handle” means log the error and return the error to the caller. Because only the top level function handles the error, so it is only logged once in the application. The caller at the top level is usually a user facing program, which is either a user interface program (UI) or another Microservice. You want to log the error message (So your application have the record) and then return the message to the UI or another Microservice, so the they can retry or do something with the error.</p></li>
+
+<li><p>All other level functions should only propagate an error to upper level.
+Don’t log or handle errors in lower level and don’t discard errors either. You may add more data to the error, and then propagate it. You don’t want to stop the whole application when there is an error.</p></li>
+</ol>
+
+<h2 id="panic">Panic:</h2>
+
+<p>I never used panic except in local “main.go”. It is more like a bug than a feature. In “<a href="https://dave.cheney.net/2015/11/05/lets-talk-about-logging">Let’s talk about logging</a>”⁴, Dave Cheney wrote “It is commonly accepted that libraries should not use panic”. Another bug is log.Fatal, which has the same effect with panic, should also be forbidden. “log.Fatal” is even worse, it looks like a log, but then it “panic” after logging, which violates the single responsibility rule.</p>
+
+<p>There are two problems with panic. First, it is treated differently from error, but it is actually an error, a sub-type of an error. Now, the error handling code needs to deal both error and panic, such as the one in the <a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">transaction handling code</a>⁵. Second, it stops the application, which is very bad. Only the top-level main control program should make the decision on how to handle an error, all other called functions should just propagate the error to the upper level. Especially nowadays, service mesh layer can provide retry and other functions, panic makes it more complicated.</p>
+
+<p>If you are calling another library and it generates panic in its code, then to protect your code from stopping, you need to catch the panic and recover from it. The following is the example code and you need to do that for every top level function that could panic ( put “defer catchPanic()” in every one of them). In the following code, we have a function “catchPanic” to catch and recover from a panic. The function “RegisterUser” calls “defer catchPanic()” in the first line of the code. Please see <a href="https://eli.thegreenplace.net/2018/on-the-uses-and-misuses-of-panics-in-go/">here</a>⁶ for more detailed discussion on panic.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">catchPanic</span>() {
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> recover(); <span style="color:#a6e22e">p</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">p</span>)
+	}
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">uss</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">UserService</span>) <span style="color:#a6e22e">RegisterUser</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">RegisterUserReq</span>)
+    (<span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">RegisterUserResp</span>, <span style="color:#66d9ef">error</span>) {
+	
+ 	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">catchPanic</span>()
+	<span style="color:#a6e22e">ruci</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getRegistrationUseCase</span>(<span style="color:#a6e22e">uss</span>.<span style="color:#a6e22e">container</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;%+v\n&#34;</span>, <span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">mu</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">userclient</span>.<span style="color:#a6e22e">GrpcToUser</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">User</span>)
+<span style="color:#f92672">...</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>Good logging can make a programmer more effective. You want to log error with stack trace. Only the top level functions should handle the error and all other level functions should only propagate an error to upper level. Don’t use panic.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="references">References:</h2>
+
+<p>[1] zap
+<a href="https://github.com/uber-go/zap">https://github.com/uber-go/zap</a></p>
+
+<p>[2] Logrus
+<a href="https://github.com/sirupsen/logrus">https://github.com/sirupsen/logrus</a></p>
+
+<p>[3]Stack traces and the errors package
+<a href="https://dave.cheney.net/2016/06/12/stack-traces-and-the-errors-package">https://dave.cheney.net/2016/06/12/stack-traces-and-the-errors-package</a></p>
+
+<p>[4]Let’s talk about logging
+<a href="https://dave.cheney.net/2015/11/05/lets-talk-about-logging">https://dave.cheney.net/2015/11/05/lets-talk-about-logging</a></p>
+
+<p>[5]database/sql Tx — detecting Commit or Rollback
+<a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629</a></p>
+
+<p>[6]On the uses and misuses of panics in Go
+<a href="https://eli.thegreenplace.net/2018/on-the-uses-and-misuses-of-panics-in-go/">https://eli.thegreenplace.net/2018/on-the-uses-and-misuses-of-panics-in-go/</a></p>
+
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/posts/go_logging_and_error_handling/">Go Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/tags/application-design">application-design</a>
+            
+            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>

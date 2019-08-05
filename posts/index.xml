@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Software Craftsman</title>
+    <link>https://jfeng45.github.io/posts/</link>
+    <description>Recent content in Posts on Software Craftsman</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 25 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Application Logging</title>
+      <link>https://jfeng45.github.io/posts/go_logging_and_error_handling/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_logging_and_error_handling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Application Layout</title>
+      <link>https://jfeng45.github.io/posts/go_microservice_application_layout/</link>
+      <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_microservice_application_layout/</guid>
+      <description>Go Microservice with Clean Architecture: Application Layout I created a Microservice with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Software Craftsman</title>
+    <link>https://jfeng45.github.io/tags/</link>
+    <description>Recent content in Tags on Software Craftsman</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 25 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Application Design</title>
+      <link>https://jfeng45.github.io/tags/application-design/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/application-design/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Error Handling</title>
+      <link>https://jfeng45.github.io/tags/error-handling/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/error-handling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Golang</title>
+      <link>https://jfeng45.github.io/tags/golang/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Logging</title>
+      <link>https://jfeng45.github.io/tags/logging/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/logging/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Microservice</title>
+      <link>https://jfeng45.github.io/tags/microservice/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/microservice/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Application Layout</title>
+      <link>https://jfeng45.github.io/tags/application-layout/</link>
+      <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/application-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Clean Architecture</title>
+      <link>https://jfeng45.github.io/tags/clean-architecture/</link>
+      <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/clean-architecture/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Grpc</title>
+      <link>https://jfeng45.github.io/tags/grpc/</link>
+      <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/grpc/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
