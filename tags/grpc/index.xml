@@ -17,7 +17,7 @@
       <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/posts/go_microservice_application_layout/</guid>
-      <description>Go Microservice with Clean Architecture: Application Layout I created a Microservice with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project.</description>
+      <description>I created a Microservice with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project. This is the first one, which is about project structure.</description>
     </item>
     
   </channel>
