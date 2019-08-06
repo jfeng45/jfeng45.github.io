@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Application Design" />
+<meta property="og:description" content="Described Clean Architecture design of this Go Microservice gRPC project, and the three business layers of the project. It also talked about two deviations that this project is different from Clean Architecture" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/posts/clean_architecture_application_design/" />
+<meta property="article:published_time" content="2019-07-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-22T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Design"/>
+<meta name="twitter:description" content="Described Clean Architecture design of this Go Microservice gRPC project, and the three business layers of the project. It also talked about two deviations that this project is different from Clean Architecture"/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-design-68f48802c8f">
+    
+
+    
+       <meta name="description" content="Described Clean Architecture design of this Go Microservice gRPC project, and the three business layers of the project. It also talked about two deviations that this project is different from Clean Architecture">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Application Design | Software Craftsman
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-22">2019-07-22</time>
+    
+    
+        by <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+    
+        <a class="badge badge-primary" href="/tags/grpc">gRPC</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>I created a Microservice with Go and gRPC and tried to apply best practice of application design and programming to this project. I wrote a series of articles about decisions and trade-offs I made when working on the project. This one is about application design.</p>
+
+<p>The design of the application followed <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>¹. There are three layers in business logic code: use case, domain model and data service.</p>
+
+<p>There are three top level packages “usecase”, “model” and “dataservice”, and one for each layer. There is only one file, named after the package, in each top level package ( except model). The file defines the interface to the outside world for each package. The hierarchy of dependency from top level down is: “usecase”, “dataservice” and “model”. The upper level package depends on the lower level package and the dependency never goes reverse direction.</p>
+
+<h2 id="use-case"><strong>Use Case:</strong></h2>
+
+<p>“usecase” is the entry point of the application and has most of the business logic. I got some of the business logic ideas from this <a href="https://medium.com/@hatajoe/clean-architecture-in-go-4030f11ec1b1">article</a>². There are three use cases “registration”, “listUser” and “listCourse”. each use case implements a business feature. The use cases may not resemble real world use case, and they are created to illustrate the design concepts. The following is the interface for registration use case:</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// RegistrationUseCaseInterface is for users to register themselves to an application. It has registration related functions.
+</span><span style="color:#75715e">// ModifyAndUnregisterWithTx() is the one supporting transaction, the other are not.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RegistrationUseCaseInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// RegisterUser register a user to an application, basically save it to a database. The returned resultUser that has
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// a Id ( auto generated by database) after persisted
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">RegisterUser</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#a6e22e">resultUser</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// UnregisterUser unregister a user from an application by user name, basically removing it from a database.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">UnregisterUser</span>(<span style="color:#a6e22e">username</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// ModifyUser change user information based on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ModifyUser</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// ModifyAndUnregister change user information and then unregister the user based on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is created to illustrate transaction, no real use.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ModifyAndUnregister</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// ModifyAndUnregisterWithTx change user information and then unregister the user based on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It supports transaction
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is created to illustrate transaction, no real use.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ModifyAndUnregisterWithTx</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// EnableTx enable transaction support on use case. Need to be included for each use case needs transaction
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It replaces the underline database handler to sql.Tx for each data service that used by this use case
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnableTxer</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The &ldquo;main” function will call “use case” through this interface, which only depends on the model layer.</p>
+
+<p>The following is a partial code for “registration.go”, which implements the functions in “RegistrationUseCaseInterface”. “RegistrationUseCase” is the concrete struct. It has two members “UserDataInterface” and “TxDataInterface”. “UserDataInterface” can be used to call methods in data service layer (for example “UserDataInterface.Insert(user)”). “TxDataInterface” is used to implement transaction. The concrete types of them are created by the application container and injected into each function through dependency injection. Any use case code only depends on the data service interface and there is no dependency on database related code ( for example, sql.DB or sql.Stmt). Any database access code is executed through the data service interface.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// RegistrationUseCase implements RegistrationUseCaseInterface.
+</span><span style="color:#75715e">// It has UserDataInterface, which can be used to access persistence layer
+</span><span style="color:#75715e">// TxDataInterface is needed to support transaction
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RegistrationUseCase</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">UserDataInterface</span> <span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">UserDataInterface</span>
+	<span style="color:#a6e22e">TxDataInterface</span>   <span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">TxDataInterface</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationUseCase</span>) <span style="color:#a6e22e">RegisterUser</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Validate</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;user validation failed&#34;</span>)
+	}
+	<span style="color:#a6e22e">isDup</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">isDuplicate</span>(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">isDup</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;duplicate user for &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>)
+	}
+	<span style="color:#a6e22e">resultUser</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">UserDataInterface</span>.<span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">user</span>)
+
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resultUser</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>Usually one use case can have one or more functions. The above code shows the “RegisterUser” function. It first checks that the passed in parameter “user” is valid, then it checks that the user is not already registered, and finally it calls the data service layer to register the user.</p>
+
+<h2 id="data-service"><strong>Data service:</strong></h2>
+
+<p>Code in this layer handles direct database access. Here is the interface of data persistence layer for domain model “User”.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// UserDataInterface represents interface for user data access through database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserDataInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// Remove deletes a user by user name from database.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">username</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">rowsAffected</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Find retrieves a user from database based on a user&#39;s id
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Find</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// FindByName retrieves a user from database by User.Name
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">FindByName</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// FindAll retrieves all users from database as an array of user
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">FindAll</span>() ([]<span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Update changes user information on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#a6e22e">rowsAffected</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Insert adds a user to a database. The returned resultUser has a Id, which is auto generated by database
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#a6e22e">resultUser</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Need to add this for transaction support
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnableTxer</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the code for MySql implementation of “insert” function in “UserDataInterface”. Here I use “gdbc.SqlGdbc” interface as a wrapper for database handler in order to support transaction. The “gdbc.SqlGdbc” can be sql.DB (which doesn’t support transaction) or sql.Tx ( which supports transaction) at run-time. By passing in “gdbc.SqlGdbc” as the receiver through UserDataSql struct, the “Insert()” function became transparent to transaction. In “insert” function, It first gets database handler from UserDataSql, then it creates the prepared statement and executes it; at last it retrieves the inserted id and returns it to the calling function.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// UserDataSql is the SQL implementation of UserDataInterface
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserDataSql</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">DB</span> <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">uds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">UserDataSql</span>) <span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+
+	<span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">uds</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#a6e22e">INSERT_USER</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Department</span>, <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Created</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">LastInsertId</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Id</span> = int(<span style="color:#a6e22e">id</span>)
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;user inserted:&#34;</span>, <span style="color:#a6e22e">user</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">user</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>If you need to support different databases, you will have one separate implementation for each of them. I will explain it in detail in another article “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">Transaction Support</a>”³.</p>
+
+<h2 id="model"><strong>Model:</strong></h2>
+
+<p>Model is the only layer that doesn’t have interfaces. In Clean Architecture, it is called “entity”. It is where I deviated from Clean Architecture. The model layer in this application doesn’t have much business logic, it only defines the data. Most business logic is in “use case” layer. From my experience, because of lazy loading or other reasons, when executing a use case, most of the time the data in a domain model is not loaded or at least not fully loaded, so the “use case” needs to call data service to load data from database. Since a domain model can’t call a data service, it has to be the “use case” layer, which makes it the perfect place to put business logic in.</p>
+
+<h2 id="validation">Validation:</h2>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;github.com/go-ozzo/ozzo-validation&#34;</span>
+	<span style="color:#e6db74">&#34;time&#34;</span>
+)
+
+<span style="color:#75715e">// User has a name, department and created date. Name and created are required, department is optional.
+</span><span style="color:#75715e">// Id is auto-generated by database after the user is persisted.
+</span><span style="color:#75715e">// json is for couchdb
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">User</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Id</span>         <span style="color:#66d9ef">int</span>       <span style="color:#e6db74">`json:&#34;uid&#34;`</span>
+	<span style="color:#a6e22e">Name</span>       <span style="color:#66d9ef">string</span>    <span style="color:#e6db74">`json:&#34;username&#34;`</span>
+	<span style="color:#a6e22e">Department</span> <span style="color:#66d9ef">string</span>    <span style="color:#e6db74">`json:&#34;department&#34;`</span>
+	<span style="color:#a6e22e">Created</span>    <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span> <span style="color:#e6db74">`json:&#34;created&#34;`</span>
+}
+
+<span style="color:#75715e">// Validate validates a newly created user, which has not persisted to database yet, so Id is empty
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#a6e22e">User</span>) <span style="color:#a6e22e">Validate</span>() <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">ValidateStruct</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>,
+		<span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Required</span>),
+		<span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">Created</span>, <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Required</span>))
+}
+
+<span style="color:#75715e">//ValidatePersisted validate a user that has been persisted to database, basically Id is not empty
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">u</span> <span style="color:#a6e22e">User</span>) <span style="color:#a6e22e">ValidatePersisted</span>() <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">ValidateStruct</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>,
+		<span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">Id</span>, <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Required</span>),
+		<span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Required</span>),
+		<span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">Created</span>, <span style="color:#a6e22e">validation</span>.<span style="color:#a6e22e">Required</span>))
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The above is the code for domain model “User”. I also have simple validation in it. It is natural to put the validation logic in the model layer, which should be the lowest layer in the application because every other layer depends on it. Validation rules usually only involve low level actions, so it shouldn’t cause any problem. The validation library used in this application is “<a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a>”⁴. It is interface-based, which makes it less intrusive to the code, please see “<a href="https://medium.com/@apzuk3/input-validation-in-golang-bc24cdec1835">Input validation in GoLang</a>”⁵ for comparisons of different validation libraries. One concern is that “ozzo” depends on “database/sql” package because of SQL validation support, which messed up the dependency. In the future, if there is a problem, we may need to switch to a different library or remove the “sql” dependency in the library.</p>
+
+<p>You may ask why you put the validation in the domain model layer but business logic in the “use case” layer? Because the business logic usually involves multiple domain models or multiple instances of one model. For example, the calculation of a product price depends on the purchase quantity and whether the item is on sale or not, so it has to be in “use case” layer. Validation on the other hand, is usually rely on one instance of a model, so it can be put in the model. If a validation spreads multiple models or multiple instances of a model ( for example, checking a user is duplicate), than put it in “use case” layer.</p>
+
+<h2 id="data-transfer-objects">Data Transfer objects</h2>
+
+<p>This is another part that I didn’t follow Clean Architecture. According to <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>¹, “ Typically the data that crosses the boundaries is simple data structures. You can use basic structs or simple Data Transfer objects if you like.” DTO (Data Transfer Object) is not used in this application, instead the domain model is shared among different layers. If the business logic is very complex, there may be some benefit to have a separate DTO, at which time I don’t mind to create them, but not now.</p>
+
+<h3 id="format-translation">Format translation</h3>
+
+<p>When across a service boundary, I do see the need to have different domain models. For example, this application is also published as a gRPC Microservice. On the server side, we use the application domain model; on the client side, we use gRPC model, and they have different types, so format translation is necessary between them.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// GrpcToUser converts from grpc User type to domain Model user type
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GrpcToUser</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">user</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>
+	}
+	<span style="color:#a6e22e">resultUser</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>{}
+
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Id</span> = int(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Id</span>)
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Name</span> = <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Department</span> = <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Department</span>
+	<span style="color:#a6e22e">created</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ptypes</span>.<span style="color:#a6e22e">Timestamp</span>(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Created</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Created</span> = <span style="color:#a6e22e">created</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">resultUser</span>, <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#75715e">// UserToGrpc converts from domain Model User type to grpc user type
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">UserToGrpc</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">user</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>
+	}
+	<span style="color:#a6e22e">resultUser</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">User</span>{}
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Id</span> = int32(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Id</span>)
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Name</span> = <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Department</span> = <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Department</span>
+	<span style="color:#a6e22e">created</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ptypes</span>.<span style="color:#a6e22e">TimestampProto</span>(<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Created</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">resultUser</span>.<span style="color:#a6e22e">Created</span> = <span style="color:#a6e22e">created</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">resultUser</span>, <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#75715e">// UserListToGrpc converts from array of domain Model User type to array of grpc user type
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">UserListToGrpc</span>(<span style="color:#a6e22e">ul</span> []<span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) ([]<span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">gul</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">uspb</span>.<span style="color:#a6e22e">User</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">user</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">ul</span> {
+		<span style="color:#a6e22e">gu</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">UserToGrpc</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">user</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+		}
+		<span style="color:#a6e22e">gul</span> = append(<span style="color:#a6e22e">gul</span>, <span style="color:#a6e22e">gu</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">gul</span>, <span style="color:#66d9ef">nil</span>
+}
+	</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The above data translation code is in “adapter/userclient” package. At first glance, it seems to sense to make the domain model “User” having a method “toGrpc()” and the validation method will be executed like this-“user.toGrpc(user *uspb.User)”, but this will create a dependency from the domain model to gRPC. So, it is better to create a separate function and put it under “adapter/userclient” package. This package will depend on both domain model and gRPC model. However, because of that, both domain model and gRPC model are clean and they don’t depend on each other.</p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>The design of the application followed Clean Architecture. There are three layers in business logic code: “use case”, “domain model” and “data service”. However, I deviated from Clean Architecture on two parts. One is that I have most business logic code in “use case” layer; the other is that I don’t have DTO, instead I use domain models to share data among different layers.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1]The Clean Code Blog
+<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html</a></p>
+
+<p>[2]Clean Architecture in Go
+<a href="https://medium.com/@hatajoe/clean-architecture-in-go-4030f11ec1b1">https://medium.com/@hatajoe/clean-architecture-in-go-4030f11ec1b1</a></p>
+
+<p>[3] Go Microservice with Clean Architecture: Transaction Support
+<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36</a></p>
+
+<p>[4]ozzo-validation
+<a href="https://github.com/go-ozzo/ozzo-validation">https://github.com/go-ozzo/ozzo-validation</a></p>
+
+<p>[5] Input validation in GoLang
+<a href="https://medium.com/@apzuk3/input-validation-in-golang-bc24cdec1835">https://medium.com/@apzuk3/input-validation-in-golang-bc24cdec1835</a></p>
+
+
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+        
+            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>

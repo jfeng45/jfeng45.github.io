@@ -6,10 +6,58 @@
     <description>Recent content in Clean Architecture on Software Craftsman</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/tags/clean-architecture/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Coding Style</title>
+      <link>https://jfeng45.github.io/posts/coding_style/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/coding_style/</guid>
+      <description>Coding style is a relatively boring topic in programming, but it is crucial to have an appropriate coding style to be an effective programmer. There are three components in it:
+ Application layout and folder structure
+ Coding rules or style
+ Naming convention
+  I already talked about application layout in “Go Microservice with Clean Architecture: Application Layout”¹ , so this article covers the rest.
+Coding rules or style  No package level variables.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Transaction Support</title>
+      <link>https://jfeng45.github.io/posts/transaction_support/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/transaction_support/</guid>
+      <description>In order to support the transaction in the business layer, I tried to get a Spring like declarative transaction management in Go, but couldn’t find it, so I decided to write one. Transaction is easy to implement in Go, but it is pretty difficult to get it right.
+Requirement:  Separate business logic from transaction code. One should only think about business logic when writing a use case, no need to be aware of transaction management.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Application Design</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_application_design/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_application_design/</guid>
+      <description>I created a Microservice with Go and gRPC and tried to apply best practice of application design and programming to this project. I wrote a series of articles about decisions and trade-offs I made when working on the project. This one is about application design.
+The design of the application followed Clean Architecture¹. There are three layers in business logic code: use case, domain model and data service.
+There are three top level packages “usecase”, “model” and “dataservice”, and one for each layer.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Design Principle</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_design_principle/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_design_principle/</guid>
+      <description>Inspiration of design: I wrote a Go Microservice application recently and the design of this application coming from three inspirations:
+ Clean Architecture¹ and SOLID² design principle³
+ Spring’s application context⁴
+ Go’s concise design⁵ especially Go’s implementation of object-oriented design⁶
+  I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom. Trade-offs have been made when there are conflicts among them.</description>
+    </item>
     
     <item>
       <title>Go Microservice with Clean Architecture: Application Layout</title>

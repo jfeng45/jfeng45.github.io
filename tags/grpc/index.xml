@@ -6,10 +6,21 @@
     <description>Recent content in Grpc on Software Craftsman</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/tags/grpc/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Application Design</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_application_design/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_application_design/</guid>
+      <description>I created a Microservice with Go and gRPC and tried to apply best practice of application design and programming to this project. I wrote a series of articles about decisions and trade-offs I made when working on the project. This one is about application design.
+The design of the application followed Clean Architecture¹. There are three layers in business logic code: use case, domain model and data service.
+There are three top level packages “usecase”, “model” and “dataservice”, and one for each layer.</description>
+    </item>
     
     <item>
       <title>Go Microservice with Clean Architecture: Application Layout</title>

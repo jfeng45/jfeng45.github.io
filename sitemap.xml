@@ -3,12 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://jfeng45.github.io/tags/application-design/</loc>
-    <lastmod>2019-07-25T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://jfeng45.github.io/categories/</loc>
     <lastmod>2019-07-25T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -68,13 +62,51 @@
   </url>
   
   <url>
-    <loc>https://jfeng45.github.io/tags/application-layout/</loc>
-    <lastmod>2019-07-21T00:00:00+00:00</lastmod>
+    <loc>https://jfeng45.github.io/tags/clean-architecture/</loc>
+    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://jfeng45.github.io/tags/clean-architecture/</loc>
+    <loc>https://jfeng45.github.io/tags/coding-style/</loc>
+    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/tags/database-transaction/</loc>
+    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/posts/coding_style/</loc>
+    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/posts/transaction_support/</loc>
+    <lastmod>2019-07-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/posts/clean_architecture_application_design/</loc>
+    <lastmod>2019-07-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/posts/clean_architecture_design_principle/</loc>
+    <lastmod>2019-07-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/tags/grpc/</loc>
+    <lastmod>2019-07-22T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://jfeng45.github.io/tags/application-layout/</loc>
     <lastmod>2019-07-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -82,12 +114,6 @@
   <url>
     <loc>https://jfeng45.github.io/posts/go_microservice_application_layout/</loc>
     <lastmod>2019-07-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jfeng45.github.io/tags/grpc/</loc>
-    <lastmod>2019-07-21T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
