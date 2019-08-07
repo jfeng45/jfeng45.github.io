@@ -423,7 +423,7 @@
 </div>
 <br/></p>
 
-<p>There is another side effect besides the one talked above. In the following code, the “SetDB” function in the “CourseDataInterface” breaks the dependency. Because “CourseDataInterface” is the data service layer interface, it shouldn’t depend on “gdbc” interface, which is one layer down. This is the second flaw in the dependency relationship of this application, and the first one is in the <a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">transaction support</a>⁶ module. There is no good fix for it, if you don’t like it just don’t use it. Try the second level factory similar to “userFataServiceFactory”.
+<p>There is another side effect besides the one talked above. In the following code, the “SetDB” function in the “CourseDataInterface” breaks the dependency. Because “CourseDataInterface” is the data service layer interface, it shouldn’t depend on “gdbc” interface, which is one layer down. This is the second flaw in the dependency relationship of this application, and the first one is in the <a href="https://jfeng45.github.io/posts/transaction_support/">transaction support</a>⁶ module. There is no good fix for it, if you don’t like it just don’t use it. Try the second level factory similar to “userFataServiceFactory”.
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
@@ -546,39 +546,29 @@
 
 <h2 id="other-articles">Other articles:</h2>
 
-<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
 
 <h2 id="reference">Reference:</h2>
 
-<p>[1]Go Microservice with Clean Architecture: Application Container
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77</a></p>
+<p>[1]<a href="https://jfeng45.github.io/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p>
 
-<p>[2] Inversion of Control Containers and the Dependency Injection pattern
-<a href="https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection">https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection</a></p>
+<p>[2] <a href="https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection">Inversion of Control Containers and the Dependency Injection pattern</a></p>
 
-<p>[3]Golang Factory Method
-<a href="https://stackoverflow.com/a/49714445">https://stackoverflow.com/a/49714445</a></p>
+<p>[3]]<a href="https://stackoverflow.com/a/49714445">Golang Factory Method</a></p>
 
-<p>[4]Creating a factory method in Java that doesn’t rely on if-else
-<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else">https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else</a></p>
+<p>[4]<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else">Creating a factory method in Java that doesn’t rely on if-else</a></p>
 
-<p>[5]Tom Hawtin’s answer
-<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505</a></p>
+<p>[5]<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">Tom Hawtin’s answer</a></p>
 
-<p>[6]Go Microservice with Clean Architecture: Transaction Support
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36</a></p>
+<p>[6]<a href="https://jfeng45.github.io/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></p>
 
-<p>[7]Dependency Injection in Go
-<a href="https://blog.drewolson.org/dependency-injection-in-go">https://blog.drewolson.org/dependency-injection-in-go</a></p>
+<p>[7]<a href="https://blog.drewolson.org/dependency-injection-in-go">Dependency Injection in Go</a></p>
 
-<p>[8]Uber’s dig
-<a href="https://github.com/uber-go/dig">https://github.com/uber-go/dig</a></p>
+<p>[8]<a href="https://github.com/uber-go/dig">Uber’s dig</a></p>
 
-<p>[9]Go Dependency Injection with Wire
-<a href="https://blog.drewolson.org/go-dependency-injection-with-wire">https://blog.drewolson.org/go-dependency-injection-with-wire</a></p>
+<p>[9]<a href="https://blog.drewolson.org/go-dependency-injection-with-wire">Go Dependency Injection with Wire</a></p>
 
-<p>[10]Google’s Wire: Automated Initialization in Go
-<a href="https://github.com/google/wire">https://github.com/google/wire</a></p>
+<p>[10]<a href="https://github.com/google/wire">Google’s Wire: Automated Initialization in Go</a></p>
 
 
     

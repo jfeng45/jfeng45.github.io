@@ -327,7 +327,7 @@
 
 <p><strong>Data store factory:</strong></p>
 
-<p>“Registration” use case needs to access database through a handler, which is created by the data store factory. All code is in “datastorefactory” sub-package. I explained in detail how data store factory works in another “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-dependency-injection-82cbd3ecb9f3">Dependency Injection</a>”⁴.</p>
+<p>“Registration” use case needs to access database through a handler, which is created by the data store factory. All code is in “datastorefactory” sub-package. I explained in detail how data store factory works in another “<a href="https://jfeng45.github.io/posts/dependency_injection/">Dependency Injection</a>”⁴.</p>
 
 <p>Current implementation of the data store factory supports two databases, MySql and CouchDB, and a gRPC cache service; each implementation has it’s own factory file. If a new database is introduced, you just need to add a new factory file and add an entry in “dsFbMap” in the following code.</p>
 
@@ -611,7 +611,7 @@
 
 <p>Then I found (I got some inspiration from <a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">here</a>⁵) it is better to put all the configuration information in a file, so I can change it without changing the code. I created a YAML file (appConfig[type].yaml) and “appConfig.go” to load the content from the file into an application configuration struct-“appConfig” and pass it to factory builders. The “[type]” can be “prod”, “dev”, “test” and so on. The config file is loaded only once. Currently, it didn’t use any third party lib, but I am thinking to switch to <a href="https://github.com/spf13/viper">Vipe</a>⁶ in the future, so it can support dynamic reloading of application configurations from a configuration server. To make the switch, I only need to change one file, “appConfig.go”.</p>
 
-<p>For logging, I’d like only one instance of logger so I can set the same logging configurations for the whole application. I created a logger package inside the container. I also tried different logging libraries to figure out which one is the best, then I created a logging factory to make it easier to add new loggers in the future. Please read “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">application logging</a>”⁷ for detail.</p>
+<p>For logging, I’d like only one instance of logger so I can set the same logging configurations for the whole application. I created a logger package inside the container. I also tried different logging libraries to figure out which one is the best, then I created a logging factory to make it easier to add new loggers in the future. Please read “<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">application logging</a>”⁷ for detail.</p>
 
 <h2 id="source-code">Source Code:</h2>
 
@@ -619,30 +619,23 @@
 
 <h2 id="other-articles">Other articles:</h2>
 
-<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
 
 <h2 id="reference">Reference:</h2>
 
-<p>[1] ozzo-validation
-<a href="https://github.com/go-ozzo/ozzo-validation">https://github.com/go-ozzo/ozzo-validation</a></p>
+<p>[1] <a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a></p>
 
-<p>[2] YAML support for the Go language
-<a href="https://github.com/go-yaml/yaml/tree/v2.2.2">https://github.com/go-yaml/yaml/tree/v2.2.2</a></p>
+<p>[2] <a href="https://github.com/go-yaml/yaml/tree/v2.2.2">YAML support for the Go language</a></p>
 
-<p>[3]Golang Factory Method
-<a href="https://stackoverflow.com/a/49714445">https://stackoverflow.com/a/49714445</a></p>
+<p>[3]<a href="https://stackoverflow.com/a/49714445">Golang Factory Method</a></p>
 
-<p>[4]Go Microservice with Clean Architecture: Dependency Injection
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-dependency-injection-82cbd3ecb9f3">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-dependency-injection-82cbd3ecb9f3</a></p>
+<p>[4]<a href="https://jfeng45.github.io/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a></p>
 
-<p>[5] How I pass around shared resources (databases, configuration, etc) within Golang projects.
-<a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a</a></p>
+<p>[5] <a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">How I pass around shared resources (databases, configuration, etc) within Golang projects</a></p>
 
-<p>[6]viper
-<a href="https://github.com/spf13/viper">https://github.com/spf13/viper</a></p>
+<p>[6]<a href="https://github.com/spf13/viper">viper</a></p>
 
-<p>[7]Go Microservice with Clean Architecture: Application Logging
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce</a></p>
+<p>[7]<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
 
 
     

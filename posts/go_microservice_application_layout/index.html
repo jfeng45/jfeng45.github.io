@@ -220,7 +220,7 @@
 
 <p>The most complex package in this app, which creates the concrete structs for each interface and injects them into other layers. The sub-level structure in it resembles the application layer, which also have “use case”, “data service” and “data store” layer.</p>
 
-<p>Under the top level, “container.go” defines the container interface, and the implementation file “serviceContainer.go” is in “servicecontainer” package. It is the entry point or this package, which glues other code in this folder together. “registrationFactory.go” in “usecasefactory” sub-package and other factories using factory method pattern to create structs. <a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">Logging</a>⁸ doesn’t belongs to any application layer, so I created a separate sub-package “loggerfactory” for it. It also has a “logger” sub-package to define logging interface. I explain everything in this package in my article “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">Application Container</a>”⁹.</p>
+<p>Under the top level, “container.go” defines the container interface, and the implementation file “serviceContainer.go” is in “servicecontainer” package. It is the entry point or this package, which glues other code in this folder together. “registrationFactory.go” in “usecasefactory” sub-package and other factories using factory method pattern to create structs. <a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Logging</a>⁸ doesn’t belongs to any application layer, so I created a separate sub-package “loggerfactory” for it. It also has a “logger” sub-package to define logging interface. I explain everything in this package in my article “<a href="https://jfeng45.github.io/posts/application_container/">Application Container</a>”⁹.</p>
 
 <p><strong>dataservice:</strong></p>
 
@@ -276,39 +276,29 @@
 
 <h2 id="other-articles">Other articles:</h2>
 
-<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
 
 <h2 id="reference">Reference:</h2>
 
-<p>[1]golang-standards/project-layout
- <a href="https://github.com/golang-standards/project-layout">https://github.com/golang-standards/project-layout</a></p>
+<p>[1]<a href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a></p>
 
-<p>[2]Go: the Good, the Bad and the Ugly
-<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/</a></p>
+<p>[2]<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad and the Ugly</a></p>
 
-<p>[3]Package by feature, not layer
- <a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">http://www.javapractices.com/topic/TopicAction.do?Id=205</a></p>
+<p>[3]<a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">Package by feature, not layer</a></p>
 
-<p>[4]Structuring Applications in Go
-<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091</a></p>
+<p>[4]<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">Structuring Applications in Go</a></p>
 
-<p>[5]Standard Package Layout
-<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1</a></p>
+<p>[5]<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout</a></p>
 
-<p>[6]The Clean Code Blog
-<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html</a></p>
+<p>[6]<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Code Blog</a></p>
 
-<p>[7]Go at Google: Language Design in the Service of Software Engineering
-<a href="https://talks.golang.org/2012/splash.article">https://talks.golang.org/2012/splash.article</a></p>
+<p>[7]<a href="https://talks.golang.org/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a></p>
 
-<p>[8]Go Microservice with Clean Architecture: Application Logging
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce</a></p>
+<p>[8]<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
 
-<p>[9]Go Microservice with Clean Architecture: Application Container
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77</a></p>
+<p>[9]<a href="https://jfeng45.github.io/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p>
 
-<p>[10]Practical Go: Real world advice for writing maintainable Go programs
- <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">https://dave.cheney.net/practical-go/presentations/qcon-china.html</a></p>
+<p>[10]<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">Practical Go: Real world advice for writing maintainable Go programs</a></p>
 
 
     

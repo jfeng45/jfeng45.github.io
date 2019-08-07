@@ -703,7 +703,7 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><strong>Panic:</strong></p>
 
-<p>I saw a lot of Go database code generated a panic instead of an error when there is a database error, which could cause a problem in Microservice environment, where you always want to keep the service running. Let’s say when you have a SQL error in an update statement, then users won’t be able to access that function, which is bad. But if because that, the whole service or website is shutdown, then it is much worse. So the right way to do is propagating the error to upper level and let it decide what to do. What if it is a third party library, who generates the panic? Then, you need to catch and recover from the panic to keep your service running. I gave an example of it in another article “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">Application Logging</a>”⁸.</p>
+<p>I saw a lot of Go database code generated a panic instead of an error when there is a database error, which could cause a problem in Microservice environment, where you always want to keep the service running. Let’s say when you have a SQL error in an update statement, then users won’t be able to access that function, which is bad. But if because that, the whole service or website is shutdown, then it is much worse. So the right way to do is propagating the error to upper level and let it decide what to do. What if it is a third party library, who generates the panic? Then, you need to catch and recover from the panic to keep your service running. I gave an example of it in another article “<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Application Logging</a>”⁸.</p>
 
 <h2 id="source-code">Source Code:</h2>
 
@@ -711,32 +711,25 @@ You can write a use case without transaction and later on to enable the transact
 
 <h2 id="other-articles">Other articles:</h2>
 
-<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
 
 <h2 id="references">References:</h2>
 
-<p>[1]db transaction in golang
-<a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">https://stackoverflow.com/questions/26593867/db-transaction-in-golang</a></p>
+<p>[1]<a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">db transaction in golang</a></p>
 
 <p>[2]<a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">database/sql Tx — detecting Commit or Rollback</a></p>
 
-<p>[3]database/sql: nested transaction or save point support
-<a href="https://github.com/golang/go/issues/7898">https://github.com/golang/go/issues/7898</a></p>
+<p>[3]<a href="https://github.com/golang/go/issues/7898">database/sql: nested transaction or save point support</a></p>
 
-<p>[4]GOTO 2015 • Applying the Saga Pattern • Caitie McCaffrey — YouTube
-<a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">https://www.youtube.com/watch?v=xDuwrtwYHu8</a></p>
+<p>[4]<a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">GOTO 2015 • Applying the Saga Pattern • Caitie McCaffrey — YouTube</a></p>
 
-<p>[5]Common Pitfalls When Using database/sql in Go
-<a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/</a></p>
+<p>[5]<a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">Common Pitfalls When Using database/sql in Go</a></p>
 
-<p>[6]Go database/sql tutorial
-<a href="http://go-database-sql.org/connection-pool.html">http://go-database-sql.org/connection-pool.html</a></p>
+<p>[6]<a href="http://go-database-sql.org/connection-pool.html">Go database/sql tutorial</a></p>
 
-<p>[7]sqlx
-<a href="https://github.com/jmoiron/sqlx">https://github.com/jmoiron/sqlx</a></p>
+<p>[7]<a href="https://github.com/jmoiron/sqlx">sqlx</a></p>
 
-<p>[8]Go Microservice with Clean Architecture: Application Logging
-<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-logging-b43dc5839bce</a></p>
+<p>[8]<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
 
 
     
