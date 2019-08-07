@@ -6,10 +6,30 @@
     <description>Recent content in Go Microservice on Software Craftsman</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 25 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/categories/go-microservice/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Application Container</title>
+      <link>https://jfeng45.github.io/posts/application_container/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/application_container/</guid>
+      <description>One philosophy of Clean Architecture is to isolate framework for the application, so the framework won’t take over your application and you decide when and where to use them. In this application, I purposely not using any libraries at the beginning so I can have a better control on the project structure. Only after the whole application structure is laid out, I will consider replacing some components of the application with libraries.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Dependency Injection</title>
+      <link>https://jfeng45.github.io/posts/dependency_injection/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/dependency_injection/</guid>
+      <description>In Clean Architecture, each layer of the application ( use case, data service and domain model) only depends on interface of other layers instead of concrete types. At run-time, the the application container¹ is responsible for creating concrete types and inject them into each function, the technology it used is called Dependency Injection². The following is the requirements.
+Requirements for dependency relationship on container:
+ The container package is the only package that depends on concrete types and many outside libraries because it needs to create concrete types.</description>
+    </item>
     
     <item>
       <title>Go Microservice with Clean Architecture: Application Logging</title>
@@ -42,6 +62,15 @@ Coding rules or style  No package level variables.</description>
       <guid>https://jfeng45.github.io/posts/transaction_support/</guid>
       <description>In order to support the transaction in the business layer, I tried to get a Spring like declarative transaction management in Go, but couldn’t find it, so I decided to write one. Transaction is easy to implement in Go, but it is pretty difficult to get it right.
 Requirement:  Separate business logic from transaction code. One should only think about business logic when writing a use case, no need to be aware of transaction management.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
+      <description>I created a Microservice project with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I also tried to apply the best practice in application design and programming, such as Clean Architecture, Dependency Injection, logging, error handling and so on, to the Go Microservice application. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different.</description>
     </item>
     
     <item>

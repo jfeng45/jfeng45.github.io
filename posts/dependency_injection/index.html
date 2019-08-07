@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Dependency Injection" />
+<meta property="og:description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/posts/dependency_injection/" />
+<meta property="article:published_time" content="2019-07-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-29T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Dependency Injection"/>
+<meta name="twitter:description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. "/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-dependency-injection-82cbd3ecb9f3">
+    
+
+    
+       <meta name="description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. ">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Dependency Injection | Software Craftsman
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-29">2019-07-29</time>
+    
+    
+        by <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+    
+        <a class="badge badge-primary" href="/tags/application-container">Application Container</a>
+    
+        <a class="badge badge-primary" href="/tags/dependency-injection">Dependency Injection</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>In Clean Architecture, each layer of the application ( use case, data service and domain model) only depends on interface of other layers instead of concrete types. At run-time, the the application container¹ is responsible for creating concrete types and inject them into each function, the technology it used is called Dependency Injection². The following is the requirements.</p>
+
+<p><strong>Requirements for dependency relationship on container:</strong></p>
+
+<ol>
+<li><p>The container package is the only package that depends on concrete types and many outside libraries because it needs to create concrete types. All other packages in the application mostly depend only on interfaces.</p></li>
+
+<li><p>The outside libraries can include DBs and DB connections, gRPC connections, HTTP connections, SMTP servers, MQ and so on.</p></li>
+
+<li><p>The concrete types of resource handlers mentioned in #2 only need to be created once and put in a registry, and all later requests will retrieve them from the registry.</p></li>
+
+<li><p>Only the use case layer needs to access and depend on the container package.</p></li>
+</ol>
+
+<p>At the core of dependency injection is the factory method pattern.</p>
+
+<h2 id="factory-method-pattern">Factory Method Pattern:</h2>
+
+<p>Implementing factory method pattern is not difficult, <a href="https://stackoverflow.com/a/49714445">here</a>³ is how to do it in Go. The difficult part is to make it extensible, basically how to avoid modifying the code when you add a new factory.</p>
+
+<p>There are different ways of dealing with new factories.</p>
+
+<ul>
+<li><p>(1)<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else"> Using if-else statement</a>⁴</p></li>
+
+<li><p>(2) <a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">Using a map to save different factories</a>⁵</p></li>
+
+<li><p>(3) Using reflection to generate new concrete types.</p></li>
+</ul>
+
+<p>The #1 is not a good option because you need to modify existing code whenever you add a new type. The #3 is the best one because there is no change to existing code when adding a new factory. In Java, I will use #3 because Java has a very elegant implementation of reflection. You can do something like “(Animal)Class.forName(“className”).newInstance()”, basically you can pass in the name of a class as a string parameter in a function and create a new instance of a type from it by reflection and then convert it to the appropriate type (could be a supper type), which is very powerful. Since Go’s reflection is not as good as Java’s, #3 is not a good option. In Go, the instance created by reflection is a reflection type not the real type and you can’t convert the type between the reflection type and the real type, they are in two different world, which makes reflection in Go really difficult to use. So I choose #2, which is better than #1, but you need to make limited code changes when adding a new type.</p>
+
+<p>The following is the code for data store factory. It has a “dsFbInterface”, which has a “Build” function need to be implemented by each data store. “Build” is the key component of the factory. The “dsFbMap” is the map between the code for each database (or gRPC) and the real factory. This is the part that needs to be changed when there is a database added.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// To map &#34;database code&#34; to &#34;database interface builder&#34;
+</span><span style="color:#75715e">// Concreate builder is in corresponding factory file. For example, &#34;sqlFactory&#34; is in &#34;sqlFactory&#34;.go
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dsFbMap</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">dsFbInterface</span>{
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">SQLDB</span>:      <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sqlFactory</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">COUCHDB</span>:    <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">couchdbFactory</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CACHE_GRPC</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cacheGrpcFactory</span>{},
+}
+
+<span style="color:#75715e">// DataStoreInterface serve as a marker to indicate the return type for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataStoreInterface</span> <span style="color:#66d9ef">interface</span>{}
+
+<span style="color:#75715e">// The builder interface for factory method pattern
+</span><span style="color:#75715e">// Every factory needs to implement Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">dsFbInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataStoreConfig</span>) (<span style="color:#a6e22e">DataStoreInterface</span>, <span style="color:#66d9ef">error</span>)
+}
+
+<span style="color:#75715e">//GetDataStoreFb is accessors for factoryBuilderMap
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetDataStoreFb</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">dsFbInterface</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dsFbMap</span>[<span style="color:#a6e22e">key</span>]
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the code for “sqlFactory”, which implemented the “dsFbInterface” in above code. It creates the data store for MySql database. In “build” function, it first retrieves the data store (MySql) from the registry, if found, then return, otherwise it creates a new one and put it into the registry. Because the registry can store data for any type, we need to convert the return value to the appropriate type (*sql.DB) after retrieving. “databasehandler.SqlDBTx” is the concrete type implemented “SqlGdbc” interface. It is created to facilitate transaction support. “sql.Open()” is called to open the database connection, but it didn’t do any action to connect the database. So, “db.Ping()” is called to make sure the database is up running.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// sqlFactory is receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">sqlFactory</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#75715e">// implement Build method for SQL database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sqlFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dsc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataStoreConfig</span>) (<span style="color:#a6e22e">DataStoreInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>
+	<span style="color:#75715e">//if it is already in container, return
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">found</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">key</span>); <span style="color:#a6e22e">found</span> {
+		<span style="color:#a6e22e">sdb</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">value</span>.(<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>)
+		<span style="color:#a6e22e">sdt</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">databasehandler</span>.<span style="color:#a6e22e">SqlDBTx</span>{<span style="color:#a6e22e">DB</span>: <span style="color:#a6e22e">sdb</span>}
+		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;found db in container for key:&#34;</span>, <span style="color:#a6e22e">key</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sdt</span>, <span style="color:#66d9ef">nil</span>
+	}
+
+	<span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">DriverName</span>, <span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">UrlAddress</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#75715e">// check the connection
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Ping</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">dt</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">databasehandler</span>.<span style="color:#a6e22e">SqlDBTx</span>{<span style="color:#a6e22e">DB</span>: <span style="color:#a6e22e">db</span>}
+	<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">db</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">dt</span>, <span style="color:#66d9ef">nil</span>
+
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<h2 id="data-service-factory">Data service factory</h2>
+
+<p>The data service layer uses factory method patter to create data service types. There are different variations on how to apply this pattern. I used three different strategies when building data service factories and each of them has its pros and cons. I will explain them in detail, so you can make a decision on which one to use in a particular situation.</p>
+
+<p><strong>Basic factory</strong></p>
+
+<p>The easiest one is “cacheGrpcFactory”, because there is only one underlying implementation of the data store (which is gRPC), so it is straightforward to create just one factory. Always use this one as far as you can.</p>
+
+<p><strong>Second level factory</strong></p>
+
+<p>For the database factory, that is not the case. Because we need to support multiple databases at the same time for each data service, another level of factory is needed, which means for each data service type, such as the “UserDataService”, we need a separate factory for each database supported. Right now, since there are two databases, we need two factories.</p>
+
+<p><img src="/images/userDataServiceFactory.jpg" alt="userDataServiceFactory" /></p>
+
+<p>You can see from the above image, we need four files to finish the “UserDataService”, among them “userDataServiceFactoryWrapper.go” is the wrapper which calls the real factory in “userdataservicefactory” folder. “couchdbUserDataServiceFactory.go” and “sqlUserDataServiceFactory.go” are the real factories for CouchDB and MySql database. “userDataServiceFactory.go” defines the interface. If you have many data services, then you will create a lot of boilerplate code.</p>
+
+<p><strong>Simplified factory</strong></p>
+
+<p>Is there a way to simplify it? Yes, that is the third way, but it also comes with some cost. The following is the code for “courseDataServiceFactory.go”. You can see it is much simplified with only one file instead of four as before. The code is similar to the “userDataServiceFactory” we just talked about, how does it get the code simplified?</p>
+
+<p>The key is to create a unified interface for the underline database handler. In “courseDataServiceFactory.go”, I can get the unified underline database handler after calling “dataStoreFactory” and set the DB of “CourseDataServiceInterface” with correct “gdbc” ( which can be any database handler as long as it implements “gdbc” interface).
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">courseDataServiceMap</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">CourseDataInterface</span>{
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">COUCHDB</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">couchdb</span>.<span style="color:#a6e22e">CourseDataCouchdb</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">SQLDB</span>:   <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sqldb</span>.<span style="color:#a6e22e">CourseDataSql</span>{},
+}
+
+<span style="color:#75715e">// courseDataServiceFactory is an empty receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">courseDataServiceFactory</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#75715e">// GetCourseDataServiceInterface is an accessor for factoryBuilderMap
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetCourseDataServiceInterface</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">CourseDataInterface</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">courseDataServiceMap</span>[<span style="color:#a6e22e">key</span>]
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tdsf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">courseDataServiceFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dataConfig</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataConfig</span>) (<span style="color:#a6e22e">DataServiceInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">dsc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dataConfig</span>.<span style="color:#a6e22e">DataStoreConfig</span>
+	<span style="color:#a6e22e">dsi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">datastorefactory</span>.<span style="color:#a6e22e">GetDataStoreFb</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">dsc</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">gdbc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsi</span>.(<span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">Gdbc</span>)
+	<span style="color:#a6e22e">gdi</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">GetCourseDataServiceInterface</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>)
+	<span style="color:#a6e22e">gdi</span>.<span style="color:#a6e22e">SetDB</span>(<span style="color:#a6e22e">gdbc</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">gdi</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The only drawback is that for any database supported, I need to implement both “SqlGdbc” and “NoSqlGdbc” interface in the following code, even though it will only use one of them, the other is just empty implementation (to fulfill the interface) without being used. If you only have couple databases to support, this could be a viable solution, otherwise it becomes increasingly unmanageable.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SqlGdbc (SQL Go database connection) is a wrapper for SQL database handler 
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SqlGdbc</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Prepare</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">QueryRow</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Row</span>
+	<span style="color:#75715e">// If need transaction support, add this interface
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Transactioner</span>
+}
+
+<span style="color:#75715e">// NoSqlGdbc (NoSQL Go database connection) is a wrapper for NoSql database handler.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NoSqlGdbc</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// The method name of underline database was Query(), but since it conflicts with the name with Query() in SqlGdbc,
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// so have to change to a different name
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">QueryNoSql</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">ddoc</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">view</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">docID</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">doc</span> <span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">options</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Options</span>) (<span style="color:#a6e22e">rev</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">docID</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">options</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Options</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Row</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Find</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">query</span> <span style="color:#66d9ef">interface</span>{}) (<span style="color:#f92672">*</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">AllDocs</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">options</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Options</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">kivik</span>.<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+}
+
+<span style="color:#75715e">// gdbc is an unified way to handle database connections. 
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Gdbc</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">SqlGdbc</span>
+	<span style="color:#a6e22e">NoSqlGdbc</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>There is another side effect besides the one talked above. In the following code, the “SetDB” function in the “CourseDataInterface” breaks the dependency. Because “CourseDataInterface” is the data service layer interface, it shouldn’t depend on “gdbc” interface, which is one layer down. This is the second flaw in the dependency relationship of this application, and the first one is in the <a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">transaction support</a>⁶ module. There is no good fix for it, if you don’t like it just don’t use it. Try the second level factory similar to “userFataServiceFactory”.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;github.com/jfeng45/servicetmpl/model&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/jfeng45/servicetmpl/tool/gdbc&#34;</span>
+)
+
+<span style="color:#75715e">// CourseDataInterface represents interface for persistence service for course data
+</span><span style="color:#75715e">// It is created for POC of courseDataServiceFactory, no real use.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CourseDataInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">FindAll</span>() ([]<span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">Course</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">SetDB</span>(<span style="color:#a6e22e">gdbc</span> <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">Gdbc</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p><strong>Which one to use?</strong></p>
+
+<p>What influences the decision on whether to choose the simplified factory or the second level factory ? It depends on the direction of changes. If you need to support a lot of new databases, but not many new data service ( which is decided by the number of domain model types), then the second level factory is better, because most changes will happen in the data store factory. But if the supported database won’t change much, and the number of data service could increase a lot, then choose the simplified factory. What if both of them could increase a lot? Then just use the second level factory and live with a lot of boilerplate code.</p>
+
+<p>When to use the basic factory vs the second level factory? Actually, even if you need to support multiple databases, but not at the same time, you can still use the basic one. For example, you need to switch from MySQL to MongoDB, even though there are two different databases, but after switching, you only use MongoDB, then you can still use the basic factory. For the basic factory, when there are multiple types, you need to change the code to make the switch (but for the second level factory, you only change the config file), so it is acceptable to change the code if you don’t do it often.</p>
+
+<h2 id="dependency-injection-library">Dependency Injection Library</h2>
+
+<p>There are several dependency injection libraries in Go, why didn’t I use them? I purposely not using any libraries at the beginning so I can have a better control on the project structure, only after the whole application structure is laid out, I will consider replacing some components of the application with outside libraries.</p>
+
+<p>I briefly looked at couple popular libraries, one is <a href="https://blog.drewolson.org/dependency-injection-in-go">Dig</a>⁷ from <a href="https://github.com/uber-go/dig">Uber</a>⁸, the other is <a href="https://blog.drewolson.org/go-dependency-injection-with-wire">Wire</a>⁹ from <a href="https://github.com/google/wire">Google</a>¹⁰. Dig uses reflection and Wire uses code generation. I don’t like either approach, but since Go currently doesn’t support generics, those are the only options available. Even though I don’t like their approach, I have to admit that those two libraries are more full-featured dependency injection libraries.</p>
+
+<p>I did give Dig a try and found it didn’t make the code simpler, so I decided to stay with the current solution. In Dig, you create “build” function for each concrete type and then register it with the container, then the container will auto-wire them together to create the top level type. The complexity of this application is because we need to support two implementations of databases, thus two different database handlers and two different sets of data service implementations for each domain model. There is no way to make this part simpler in Dig, you still need to create all the factories and then register them with the container. Of course, you can use “if-else” approach to implement the factory, which will make the code simpler, but you need to put a lot more effort to maintain the code in the future.</p>
+
+<p>My approach is simple and easy to extend and it also supports loading configuration from a file, but you need to understand how things are putting together to extend it. The additional function Dig providing is auto-wire. If your application has a lot of types and complex dependency relationship among the types, then probably you want to switch to Dig or Wire, otherwise stay with the current solution.</p>
+
+<h2 id="interface-design">Interface design</h2>
+
+<p>The following is the code for “userDataServiceFactoryWrapper”.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// DataServiceInterface serves as a marker to indicate the return type for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataServiceInterface</span> <span style="color:#66d9ef">interface</span>{}
+
+<span style="color:#75715e">// userDataServiceFactory is a empty receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">userDataServiceFactoryWrapper</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">udsfw</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">userDataServiceFactoryWrapper</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dataConfig</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataConfig</span>) 
+    (<span style="color:#a6e22e">DataServiceInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dataConfig</span>.<span style="color:#a6e22e">DataStoreConfig</span>.<span style="color:#a6e22e">Code</span>
+	<span style="color:#a6e22e">udsi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">userdataservicefactory</span>.<span style="color:#a6e22e">GetUserDataServiceFb</span>(<span style="color:#a6e22e">key</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">dataConfig</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">udsi</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>You may notice the return type for the “Build()” function is “DataServiceInterface” which is an empty interface, why do we need an empty interface? Can we write the function like this, basically to replace “DataServiceInterface” with “interface{}”?
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// userDataServiceFactory is a empty receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">userDataServiceFactoryWrapper</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">udsfw</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">userDataServiceFactoryWrapper</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dataConfig</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataConfig</span>) 
+    (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+<span style="color:#f92672">...</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>If you replace the return type from “DataServiceInterface” to “interface{}”, it is essentially the same. The benefit of “DataServiceInterface” is that it can tell me the returned type of the function, which is the data service interface; actually the real return type is “dataservice.UserDataInterface”, but “DataStoreInterface” is good enough for now, another cheating solution to make life little easier.</p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. There are three ways to implement it in Go and the best one is saving different factories in a map. There are also different ways to apply the factory method pattern to data service layer and they all have pros and cons. You need to choose the right one based on the change direction of your application.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1]Go Microservice with Clean Architecture: Application Container
+<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77</a></p>
+
+<p>[2] Inversion of Control Containers and the Dependency Injection pattern
+<a href="https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection">https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection</a></p>
+
+<p>[3]Golang Factory Method
+<a href="https://stackoverflow.com/a/49714445">https://stackoverflow.com/a/49714445</a></p>
+
+<p>[4]Creating a factory method in Java that doesn’t rely on if-else
+<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else">https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else</a></p>
+
+<p>[5]Tom Hawtin’s answer
+<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505</a></p>
+
+<p>[6]Go Microservice with Clean Architecture: Transaction Support
+<a href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36</a></p>
+
+<p>[7]Dependency Injection in Go
+<a href="https://blog.drewolson.org/dependency-injection-in-go">https://blog.drewolson.org/dependency-injection-in-go</a></p>
+
+<p>[8]Uber’s dig
+<a href="https://github.com/uber-go/dig">https://github.com/uber-go/dig</a></p>
+
+<p>[9]Go Dependency Injection with Wire
+<a href="https://blog.drewolson.org/go-dependency-injection-with-wire">https://blog.drewolson.org/go-dependency-injection-with-wire</a></p>
+
+<p>[10]Google’s Wire: Automated Initialization in Go
+<a href="https://github.com/google/wire">https://github.com/google/wire</a></p>
+
+
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></li>
+        
+            <li><a href="/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+        
+            <li><a href="/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></li>
+        
+            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
