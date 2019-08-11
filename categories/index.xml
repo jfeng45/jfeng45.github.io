@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Software Craftsman</title>
+    <title>Categories on </title>
     <link>https://jfeng45.github.io/categories/</link>
-    <description>Recent content in Categories on Software Craftsman</description>
+    <description>Recent content in Categories on </description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-Hans</language>
     <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Go Microservice</title>
-      <link>https://jfeng45.github.io/categories/go-microservice/</link>
+      <title>Go微服务</title>
+      <link>https://jfeng45.github.io/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
       <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jfeng45.github.io/categories/go-microservice/</guid>
+      <guid>https://jfeng45.github.io/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description></description>
     </item>
     

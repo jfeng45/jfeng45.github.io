@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Dependency Injection" />
-<meta property="og:description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. " />
+<meta property="og:title" content="清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）" />
+<meta property="og:description" content="程序容器使用依赖注入创建具体类型并将它们注入每个函数。 在它内部使用工厂方法模式。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/dependency_injection/" />
 <meta property="article:published_time" content="2019-07-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-29T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Dependency Injection"/>
-<meta name="twitter:description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. "/>
+<meta name="twitter:title" content="清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）"/>
+<meta name="twitter:description" content="程序容器使用依赖注入创建具体类型并将它们注入每个函数。 在它内部使用工厂方法模式。"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-dependency-injection-82cbd3ecb9f3">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/dependency_injection/">
     
 
     
-       <meta name="description" content="Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. ">
+       <meta name="description" content="程序容器使用依赖注入创建具体类型并将它们注入每个函数。 在它内部使用工厂方法模式。">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Dependency Injection | Software Craftsman
+        清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection） | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a>
+    <a class="text-dark" href="/posts/dependency_injection/">清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）</a>
 </h5>
 
     
@@ -105,29 +122,29 @@
         <time datetime="2019-07-29">2019-07-29</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
     
-        <a class="badge badge-primary" href="/tags/application-container">Application Container</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
-        <a class="badge badge-primary" href="/tags/dependency-injection">Dependency Injection</a>
+        <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -136,39 +153,41 @@
 <article class="blog-post">
     
 
-<p>In Clean Architecture, each layer of the application ( use case, data service and domain model) only depends on interface of other layers instead of concrete types. At run-time, the the application container¹ is responsible for creating concrete types and inject them into each function, the technology it used is called Dependency Injection². The following is the requirements.</p>
+<p>在清晰架构（Clean Atchitecture）中，应用程序的每一层（用例，数据服务和域模型）仅依赖于其他层的接口而不是具体类型。 在运行时，<a href="https://jfeng45.github.io/posts/application_container/">程序容器</a>¹负责创建具体类型并将它们注入到每个函数中，它使用的技术称为<a href="https://www.martinfowler.com/articles/injection.html#FormsOfDependencyInjection">依赖注入</a>²。 以下是要求。</p>
 
-<p><strong>Requirements for dependency relationship on container:</strong></p>
+<p><strong>容器包的依赖关系:</strong></p>
 
 <ol>
-<li><p>The container package is the only package that depends on concrete types and many outside libraries because it needs to create concrete types. All other packages in the application mostly depend only on interfaces.</p></li>
+<li><p>容器包是唯一依赖于具体类型和许多外部库的包，因为它需要创建具体类型。 本程序中的所有其他软件包主要仅依赖于接口。</p></li>
 
-<li><p>The outside libraries can include DBs and DB connections, gRPC connections, HTTP connections, SMTP servers, MQ and so on.</p></li>
+<li><p>外部库可以包括DB和DB连接，gRPC连接，HTTP连接，SMTP服务器，MQ等。</p></li>
 
-<li><p>The concrete types of resource handlers mentioned in #2 only need to be created once and put in a registry, and all later requests will retrieve them from the registry.</p></li>
+<li><p>＃2中提到的具体类型的资源链接只需要创建一次并放入注册表中，所有后来的请求都将从注册表中检索它们。</p></li>
 
-<li><p>Only the use case layer needs to access and depend on the container package.</p></li>
+<li><p>只有用例层需要访问并依赖于容器包。</p></li>
 </ol>
 
-<p>At the core of dependency injection is the factory method pattern.</p>
+<p>依赖注入的核心是工厂方法模式(factory method pattern)。</p>
 
-<h2 id="factory-method-pattern">Factory Method Pattern:</h2>
+<h5 id="工厂方法模式-factory-method-pattern"><strong>工厂方法模式（Factory Method Pattern）:</strong></h5>
 
-<p>Implementing factory method pattern is not difficult, <a href="https://stackoverflow.com/a/49714445">here</a>³ is how to do it in Go. The difficult part is to make it extensible, basically how to avoid modifying the code when you add a new factory.</p>
+<p><br/></p>
 
-<p>There are different ways of dealing with new factories.</p>
+<p>实现工厂方法模式并不困难，<a href="https://stackoverflow.com/a/49714445">这里</a>³描述了是如何在Go中实现它的。困难的部分是使其可扩展，即如何避免在添加新工厂时修改代码。</p>
+
+<p>处理新工厂的方式有很多种，下面是常见的三种：</p>
 
 <ul>
-<li><p>(1)<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else"> Using if-else statement</a>⁴</p></li>
+<li><p>(1)<a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else">使用if-else语句</a>⁴</p></li>
 
-<li><p>(2) <a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">Using a map to save different factories</a>⁵</p></li>
+<li><p>(2) <a href="https://stackoverflow.com/questions/3434466/creating-a-factory-method-in-java-that-doesnt-rely-on-if-else/3434505#3434505">使用映射（map）保存不同的工厂</a>⁵</p></li>
 
-<li><p>(3) Using reflection to generate new concrete types.</p></li>
+<li><p>(3) 使用反射生成新的具体类型。</p></li>
 </ul>
 
-<p>The #1 is not a good option because you need to modify existing code whenever you add a new type. The #3 is the best one because there is no change to existing code when adding a new factory. In Java, I will use #3 because Java has a very elegant implementation of reflection. You can do something like “(Animal)Class.forName(“className”).newInstance()”, basically you can pass in the name of a class as a string parameter in a function and create a new instance of a type from it by reflection and then convert it to the appropriate type (could be a supper type), which is very powerful. Since Go’s reflection is not as good as Java’s, #3 is not a good option. In Go, the instance created by reflection is a reflection type not the real type and you can’t convert the type between the reflection type and the real type, they are in two different world, which makes reflection in Go really difficult to use. So I choose #2, which is better than #1, but you need to make limited code changes when adding a new type.</p>
+<p>＃1不是一个好选择，因为你需要在添加新类型时修改现有代码。 ＃3是最好的，因为添加新工厂时现有代码不需更改。在Java中，我会使用＃3，因为Java具有非常优雅的反射实现。你可以执行类似“（Animal）Class.forName（”className“）。newInstance（）”的操作，即你可以将类的名称作为函数中的字符串参数传递进来，并通过反射从中创建一个类型的新实例，然后将结构转换为适当的类型（可能是它的一个超级类型（super type），这是非常强大的。由于Go的反射不如Java，＃3不是一个好选择。在Go中，由反射创建的实例是反射类型而不是实际类型，并且你无法在反射类型和实际类型之间转换类型，它们处于两个不同的世界中，这使得Go中的反射难以使用。所以我选择＃2，它比＃1好，但是在添加新类型时需要更改少部分代码。</p>
 
-<p>The following is the code for data store factory. It has a “dsFbInterface”, which has a “Build” function need to be implemented by each data store. “Build” is the key component of the factory. The “dsFbMap” is the map between the code for each database (or gRPC) and the real factory. This is the part that needs to be changed when there is a database added.</p>
+<p>以下是数据存储工厂的代码。它有一个“dsFbInterface”，其中有一个“Build”函数需要由每个数据存储工厂实现。 “Build”是工厂的关键部分。 “dsFbMap”是每个数据库（或gRPC）的代码（code）与实际工厂之间的映射。这是添加数据库时需要更改的部分。</p>
 
 <p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -220,8 +239,10 @@
 </div>
 <br/></p>
 
-<p>The following is the code for “sqlFactory”, which implemented the “dsFbInterface” in above code. It creates the data store for MySql database. In “build” function, it first retrieves the data store (MySql) from the registry, if found, then return, otherwise it creates a new one and put it into the registry. Because the registry can store data for any type, we need to convert the return value to the appropriate type (*sql.DB) after retrieving. “databasehandler.SqlDBTx” is the concrete type implemented “SqlGdbc” interface. It is created to facilitate transaction support. “sql.Open()” is called to open the database connection, but it didn’t do any action to connect the database. So, “db.Ping()” is called to make sure the database is up running.
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p>以下是“sqlFactory”的程序，它实现了上面的代码中定义的“dsFbInterface”。 它为MySql数据库创建数据存储。 在“Build”函数中，它首先从注册表中检索数据存储（MySql），如果找到，则返回，否则创建一个新的并将其放入注册表。
+因为注册表可以存储任何类型的数据，所以我们需要在检索后将返回值转换为适当的类型（*sql.DB）。 “databasehandler.SqlDBTx”是实现“SqlGdbc”接口的具体类型。 它的创建是为了支持事务管理。 代码中调用“sql.Open（）”来打开数据库连接，但它并没有真正执行任何连接数据库的操作。 因此，需调用“db.Ping（）”去访问数据库以确保数据库正在运行。</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -285,28 +306,31 @@
 </div>
 <br/></p>
 
-<h2 id="data-service-factory">Data service factory</h2>
+<h5 id="数据服务工厂-data-service-factory"><strong>数据服务工厂（Data service factory）</strong></h5>
 
-<p>The data service layer uses factory method patter to create data service types. There are different variations on how to apply this pattern. I used three different strategies when building data service factories and each of them has its pros and cons. I will explain them in detail, so you can make a decision on which one to use in a particular situation.</p>
+<p><br/></p>
 
-<p><strong>Basic factory</strong></p>
+<p>数据服务层使用工厂方法模式来创建数据服务类型。 可以有不同的策略来应用此模式。 在构建数据服务工厂时，我使用了三种不同的策略，每种策略都有其优缺点。 我将详细解释它们，以便你可以决定在那种情况下使用哪一个。</p>
 
-<p>The easiest one is “cacheGrpcFactory”, because there is only one underlying implementation of the data store (which is gRPC), so it is straightforward to create just one factory. Always use this one as far as you can.</p>
+<p><strong>基础工厂（Basic factory）</strong></p>
 
-<p><strong>Second level factory</strong></p>
+<p>最简单的是“cacheGrpcFactory”，因为数据存储只有一个底层实现（即gRPC），所以只创建一个工厂就行了。</p>
 
-<p>For the database factory, that is not the case. Because we need to support multiple databases at the same time for each data service, another level of factory is needed, which means for each data service type, such as the “UserDataService”, we need a separate factory for each database supported. Right now, since there are two databases, we need two factories.</p>
+<p><strong>二级工厂（Second level factory）</strong></p>
+
+<p>对于数据库工厂，情况并非如此。 因为我们需要每个数据服务同时支持多个数据库，所以需要二级工厂，这意味着对于每种数据服务类型，例如“UserDataService”，我们需要为每个支持的数据库使用单独的工厂。 现在，由于有两个数据库，我们需要两个工厂。</p>
 
 <p><img src="/images/userDataServiceFactory.jpg" alt="userDataServiceFactory" /></p>
 
-<p>You can see from the above image, we need four files to finish the “UserDataService”, among them “userDataServiceFactoryWrapper.go” is the wrapper which calls the real factory in “userdataservicefactory” folder. “couchdbUserDataServiceFactory.go” and “sqlUserDataServiceFactory.go” are the real factories for CouchDB and MySql database. “userDataServiceFactory.go” defines the interface. If you have many data services, then you will create a lot of boilerplate code.</p>
+<p>你可以从上面的图像中看到，我们需要四个文件来完成“UserDataService”，其中“userDataServiceFactoryWrapper.go”是在“userdataservicefactory”文件夹中调用实际工厂的封装器（wrapper）。 “couchdbUserDataServiceFactory.go”和“sqlUserDataServiceFactory.go”是CouchDB和MySql数据库的真正工厂。 “userDataServiceFactory.go”定义了接口。 如果你有许多数据服务，那么你将创建许多类似代码。</p>
 
-<p><strong>Simplified factory</strong></p>
+<p><strong>简化工厂（Simplified factory）</strong></p>
 
-<p>Is there a way to simplify it? Yes, that is the third way, but it also comes with some cost. The following is the code for “courseDataServiceFactory.go”. You can see it is much simplified with only one file instead of four as before. The code is similar to the “userDataServiceFactory” we just talked about, how does it get the code simplified?</p>
+<p>有没有办法简化它？ 有的，这是第三种方式，但也带来一些问题。 以下是“courseDataServiceFactory.go”的代码。 你可以看到只需一个文件而不是之前的四个文件。 代码类似于我们刚才谈到的“userDataServiceFactory”。那么它是如何如何简化代码的呢？</p>
 
-<p>The key is to create a unified interface for the underline database handler. In “courseDataServiceFactory.go”, I can get the unified underline database handler after calling “dataStoreFactory” and set the DB of “CourseDataServiceInterface” with correct “gdbc” ( which can be any database handler as long as it implements “gdbc” interface).
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p>关键是为底层数据库链接创建统一的接口。 在“courseDataServiceFactory.go”中，可以在调用“dataStoreFactory”之后获得底层数据库链接统一接口，并将“CourseDataServiceInterface”的DB设置为正确的“gdbc”（只要它实现“gdbc”接口，它可以是任何数据库链接）。</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -362,8 +386,9 @@
 </div>
 <br/></p>
 
-<p>The only drawback is that for any database supported, I need to implement both “SqlGdbc” and “NoSqlGdbc” interface in the following code, even though it will only use one of them, the other is just empty implementation (to fulfill the interface) without being used. If you only have couple databases to support, this could be a viable solution, otherwise it becomes increasingly unmanageable.
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p>它的缺点是，对于任何支持的数据库，需要实现以下代码中“SqlGdbc”和“NoSqlGdbc”接口，即使它只使用其中一个，另一个只是空实现（以满足接口要求）并没有被使用。 如果你只有少数几个数据库需要支持，这可能是一个可行的解决方案，否则它将变得越来越难以管理。</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -423,8 +448,9 @@
 </div>
 <br/></p>
 
-<p>There is another side effect besides the one talked above. In the following code, the “SetDB” function in the “CourseDataInterface” breaks the dependency. Because “CourseDataInterface” is the data service layer interface, it shouldn’t depend on “gdbc” interface, which is one layer down. This is the second flaw in the dependency relationship of this application, and the first one is in the <a href="https://jfeng45.github.io/posts/transaction_support/">transaction support</a>⁶ module. There is no good fix for it, if you don’t like it just don’t use it. Try the second level factory similar to “userFataServiceFactory”.
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p>除了上面谈到的那个之外，还有另一个副作用。 在下面的代码中，“CourseDataInterface”中的“SetDB”函数打破了依赖关系。 因为“CourseDataInterface”是数据服务层接口，所以它不应该依赖于“gdbc”接口，这是下面一层的接口。 这是本程序的依赖关系中的第二个缺陷，第一个是在<a href="https://jfeng45.github.io/posts/transaction_support/">事物管理</a>⁶模块。 目前对它没有好的解决方法，如果你不喜欢它，就不要使用它。 可以创建类似于“userFataServiceFactory”的二级工厂，只是程序较长而已。</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -454,26 +480,30 @@
 </div>
 <br/></p>
 
-<p><strong>Which one to use?</strong></p>
+<p><strong>怎样选择?</strong></p>
 
-<p>What influences the decision on whether to choose the simplified factory or the second level factory ? It depends on the direction of changes. If you need to support a lot of new databases, but not many new data service ( which is decided by the number of domain model types), then the second level factory is better, because most changes will happen in the data store factory. But if the supported database won’t change much, and the number of data service could increase a lot, then choose the simplified factory. What if both of them could increase a lot? Then just use the second level factory and live with a lot of boilerplate code.</p>
+<p>怎样选择是用简化工厂还是二级工厂？这取决于变化的方向。如果你需要支持大量新数据库，但新的数据服务不多（由新的域模型类型决定），那么选二级工厂，因为大多数更改都会发生在数据存储工厂中。但是如果支持的数据库不会发生太大变化，并且数据服务的数量可能会增加很多，那么选择简化工厂。如果两者都可能增加很多呢？那么只能使用二级工厂，只是程序会比较长。</p>
 
-<p>When to use the basic factory vs the second level factory? Actually, even if you need to support multiple databases, but not at the same time, you can still use the basic one. For example, you need to switch from MySQL to MongoDB, even though there are two different databases, but after switching, you only use MongoDB, then you can still use the basic factory. For the basic factory, when there are multiple types, you need to change the code to make the switch (but for the second level factory, you only change the config file), so it is acceptable to change the code if you don’t do it often.</p>
+<p>怎样选择使用基本工厂还是二级工厂？实际上，即使你需要支持多个数据库，但不需<strong>同时</strong>支持多个数据库，你仍然可以使用基本工厂。例如，你需要从MySQL切换到MongoDB，即使有两个不同的数据库，但在切换后，你只使用MongoDB，那么你仍然可以使用基本工厂。对于基本工厂，当有多种类型时，你需要更改代码以进行切换（但对于二级工厂，你只需更改配置文件），因此如果你不经常更改代码，这是可以忍受的。</p>
 
-<h2 id="dependency-injection-library">Dependency Injection Library</h2>
+<h5 id="依赖注入-dependency-injection-库"><strong>依赖注入（Dependency Injection）库</strong></h5>
 
-<p>There are several dependency injection libraries in Go, why didn’t I use them? I purposely not using any libraries at the beginning so I can have a better control on the project structure, only after the whole application structure is laid out, I will consider replacing some components of the application with outside libraries.</p>
+<p><br/></p>
 
-<p>I briefly looked at couple popular libraries, one is <a href="https://blog.drewolson.org/dependency-injection-in-go">Dig</a>⁷ from <a href="https://github.com/uber-go/dig">Uber</a>⁸, the other is <a href="https://blog.drewolson.org/go-dependency-injection-with-wire">Wire</a>⁹ from <a href="https://github.com/google/wire">Google</a>¹⁰. Dig uses reflection and Wire uses code generation. I don’t like either approach, but since Go currently doesn’t support generics, those are the only options available. Even though I don’t like their approach, I have to admit that those two libraries are more full-featured dependency injection libraries.</p>
+<p>Go中已经有几个依赖注入库，为什么我不使用它们？我有意在项目初期时不使用任何库，所以我可以更好地控制程序结构，只有在完成整个程序结构布局之后，我才会考虑用外部库替换本程序的某些组件。</p>
 
-<p>I did give Dig a try and found it didn’t make the code simpler, so I decided to stay with the current solution. In Dig, you create “build” function for each concrete type and then register it with the container, then the container will auto-wire them together to create the top level type. The complexity of this application is because we need to support two implementations of databases, thus two different database handlers and two different sets of data service implementations for each domain model. There is no way to make this part simpler in Dig, you still need to create all the factories and then register them with the container. Of course, you can use “if-else” approach to implement the factory, which will make the code simpler, but you need to put a lot more effort to maintain the code in the future.</p>
+<p>我简要地看了几个流行的依赖注入库，一个是来自<a href="https://blog.drewolson.org/dependency-injection-in-go">优步</a>⁷的<a href="https://github.com/uber-go/dig">Dig</a>⁸，另一个是来自<a href="https://github.com/google/wire">谷歌</a>¹⁰的<a href="https://blog.drewolson.org/go-dependency-injection-with-wire">Wire</a>⁹ 。 Dig使用反射，Wire使用代码生成。这两种方法我都不喜欢，但由于Go目前不支持泛型，因此这些是唯一可用的选项。虽然我不喜欢他们的方法，但我不得不承认这两个库的依赖注入功能更全。</p>
 
-<p>My approach is simple and easy to extend and it also supports loading configuration from a file, but you need to understand how things are putting together to extend it. The additional function Dig providing is auto-wire. If your application has a lot of types and complex dependency relationship among the types, then probably you want to switch to Dig or Wire, otherwise stay with the current solution.</p>
+<p>我试了一下Dig，发现它没有使代码更简单，所以我决定继续使用当前的解决方案。在Dig中，你为每个具体类型创建“（build）”函数，然后将其注册到容器，最后容器将它们自动连接在一起以创建顶级类型。本程序的复杂性是因为我们需要支持两个数据库实现，因此每个域模型有两个不同的数据库链接和两组不同的数据服务实现。在Dig中没有办法使这部分更简单，你仍然需要创建所有工厂然后把它们注册到容器。当然，你可以使用“if-else”方法来实现工厂，这将使代码更简单，但你以后需要付出更多努力来维护代码。</p>
 
-<h2 id="interface-design">Interface design</h2>
+<p>我的方法简单易用，并且还支持从文件加载配置，但是你需要了解它的原理以扩展它。 Dig提供的附加功能是自动加载依赖关系。如果你的应用程序有很多类型并且类型之间有很多复杂的依赖关系，那么你可能需要切换到Dig或Wire，否则请继续使用当前的解决方案</p>
 
-<p>The following is the code for “userDataServiceFactoryWrapper”.
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<h5 id="接口设计"><strong>接口设计</strong></h5>
+
+<p><br/>
+下面是 “userDataServiceFactoryWrapper”的代码.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -511,8 +541,9 @@
 </div>
 <br/></p>
 
-<p>You may notice the return type for the “Build()” function is “DataServiceInterface” which is an empty interface, why do we need an empty interface? Can we write the function like this, basically to replace “DataServiceInterface” with “interface{}”?
-<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p>你可能注意到了“Build（）”函数的返回类型是“DataServiceInterface”，这是一个空接口，为什么我们需要一个空接口？ 我们可以用“interface {}”替换“DataServiceInterface”吗？</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
@@ -534,21 +565,21 @@
 </div>
 <br/></p>
 
-<p>If you replace the return type from “DataServiceInterface” to “interface{}”, it is essentially the same. The benefit of “DataServiceInterface” is that it can tell me the returned type of the function, which is the data service interface; actually the real return type is “dataservice.UserDataInterface”, but “DataStoreInterface” is good enough for now, another cheating solution to make life little easier.</p>
+<p>如果将返回类型从“DataServiceInterface”替换为“interface {}”，结果是相同的。 “DataServiceInterface”的好处是它可以告诉我函数的返回类型，即数据服务接口; 实际上，真正的返回类型是“dataservice.UserDataInterface”，但是“DataStoreInterface”现在已经足够好了，一个小诀窍让生活变得轻松一点。</p>
 
-<h2 id="conclusion">Conclusion:</h2>
+<h5 id="结论"><strong>结论:</strong></h5>
 
-<p>Application container uses Dependency Injection to create concrete types and inject them into each function. Under the core, it uses the factory method pattern. There are three ways to implement it in Go and the best one is saving different factories in a map. There are also different ways to apply the factory method pattern to data service layer and they all have pros and cons. You need to choose the right one based on the change direction of your application.</p>
+<p>程序容器使用依赖注入创建具体类型并将它们注入每个函数。 它的核心是工厂方法模式。 在Go中有三种方法可以实现它，最好的方法是在映射（map）中保存不同的工厂。 将工厂方法模式应用于数据服务层也有不同的方法，它们各自都有利有弊。 你需要根据应用程序的更改方向选择正确的方法。</p>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1]<a href="https://jfeng45.github.io/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p>
 
@@ -572,21 +603,30 @@
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/dependency_injection/">en: Go Microservice with Clean Architecture: Dependency Injection</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></li>
+            <li><a href="/posts/application_container/">清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</a></li>
         
-            <li><a href="/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+            <li><a href="/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a></li>
         
-            <li><a href="/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></li>
+            <li><a href="/posts/transaction_support/">清晰架构（Clean Atchitecture）的Go微服务: 事物管理</a></li>
         
-            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+            <li><a href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
     </ul>
 
@@ -595,51 +635,51 @@
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -650,39 +690,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -691,12 +731,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -706,17 +747,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

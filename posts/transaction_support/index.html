@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Transaction Support" />
-<meta property="og:description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction ." />
+<meta property="og:title" content="清晰架构（Clean Atchitecture）的Go微服务: 事物管理" />
+<meta property="og:description" content="Go中的业务级事务管理系统，它完成了声明式事务的大部分功能。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/transaction_support/" />
 <meta property="article:published_time" content="2019-07-24T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-24T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Transaction Support"/>
-<meta name="twitter:description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction ."/>
+<meta name="twitter:title" content="清晰架构（Clean Atchitecture）的Go微服务: 事物管理"/>
+<meta name="twitter:description" content="Go中的业务级事务管理系统，它完成了声明式事务的大部分功能。"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/transaction_support/">
     
 
     
-       <meta name="description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction .">
+       <meta name="description" content="Go中的业务级事务管理系统，它完成了声明式事务的大部分功能。">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Transaction Support | Software Craftsman
+        清晰架构（Clean Atchitecture）的Go微服务: 事物管理 | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a>
+    <a class="text-dark" href="/posts/transaction_support/">清晰架构（Clean Atchitecture）的Go微服务: 事物管理</a>
 </h5>
 
     
@@ -105,27 +122,27 @@
         <time datetime="2019-07-24">2019-07-24</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
-        <a class="badge badge-primary" href="/tags/database-transaction">Database Transaction</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -134,33 +151,33 @@
 <article class="blog-post">
     
 
-<p>In order to support the transaction in the business layer, I tried to get a Spring like declarative transaction management in Go, but couldn’t find it, so I decided to write one. Transaction is easy to implement in Go, but it is pretty difficult to get it right.</p>
+<p>为了支持业务层中的事务，我试图在Go中查找类似Spring的声明式事务管理，但是没找到，所以我决定自己写一个。 事务很容易在Go中实现，但很难做到正确地实现。</p>
 
-<h2 id="requirement"><strong>Requirement:</strong></h2>
+<h5 id="需求"><strong>需求:</strong></h5>
 
 <ol>
-<li><p>Separate business logic from transaction code.
-One should only think about business logic when writing a use case, no need to be aware of transaction management. If later on, there is a need to add transaction support, you can just write a wrapper on top of existing business logic, and no need to change any other code. Transaction implementation detail should be transparent to business logic.</p></li>
+<li><p>将业务逻辑与事务代码分开。
+在编写业务用例时，开发者应该只需考虑业务逻辑，不需要同时考虑怎样给业务逻辑加事务管理。如果以后需要添加事务支持，你可以在现有业务逻辑的基础上进行简单封装，而无需更改任何其他代码。事务实现细节应该对业务逻辑透明。</p></li>
 
-<li><p>Transaction logic should be applied to the use case layer ( business logic)
-Not on the persistence layer.</p></li>
+<li><p>事务逻辑应该作用于用例层（业务逻辑）
+不在持久层上。</p></li>
 
-<li><p>The data service (data persistence) layer should be transparent to the transaction logic.
-Meaning the persistence code should be the same whether it supports transaction or not</p></li>
+<li><p>数据服务（数据持久性）层应对事务逻辑透明。
+这意味着持久性代码应该是相同的，无论它是否支持事务</p></li>
 
-<li><p>You have the choice to delay the transaction supporting decision later.
-You can write a use case without transaction and later on to enable the transaction on that use case without modifying existing code. You only add new code.</p></li>
+<li><p>你可以选择延迟支持事物。
+你可以先编写没有事务的用例，稍后可以在不修改现有代码的情况下给该用例加上事务。你只需添加新代码。</p></li>
 </ol>
 
-<p>The solution I came up with is not a declarative transaction management even though it is a pretty close one. Creating a real declarative transaction management needs a lot of effort, so I built a simple one which can fulfill most features of the declarative transaction.</p>
+<p>我最终的解决方案还不是声明式事务管理，但它非常接近。创建一个真正的声明式事务管理需要付出很多努力，因此我构建了一个可以实现声明式事务的大多数功能的事务管理，同时又没花很多精力。</p>
 
-<h2 id="solution"><strong>Solution:</strong></h2>
+<h5 id="方案"><strong>方案:</strong></h5>
 
-<p>The solution spreads all different layers of the application and I will explain them one by one.</p>
+<p>最终解决方案涉及本程序的所有层级，我将逐一解释它们。</p>
 
-<p><strong>Wrapper for database handler</strong></p>
+<p><strong>数据库链接封装</strong></p>
 
-<p>In Go’s “sql” lib, there are two database handler sql.DB and sql.Tx. When there is no transaction, you use sql.DB to access database; when there is a transaction, you use sql.Tx. In order to share code, the persistence layer needs to support both. A wrapper is created as a receiver for database access methods, so it can work with both. I got the rough idea from <a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">here</a>¹.</p>
+<p>在Go的“sql”lib中，有两个数据库链接sql.DB和sql.Tx. 不需要事务时，使用sql.DB访问数据库; 当需要事务时，你使用sql.Tx. 为了共享代码，持久层需要同时支持两者。 因此需要对数据库链接进行封装，然后把它作为数据库访问方法的接收器。 我从<a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">这里</a>¹得到了粗略的想法。</p>
 
 <p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -210,7 +227,7 @@ You can write a use case without transaction and later on to enable the transact
 </div>
 <br/></p>
 
-<p>Both Database handler the SqlDBTx and the sqlConnTx need to implement the SqlGdbc interface (including “Transactioner”) interface to get it work. “Transactioner” interface needs to be implemented for each database to support the transaction.</p>
+<p>数据库实现类型SqlDBTx和sqlConnTx都需要实现SqlGdbc接口（包括“Transactioner”）接口才行。 需要为每个数据库（例如MySQL， CouchDB）实现“Transactioner”接口以支持事务。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -247,9 +264,9 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p><strong>Transaction code for database handler</strong></p>
+<p><strong>数据库存储层（datastore layer）的事物管理代码</strong></p>
 
-<p>The following are the implementation code for “Transactioner” interface, among them, only TxBegin() is implemented on SqlDBTx(sql.DB) because a transaction starts from sql.DB, all others are on SqlConnTx(sql.Tx). I got the idea from <a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">here</a>².</p>
+<p>以下是“Transactioner”接口的实现代码，其中只有TxBegin（）是在SqlDBTx（sql.DB）上实现，因为事务从sql.DB开始，然后所有事务的其他操作都在SqlConnTx（sql.Tx）上。 我从<a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">这里</a>²得到了这个想法。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -316,9 +333,9 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p><strong>The transaction interface on use case layer</strong></p>
+<p><strong>用例层的事物接口</strong></p>
 
-<p>In the use case layer, you can have two versions of the same function, one with the transaction and one without, and their names can share the same prefix and the transaction one can add ”withTx” as a suffix. For example, in the following code, “ModifyAndUnregister” is the one without transaction and “ModifyAndUnregisterWithTx” is the one with transaction. “EnableTxer” is the only interface for transaction support on the use case layer, any “use case” with transaction support need to have it. All the code here is the use case level ( including “EnableTxer”) code, no database stuff involved.</p>
+<p>在用例层中，你可以拥有相同业务功能的一个函数的两个版本，一个支持事务，一个不支持，并且它们的名称可以共享相同的前缀，而事务可以添加“withTx”作为后缀。 例如，在以下代码中，“ModifyAndUnregister”是不支持事务的那个，“ModifyAndUnregisterWithTx”是支持事务的那个。 “EnableTxer”是用例层上唯一的事务支持接口，任何支持事务的“用例”都需要它。 这里的所有代码都在是用例层级（包括“EnableTxer”）代码，不涉及数据库内容。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -363,7 +380,7 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p>The followings are the example of business logic code with and without transaction. The “modifyAndUnregister(ruc, user)” is the business function shared by transaction and non-transaction use case functions. You do need to wrap the business function with TxBegin() and TxEnd() (which are in TxDataInterface) to support transaction, and those are data service layer interfaces, and has nothing to do with the database access layer. The use case also implemented the “EnableTx()” interface, which basically switched the underline database handler from sql.DB to sql.Tx.</p>
+<p>以下是不包含事务的业务逻辑代码的示例。 “modifyAndUnregister（ruc，user）”是事务和非事务用例函数共享的业务功能。 你需要使用TxBegin（）和TxEnd（）（在TxDataInterface中）来包装业务功能以支持事务，这些是数据服务层接口，并且与数据库访问层无关。 该用例还实现了“EnableTx（）”接口，该接口实际上将底层数据库链接从sql.DB切换到sql.Tx.</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -452,11 +469,11 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p>Why do I call the function “EnbaleTx” in “TxDataInterface” to replace the underline database handler instead of doing it directly in the use case? Because sql.DB and sql.Tx are several layers down, to do that will mess up the dependency. The trick is to have TxBegin() and TxEnd() on each layer and call them layer by layer down to maintain the appropriate dependency relationship.</p>
+<p>为什么我需要在“TxDataInterface”中调用函数“EnbaleTx”来替换底层数据库链接而不是直接在用例中执行？ 因为sql.DB和sql.Tx层级要比用例层低几个级别，直接调用会搞砸依赖关系。 保持合理依赖关系的诀窍是在每一层上都有TxBegin（）和TxEnd（）并逐层调用它们以维持合理的依赖关系。</p>
 
-<p><strong>Transaction interface on the data service layer</strong></p>
+<p><strong>数据服务层的事物接口</strong></p>
 
-<p>We talked about transaction functions on the use case layer and the data store layer, and we also need transaction functions in the data service layer to connect those two together. The following code is the transaction interface (“TxDataInterface”) for the data service layer. “TxDataInterface” is a data service layer interface created solely for facilitating transaction. The interface only needs to be implemented once for each database. There is also an “EnableTxer” interface ( This is a data service layer interface, don’t be confused with the “EnableTxer” interface in use case layer), which will enable the transaction support for a data service type, such as “UserDataInterface”.</p>
+<p>我们讨论了用例层和数据存储层上的事务功能，我们还需要数据服务层中的事务功能将这两者连接在一起。 以下代码是数据服务层的事务接口（“TxDataInterface”）。 “TxDataInterface”是仅为事物管理而创建的数据服务层接口。 每个数据库只需要实现一次。 还有一个“EnableTxer”接口（这是一个数据服务层接口，不要与用例层中的“EnableTxer”接口混淆），实现“EnableTxer”接口将开启数据服务类型对事务的支持，例如， 如果想要“UserDataInterface”支持事物，就需要它实现“EnableTxer”接口。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -527,7 +544,7 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p>The following code is the implementation for “TxDataInterface”. “TxDataSql” is the concrete type for “TxDataInterface”. It calls underline database handler’s begin and end function to do the real transaction work.</p>
+<p>以下代码是“TxDataInterface”的实现。 “TxDataSql”是“TxDataInterface”的具体类型。 它调用底层数据库链接的开始和结束函数来执行真正的事务操作。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -578,9 +595,9 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p><strong>Transaction strategy:</strong></p>
+<p><strong>事物策略:</strong></p>
 
-<p>You may ask why I need “TxDataSql” in above code? It is true that transaction can be implemented without it, actually it was working that way before. However, I sill need to implement “TxDataInterface” in some data service to begin and end a transaction. Since that is done in use case layer, which doesn’t know which data service type implemented the interface, you have to implement the “TxDataInterface” on every data service interface ( for example, “UserDataInterface”, and “CourseDataInterface” ) to guarantee that “use case” won’t choose the wrong “data service” that doesn’t have the interface. After creating “TxDataSql”, I only need to implement “TxDataInterface” once in “TxDataSql”, then each data service type only needs to implement “EnableTx()”.</p>
+<p>你可能会问为什么我在上面的代码中需要“TxDataSql”？ 确实可以在没有它的情况下实现事务，实际上最开的程序里就没有它。 但是我还是要在某些数据服务中实现“TxDataInterface”来开始和结束事务。 由于这是在用例层中完成的，用例层不知道哪个数据服务类型实现了接口，因此必须在每个数据服务接口上实现“TxDataInterface”（例如，“UserDataInterface”和“CourseDataInterface”）以保证 “用例层”不会选择没有接口的“数据服务（data service）”。 在创建“TxDataSql”之后，我只需要在“TxDataSql”中实现一次“TxDataInterface”，然后每个数据服务类型只需要实现“EnableTx（）”就行了。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -627,55 +644,57 @@ You can write a use case without transaction and later on to enable the transact
 
 <p><br/></p>
 
-<p>The above code is the implementation for “UserDataService”. “EnableTx()” method retrieves sql.Tx from “TxDataInterface” and replace the sql.DB inside “UserDataSql” to sql.Tx.</p>
+<p>上面的代码是“UserDataService”接口的实现程序。 “EnableTx（）”方法从“TxDataInterface”获得sql.Tx并将“UserDataSql”中的sql.DB替换为sql.Tx.</p>
 
-<p>Data access method (for example, FindByName() ) is shared between transaction and non-transaction code and doesn’t need to know whether the passed receiver “UserDataSql.DB” is sql.DB or sql.Tx.</p>
+<p>数据访问方法（例如，FindByName（））在事务代码和非事务代码之间共享，并且不需要知道“UserDataSql.DB”是sql.DB还是sql.Tx.</p>
 
-<p><strong>Dependency leak:</strong></p>
+<p><strong>依赖关系漏洞:</strong></p>
 
-<p>There is one flaw in the implementation, which breaks my design and makes it imperfect. It is the function “GetTx()” in “TxDataInterface”, which is a data service layer interface, thus it shouldn’t depend on gdbc.SqlGdbc (database interface). You may think the implementation code of data service layer need to access database anyway, which is true for now. However, you can change the implementation to call a gRPC Microservice in the future. If the interface doesn’t depend on SQL interface, you are free to change the implementation, but if not, the interface sticks with SQL forever even though your implementation has changed.</p>
+<p>上面的代码实现中存在一个缺陷，这会破坏我的设计并使其不完美。它是“TxDataInterface”中的函数“GetTx（）”，它是一个数据服务层接口，因此它不应该依赖于gdbc.SqlGdbc（数据库接口）。你可能认为数据服务层的实现代码无论如何都需要访问数据库，当前这是正确的。但是，你可以在将来更改实现去调用gRPC微服务（而不是数据库）。如果接口不依赖于SQL接口的话，则可以自由更改实现，但如果不是，则即使你的接口实现已更改，该接口也会永久保留对SQL的依赖。</p>
 
-<p>Why is it the only place to break the dependency? Because for other interfaces, the container is responsible to create concrete types, and the rest part of the application only uses the interface. But for transaction, after the concrete type is created, the underline database handler needs to be replace from sql.DB to sql.Tx, which breaks the design.</p>
+<p>为什么它是本程序中打破依赖关系的唯一地方？因为对于其他接口，容器负责创建具体类型，而程序的其余部分仅使用接口。但是对于事务，在创建具体类型之后，需要将底层数据库处理程序从sql.DB替换为sql.Tx，这破坏了设计。</p>
 
-<p>Is there a fix for it? Yes, the container can create sql.Tx instead of sql.DB for functions needing transaction so I don’t need to do it in use case level later. However, a flag is needed in the configuration file to indicate whether a function needs transaction or not for every function in a use case. That is too big a change, so I decided to live with an imperfect design for now and try to revisit it later.</p>
+<p>它有解决方法吗？是的，容器可以为需要事务的函数创建sql.Tx而不是sql.DB，这样我就不需要在以后的用例级别中替换它。但是，配置文件中需要一个标志来指示函数是否需要事务， 而且这个标志需要配备给用例中的每个函数。这是一个太大的改动，所以我决定现在先这样，以后再重新审视它。</p>
 
-<h2 id="benefit">Benefit:</h2>
+<h5 id="好处"><strong>好处:</strong></h5>
 
-<p>With this implementation, the transaction code is almost transparent to business logic (except the flaw I mentioned above), you don’t have the database level transaction code such as Tx.Begin, Tx.Commit and Tx.Rollback (you do need the business level function Tx.Begin and Tx.End though) mixed with business logic code, you don’t even have those in your persistence code. To enable transaction on the use case layer, you just need to implement EnableTx() on the use case and wrap the business function among “TxBegin()”, EnableTx() and “TxEnd()” as above example showed. On persistence layer, most transaction code has already been implemented by “txDataService.go”, you just need to implement “EnableTx” for a particular data service. The real meat for transaction support is in “transaction.go” file, which implemented “Transactioner” interface, which has four methods, “Rollback”, “Commit”, “TxBegin” and “TxEnd”</p>
+<p>通过这个实现，事务代码对业务逻辑几乎是透明的（除了我上面提到的缺陷）。业务逻辑中没有数据存储（datastore）级事务代码，如Tx.Begin，Tx.Commit和Tx.Rollback（但你确实需要业务级别事物函数Tx.Begin和Tx.End），不仅如此，你的持久性代码中也几乎没有数据存储级事务代码。 如需在用例层上启用事务，你只需要在用例上实现EnableTx（）并将业务函数封装在“TxBegin（）”，EnableTx（）和“TxEnd（）”中，如上例所示。 在持久层上，大多数事务代码已经由“txDataService.go”实现，你只需要为特定的数据服务（例如UserDataService）实现“EnableTx”。 事务支持的真正操作是在“transaction.go”文件中实现的，它实现了“Transactioner”接口，它有四个函数，“Rollback”, “Commit”, “TxBegin” 和 “TxEnd”。</p>
 
-<h2 id="steps-to-add-transaction-support-to-a-use-case"><strong>Steps to add transaction support to a use case:</strong></h2>
+<h5 id="对用例增加事物支持的步骤"><strong>对用例增加事物支持的步骤:</strong></h5>
 
-<p>Let say we need to add transaction support for one function in the use case “listCourse”, the following are the steps</p>
+<p>假设我们需要在用例“listCourse”中为一个函数添加事务支持，以下是步骤</p>
 
 <ol>
-<li><p>Implement “EnableTxer” interface in list course use case ( “listCourse.go”)</p></li>
+<li><p>在列表课程用例（“listCourse.go”）中实现“EnableTxer”界面</p></li>
 
-<li><p>Implement “EnableTxer” interface in the domain model’s ( “course”) data service layer ( courseDataMysql.go)</p></li>
+<li><p>在域模型（“course”）数据服务层（courseDataMysql.go）中实现“EnableTxer”接口</p></li>
 
-<li><p>Create a new transaction enabled function and wrap the existing business function among “TxBegin()”, EnableTx() and “TxEnd()”</p></li>
+<li><p>创建一个新的事务启用函数并将现有业务函数包装在“TxBegin（）”，EnableTx（）和“TxEnd（）”中</p></li>
 </ol>
 
-<h2 id="limitations"><strong>Limitations:</strong></h2>
+<h5 id="缺陷"><strong>缺陷:</strong></h5>
 
-<p>First, it is still not declarative transaction yet; second it didn’t fully achieved #4 in the requirement. To change a use case function from non-transaction to transaction, you either create a new function with transaction enabled, which need to change the calling function; or you modify the existing function and wrap it into a transaction and both of them need small code change. In order to achieve #4, a lot more code need to be added, so I postpone it to a later time. Third, it doesn’t support nested transaction, so you need to manually make sure nested transaction is not happening in the code. If the code-base is not too complex, this is easy to do. If you have a really complex code-base with a lot of transaction and non-transaction code intervened, then it is time to implement nested transaction or find a solution supporting it. I didn’t take time to look into how much effort it takes to add nested transaction, but it may not be trivial. If you are interested in it, <a href="https://github.com/golang/go/issues/7898">here</a>³ are some discussions. So far, for most use cases, the current solution probably strikes a good balance between the effort and the reward.</p>
+<p>首先，它仍然不是声明​​式事物管理;第二，它没有完全达到需求中的＃4。要将用例函数从非事务更改为事务，你可以创建一个支持事务的新函数，它需要更改调用函数; 或者你修改现有函数并将其包装到事务中，这也需要代码更改。为了实现＃4，需要添加许多代码，因此我将其推迟到以后。第三，它不支持嵌套事务（Nested Transaction），因此你需要手动确保代码中没有发生嵌套事务。如果代码库不是太复杂，这很容易做到。如果你有一个非常复杂的代码库，有很多事务和非事务函数混在一起，那么手工做起来会比较困难，这是需要在程序中实现嵌套事务或找到已经支持它的方案。我没有花时间研究添加嵌套事务所需的工作量，但这可能并不容易。如果你对它感兴趣，<a href="https://github.com/golang/go/issues/7898">这里</a>³是一些讨论。到目前为止，对于大多数情况而言，当前的解决方案可能是在代价不大的情况下的最佳方案。</p>
 
-<h2 id="applied-scope"><strong>Applied Scope:</strong></h2>
+<h5 id="应用范围"><strong>应用范围:</strong></h5>
 
-<p>First, it only supports transaction for SQL database. If you have a NoSql database, it won’t work (Most NoSql databases don’t support transaction anyway). Second, if your transaction boundary across databases (for example, among different Microservers), then it won’t work. The common idiom for that situation is to use <a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">Saga</a>⁴, basically you write a compensation action for each action in a transaction and execute the compensation action one by one during the rollback phase. It should not be difficult to add Sage solution in the current framework.</p>
+<p>首先，它只支持SQL数据库的事务。 如果你有NoSql数据库，它将无法工作（大多数NoSql数据库无论如何都不支持事务）。 其次，如果事务跨越了数据库的边界（例如在不同的微服务器之间），那么它将无法工作。 在这种情况下，你需要使用<a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">Saga</a>⁴。它的原理是为事物中的每个操作写一个补偿操作，然后在回滚阶段挨个执行每一个补偿操作。 在当前框架中添加Sage解决方案应该不难。</p>
 
-<h2 id="other-database-related-issues">Other database related issues:</h2>
+<h5 id="其他数据库相关问题"><strong>其他数据库相关问题:</strong></h5>
 
-<p><strong>Close connection</strong></p>
+<p><br/></p>
 
-<p>I never called Close() function for database connections because there is no need to do it. You either pass in a sql.DB or a sql.Tx as a receiver for a persistence function. For sql.DB, the database will automatically create a connection pool and manage connections for you. When a connection is done, it will be returned to the connection pool and no need to close. For sql.Tx, at the end of a transaction, you either commit or rollback, after that the connection is returned to the connection pool and no need to close. Please see reference <a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">here</a>⁵ and <a href="http://go-database-sql.org/connection-pool.html">here</a>⁶ for detail.</p>
+<p><strong>关闭数据库链接（Close connection）</strong></p>
 
-<p><strong>O/R mapping</strong></p>
+<p>我从来没有为数据库链接调用Close（）函数，因为没有必要这样做。 你可以传入sql.DB或sql.Tx作为持久性函数的接收器（receiver）。 对于sql.DB，数据库将自动创建链接池并为你管理链接。 链接完成后，它将返回到链接池，无需关闭。 对于sql.Tx，在事务结束时，你可以提交或回滚，之后链接将返回到连接池，而无需关闭。 请参阅<a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">此处</a>⁵ 和 <a href="http://go-database-sql.org/connection-pool.html">此处</a>⁶ .</p>
 
-<p>I looked at couple O/R mapping libraries briefly and didn’t find them providing the needed functionality. I think O/R mapping is a good fit for two situations. First, your application is mostly CRUD, not much query or search; second, the developers are not familiar with SQL. If those are not the case, O/R mapping doesn’t provide much help. There are two features I want from an extension database library, one is loading sql.row to my domain model structs (include handling of NULL value) , the other is automatically closing the sql types such as sql.statement or sql.rows. There are some <a href="https://github.com/jmoiron/sqlx">sql extension</a>⁷ libraries seem to provide at least some of those functionalities. I haven’t got a chance to try it yet, but it seems worth a try.</p>
+<p><strong>对象关系映射（O/R mapping）</strong></p>
 
-<p><strong>Defer:</strong></p>
+<p>我简要地查看了几个“O/R”映射库，但它们没有提供我所需要的功能。 我认为“O/R映射”只适合两种情况。 首先，你的应用程序主要是CRUD，没有太多的查询或搜索; 第二，开发人员不熟悉SQL。 如果不是这种情况，则O/R映射不会提供太多帮助。 我想从扩展数据库模块中获得两个功能，一个是将sql.row加载到我的域模型结构（包括处理NULL值）中（例如“User”），另一个是自动关闭sql类型，如sql.statement或sql.rows。 有一些sql扩展库似乎提供了至少部分这样的功能。 我还没有尝试，但似乎值得一试。</p>
 
-<p>You will make a lot of repeated calls to close database types (such as statements, rows ) when work with a database, like the one-“defer row.close()” in the following code. You want to do it right though, which is always put “defer” after error handling function because if not, when there is an error, “rows” will be nil, which will cause panic and the error handling code will not be executed.</p>
+<p><strong>延迟（Defer）:</strong></p>
+
+<p>在进行数据库访问时，你将进行大量重复调用以关闭数据库类型（例如statements, rows）。例如以下代码中的“defer row.close（）”。 你想要记住这一点，要在错误处理函数之后调用“defer row.close（）”，因为如果不是这样，当出现错误时，“rows”将为nil，这将导致恐慌并且不会执行错误处理代码。</p>
 
 <p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -701,19 +720,19 @@ You can write a use case without transaction and later on to enable the transact
 </div>
 <br/></p>
 
-<p><strong>Panic:</strong></p>
+<p><strong>恐慌（panic）:</strong></p>
 
-<p>I saw a lot of Go database code generated a panic instead of an error when there is a database error, which could cause a problem in Microservice environment, where you always want to keep the service running. Let’s say when you have a SQL error in an update statement, then users won’t be able to access that function, which is bad. But if because that, the whole service or website is shutdown, then it is much worse. So the right way to do is propagating the error to upper level and let it decide what to do. What if it is a third party library, who generates the panic? Then, you need to catch and recover from the panic to keep your service running. I gave an example of it in another article “<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Application Logging</a>”⁸.</p>
+<p>我看到很多Go数据库代码在出现数据库错误时抛出了恐慌（panic）而不是错误（error），这可能会导致微服务出现问题，因为在微服务环境中你通常希望服务一直运行。 假设当更新语句中出现SQL错误时，用户将无法访问该功能，这很糟糕。 但如果因为这个，整个微服务或网站被关闭，那就更糟了。 因此，正确的方法是将错误传播到上一级并让它决定要做什么。 因此正确的做法是不在你的程序中抛出panic，但如果第三方库抛出恐慌呢？ 这时你需要捕获恐慌并从中恢复以保持你的服务正常运行。 我在另一篇文章“<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">日志管理</a>”⁸中有具体示例.</p>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
 
-<h2 id="references">References:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1]<a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">db transaction in golang</a></p>
 
@@ -733,21 +752,30 @@ You can write a use case without transaction and later on to enable the transact
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/transaction_support/">en: Go Microservice with Clean Architecture: Transaction Support</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+            <li><a href="/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a></li>
         
-            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+            <li><a href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
-            <li><a href="/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+            <li><a href="/posts/clean_architecture_design_principle/">清晰架构（Clean Architecture）的Go微服务: 设计原则</a></li>
         
-            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+            <li><a href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></li>
         
     </ul>
 
@@ -756,51 +784,51 @@ You can write a use case without transaction and later on to enable the transact
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -811,39 +839,39 @@ You can write a use case without transaction and later on to enable the transact
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -852,12 +880,13 @@ You can write a use case without transaction and later on to enable the transact
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -867,17 +896,18 @@ You can write a use case without transaction and later on to enable the transact
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

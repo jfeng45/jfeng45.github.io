@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Coding Style" />
-<meta property="og:description" content="Coding style is crucial to make programming effective. Good naming makes code self documenting. It includes three parts: application layout, coding rules and style, naming convention" />
+<meta property="og:title" content="清晰架构（Clean Architecture）的Go微服务: 编码风格" />
+<meta property="og:description" content="编码风格对于编程高效至关重要。 良好的命名使代码实现自我解释。 它包括三个部分：程序结构，编码规则和风格，命名约定" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/coding_style/" />
 <meta property="article:published_time" content="2019-07-24T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-24T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Coding Style"/>
-<meta name="twitter:description" content="Coding style is crucial to make programming effective. Good naming makes code self documenting. It includes three parts: application layout, coding rules and style, naming convention"/>
+<meta name="twitter:title" content="清晰架构（Clean Architecture）的Go微服务: 编码风格"/>
+<meta name="twitter:description" content="编码风格对于编程高效至关重要。 良好的命名使代码实现自我解释。 它包括三个部分：程序结构，编码规则和风格，命名约定"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-micro-service-with-clean-architecture-coding-style-a4da35a27d90">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/coding_style/">
     
 
     
-       <meta name="description" content="Coding style is crucial to make programming effective. Good naming makes code self documenting. It includes three parts: application layout, coding rules and style, naming convention">
+       <meta name="description" content="编码风格对于编程高效至关重要。 良好的命名使代码实现自我解释。 它包括三个部分：程序结构，编码规则和风格，命名约定">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Coding Style | Software Craftsman
+        清晰架构（Clean Architecture）的Go微服务: 编码风格 | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a>
+    <a class="text-dark" href="/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a>
 </h5>
 
     
@@ -105,27 +122,27 @@
         <time datetime="2019-07-24">2019-07-24</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
-        <a class="badge badge-primary" href="/tags/coding-style">Coding Style</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -134,76 +151,83 @@
 <article class="blog-post">
     
 
-<p>Coding style is a relatively boring topic in programming, but it is crucial to have an appropriate coding style to be an effective programmer. There are three components in it:</p>
+<p>编码风格在编程中是一个相对乏味的主题，但是合适的编码风格对一个有效的程序员是至关重要的。 它有三个组成部分：</p>
 
 <ol>
-<li><p>Application layout and folder structure</p></li>
+<li><p>程序结构 （ application layout）</p></li>
 
-<li><p>Coding rules or style</p></li>
+<li><p>编码规则或风格</p></li>
 
-<li><p>Naming convention</p></li>
+<li><p>命名约定</p></li>
 </ol>
 
-<p>I already talked about application layout in “<a href="https://jfeng45.github.io/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a>”¹ , so this article covers the rest.</p>
+<p>我已经在<a href="https://jfeng45.github.io/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a>¹中讨论了程序结构，因此本文将介绍后两点。</p>
 
-<h2 id="coding-rules-or-style"><strong>Coding rules or style</strong></h2>
+<h5 id="编码规则或风格"><strong>编码规则或风格</strong></h5>
+
+<p><br/></p>
 
 <ol>
-<li><p>No package level variables.</p>
+<li><p>没有包级别(package level)变量。</p>
 
-<p>Package level variables break the function encapsulation and make functions in-deterministic. I followed this rule in the application and the only exception is in “container” package, because of dealing with application level configurations, it is hard to do it here. It is possible to remove package level variables even in “container” package, but it needs a lot of effort, which probably is overkill. However, since the package level variable is confined only in “container” package, the resulted damage is greatly reduced.</p></li>
+<p>包级别变量打破了函数封装并使函数有了不确定。我在本程序中遵循了这个规则，唯一的例外是在“容器”包中，因为它负责程序级配置，在这里很难做到。其实即使在“容器”包中也可以去除掉包级别变量，但它需要付出很多努力，有些得不偿失。但是，由于包级别变量仅限于“容器”包中，因此导致的破坏大大减少。</p></li>
 
-<li><p>Use less constants</p>
+<li><p>尽量少使用常量</p>
 
-<p>Constants are also package level, because of immutability, they are less harmful as global variables, but they still break function encapsulation and need to be restricted.</p></li>
+<p>常量也是包级别，因为具有不变性，它们作为全局变量的危害较小，但它们仍然会破坏函数封装并需要进行限制。</p></li>
 
-<li><p>Dependent on interfaces not on concrete types</p></li>
+<li><p>依赖于接口而不是具体类型</p>
+
+<p>当你尝试最小化外部更改对程序的影响时，无论外来者是函数，包还是应用程序，都要使代码依赖于接口而不是具体类型。</p></li>
 </ol>
 
-<p>When you try to minimize the impact of outside changes to your program, no matter it is a function, a package or an application, make your code depends on interfaces rather than concrete types.</p>
+<h5 id="命名规则"><strong>命名规则</strong></h5>
 
-<h2 id="naming-convention"><strong>Naming convention</strong></h2>
+<p>最佳的代码是自我解释的，良好的命名起着至关重要的作用。Go的命名约定与Java非常矛盾。尝试之后，我发现它是有效的，在创建简洁的代码同时并没有降低可读性。 Go是一种相对与更底层接近的语言，人们用它来编写网络，驱动程序和docker容器代码。在这些环境中，使用简洁的名称是合适的。</p>
 
-<p>Best code is self documenting and good naming plays a critical role. Coming from Java background, Go’s naming convention is very contradicting. After giving it a try, I found it made sense and creating concise code without reducing readability in you apply it right. Go is a relatively low level language and people use it to write networking, driver and docker container code. In those environments, it is appropriate to use concise names.</p>
+<p>但是，在编写业务应用程序时，我们需要创建许多不同的类型或结构来处理相似的业务概念，简洁的命名便不再适用。例如，为了处理与“用户”相关概念，我们有“User”，“UserDataService”，“RegistrationUseCase”，“RegistrationUseCaseIterface”和“UserDataInterface”，它们都与“User”有关，但都完全不同。你确实需要一个相对较长的名字来区分它们。为了获得良好的可读性，我有意违反了Go的一些命名约定，我将逐一解释它们。</p>
 
-<p>However, when writing a business application, we need to create many different types or structs to deal with the similar business concepts, concise naming doesn’t apply anymore. For example, to deal with “User” related concepts, we have “User”, “UserDataService”, “RegistrationUseCase”, “RegistrationUseCaseIterface” and “UserDataInterface”, and they all related to “User”, but are all quite different. You do need a relatively long name to distinguish them. I purposely violated some of Go’s naming convention in order to achieve good readability, I will explain them one by one.</p>
+<p>我遵循的一条规则是“变量声明（name declaration）与其使用之间的距离越大，名称应该越长”<a href="https://talks.golang.org/2014/names.slide#4">Andrew Gerrand</a>². 我从<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">Dave Cheney</a>³的一篇文章中学到了这一点。基于它，我创建了自己的命名规则：“为类型（结构，接口）或函数命名使用长名称使其清晰易读，为局部变量命名使用短名称”，因为局部变量声明和使用之间的距离较短。</p>
 
-<p>One rule I followed is “The greater the distance between a name’s declaration and its uses, the longer the name should be” by <a href="https://talks.golang.org/2014/names.slide#4">Andrew Gerrand</a>².I learned it from a great article from <a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">Dave Cheney</a>³ . Based on it, I created my own rule: “Use a long name for a type (struct, interface) or a function to make it clear, and a use short name for a local variable”, because a local variable has shorter distance between declaration and usage.</p>
+<h5 id="给类型-types-命名"><strong>给类型（types）命名:</strong></h5>
 
-<h3 id="name-for-types">Name for types:</h3>
+<p>当我看到一个名字时，重要的是要了解它是哪种类型，它处于哪个层。例如，“UserDataInterface”，告诉我它是域模型“User”，它提供数据服务（持久性），并且它是一个接口。</p>
 
-<p>When I encounter a name, it is important to understand which type I am dealing with, which layer it is in. For example, “UserDataInterface”, tells me that it is for domain model “User”, and it provides data service (persistence layer) and it is an interface.</p>
+<p><strong>Model:</strong></p>
 
-<p>**Model:
-**This layer is for domain model and the easiest one to give a name. For example, “User” for domain type user.</p>
+<p>域模型层，是最容易提供名称的层。 例如，域模型用户的“User”。</p>
 
-<p><strong>Dataservice:</strong>
-This layer is for data persistence service. For example, use the name “UserDataMySql” for user persistence service for MySQL database; use the name “UserDataCouchdb” for user persistence service for CouchDB database. Different implementations for user data service share the same prefix “UserData” and the interface for them is “UserDataInterface”.</p>
+<p><strong>Dataservice:</strong></p>
 
-<p>“CourseDataInterface” is the interface for course data service and “CourseDataMySql” is the name of concrete type of course data service for MSql database. All data service share the same prefix “[model]Data”.</p>
+<p>数据持久性服务层。 例如“UserDataMySql”作为用户持久性服务MySQL数据库的命名; “UserDataCouchdb”作为CouchDB数据库的用户持久性服务的命名。 用户数据服务的不同实现共享相同的前缀“UserData”，并且它们的接口是“UserDataInterface”。</p>
 
-<p><strong>Use Case:</strong>
-This layer is for use cases. “RegistrationUseCase” is the concrete type for registration use case and the interface is “RegistrationUseCaseInterface”. “ListCourseUseCase” is the concrete type for list course use case. All use case share the same suffix “UseCase”</p>
+<p>“CourseDataInterface”是课程数据服务的接口，“CourseDataMySql”是具体课程数据服务MSql数据库实现的名称。 所有数据服务共享相同的前缀“[model]Data”。</p>
 
-<p><strong>Interface:</strong>
-In Clean Architecture, all business logic is programmed on interfaces. It is important to recognize a type is an interface when you encounter it , so I add suffix “Interface” to all interfaces, for example “UseCaseInerface” . If you think it is too long, you can replace “Interface” with Acronyms like “I”, “If” or “Intf”. To me, typing is not a problem further more IDE took care of it most of the time.</p>
+<p><strong>Use Case:</strong></p>
 
-<p><strong>Constants:</strong>
-For constants, it is important to distinguish them from variables, so I use all caps and if it is a multi-words constant I use the Snake case instead of the camel case (I knew it against the Go naming convention). For example, “QUERY_USER_BY_NAME” instead of “queryUserByName”, which makes it a lot easier to read.</p>
+<p>用例层。 “RegistrationUseCase”是注册用例的具体类型，接口是“RegistrationUseCaseInterface”。 “ListCourseUseCase”是课程列表用例的具体类型。 所有用例共享相同的后缀“UseCase”</p>
 
-<h2 id="conclusion">Conclusion:</h2>
+<p><strong>Interface:</strong></p>
 
-<p>Coding style is crucial to make programming effective. Good naming makes code self documenting. Using long name for a type or a function and short name for local variables. It is fine to put “interface” in the name of an interface. Using all caps in the snake case to name constants to make them easy to identify.</p>
+<p>在清晰架构（Clean Architecture）中，所有业务逻辑都是基于接口调用的。 在遇到类型时，重要的是要识别类型是接口还是具体实现，因此我在所有接口上添加后缀“Interface”，例如“UseCaseInterface”。 如果你认为它太长，你可以用“I”，“If”或“Intf”等缩略语替换“Interface”。 对我来说，打字不是一个问题，IDE在大多数时间里都已经把问题解决了。</p>
 
-<h2 id="source-code">Source Code:</h2>
+<p><strong>Constants:</strong></p>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>对于常量，重要的是将它们与变量区分开来，所以我使用全部大写，如果是多字段常量（multi-words constant），我使用蛇形命名法（Snake Case）而不是驼峰命名法（Camel Case）（我知道它与Go命名约定相左）。 例如，“QUERY_USER_BY_NAME”而不是“queryUserByName”，这使它易读性更好。</p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="结论"><strong>结论:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>编码风格对于使编程效率至关重要。 良好的命名使代码自我解释。 对类型或函数使用长名称，对局部变量使用短名称。 将“interface”放在接口名称中是有帮助的。 用蛇形命名法（Snake Case）并且所有字母大写来命名常量，以便于识别。</p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
+
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
+
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
+
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1]<a href="https://jfeng45.github.io/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></p>
 
@@ -213,21 +237,30 @@ For constants, it is important to distinguish them from variables, so I use all 
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/coding_style/">en: Go Microservice with Clean Architecture: Coding Style</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></li>
+            <li><a href="/posts/transaction_support/">清晰架构（Clean Atchitecture）的Go微服务: 事物管理</a></li>
         
-            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+            <li><a href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
-            <li><a href="/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+            <li><a href="/posts/clean_architecture_design_principle/">清晰架构（Clean Architecture）的Go微服务: 设计原则</a></li>
         
-            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+            <li><a href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></li>
         
     </ul>
 
@@ -236,51 +269,51 @@ For constants, it is important to distinguish them from variables, so I use all 
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -291,39 +324,39 @@ For constants, it is important to distinguish them from variables, so I use all 
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -332,12 +365,13 @@ For constants, it is important to distinguish them from variables, so I use all 
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -347,17 +381,18 @@ For constants, it is important to distinguish them from variables, so I use all 
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

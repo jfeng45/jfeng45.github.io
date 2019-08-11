@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>程序容器 on </title>
+    <link>https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8/</link>
+    <description>Recent content in 程序容器 on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）</title>
+      <link>https://jfeng45.github.io/posts/dependency_injection/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/dependency_injection/</guid>
+      <description>在清晰架构（Clean Atchitecture）中，应用程序的每一层（用例，数据服务和域模型）仅依赖于其他层的接口而不是具体类型。 在运行时，</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</title>
+      <link>https://jfeng45.github.io/posts/application_container/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/application_container/</guid>
+      <description>清晰架构（Clean Atchitecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
+    </item>
+    
+  </channel>
+</rss>

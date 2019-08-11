@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture" />
-<meta property="og:description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection." />
+<meta property="og:title" content="清晰架构（Clean Architecture）的Go微服务" />
+<meta property="og:description" content="“我写了一系列关于用清晰架构（Clean Architecture）和SOLID设计Go Microservice和gRPC 的文章。它讨论了应用程序设计，应用程序布局和项目结构，日志记录，错误处理，事务管理，应用程序容器（Application Container）和依赖注入（Dependency Injection）。“" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/clean_architecture_with_go/" />
 <meta property="article:published_time" content="2019-07-22T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-22T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture"/>
-<meta name="twitter:description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection."/>
+<meta name="twitter:title" content="清晰架构（Clean Architecture）的Go微服务"/>
+<meta name="twitter:description" content="“我写了一系列关于用清晰架构（Clean Architecture）和SOLID设计Go Microservice和gRPC 的文章。它讨论了应用程序设计，应用程序布局和项目结构，日志记录，错误处理，事务管理，应用程序容器（Application Container）和依赖注入（Dependency Injection）。“"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/clean_architecture_with_go/">
     
 
     
-       <meta name="description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection.">
+       <meta name="description" content="“我写了一系列关于用清晰架构（Clean Architecture）和SOLID设计Go Microservice和gRPC 的文章。它讨论了应用程序设计，应用程序布局和项目结构，日志记录，错误处理，事务管理，应用程序容器（Application Container）和依赖注入（Dependency Injection）。“">
     
 
     <title>
       
-        Go Microservice with Clean Architecture | Software Craftsman
+        清晰架构（Clean Architecture）的Go微服务 | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>
+    <a class="text-dark" href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>
 </h5>
 
     
@@ -105,29 +122,29 @@
         <time datetime="2019-07-22">2019-07-22</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
         <a class="badge badge-primary" href="/tags/grpc">Grpc</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
-        <a class="badge badge-primary" href="/tags/microservice">Microservice</a>
+        <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">“微服务”</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -136,43 +153,41 @@
 <article class="blog-post">
     
 
-<p>I created a Microservice project with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I also tried to apply the best practice in application design and programming, such as Clean Architecture, Dependency Injection, logging, error handling and so on, to the Go Microservice application. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project.</p>
+<p>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Microservice程序，例如清晰架构（Clean Architecture），依赖注入（Dependency Injection），日志记录，错误处理等。我有Java背景，并发现自己在Java和Go之间挣扎，它们之间的编程理念完全不同。我写了一系列关于在项目工作中做出的设计决策和取舍的文章。</p>
 
-<p><strong>Who is the audience?</strong></p>
+<p>阅读这些文章不需要了解Go，但如果你有Go基础绝对会有帮助。如果你不会Go并且无法确定文章中的代码在做什么，那么你需要从这里<a href="https://gobyexample.com/">Go by Example</a>¹(你不必完成里面的所有主题，只需要前面几个）学习一些基本的Go。本系列中的“事务支持”涉及到数据库，需要Go中的一些数据库知识，你可以从<a href="http://go-database-sql.org/index.html">Go database / sql tutorial</a>获取它²。如果你对Go Microservice编程感兴趣并思考和关心代码设计，程序结构，编码风格，日志记录，事务管理和依赖注入，那么这个系列非常适合你。</p>
 
-<p>Knowing basic Go is not required for reading the articles, but definitely will help you. If you don’t know Go and can’t figure what the code is doing, then you probably want to learn some basic Go from “<a href="https://gobyexample.com/">Go by Example</a>”¹ (You don’t need to finish all of the topics, just the first several). The “Transaction support” one in this series is database heavy and require some database knowledge in Go and you can acquire it from “<a href="http://go-database-sql.org/index.html">Go database/sql tutorial</a>”². If you are interested in Go Microservice programming and thinking about the code design and application layers, project structure, coding style, logging, transaction management and Dependency Injection, then this series is perfect for you.</p>
+<p><strong>本系列的侧重点？</strong></p>
 
-<p><strong>What is it about?</strong></p>
+<p>本系列不是关于如何快速创建程序原型，而是关于如何进行良好的程序设计使之能适应将来的变化。例如，你可能希望将本微服务的部分功能拆分为单独的微服务，或添加事务支持，或切换到更好的日志记录器，但不想更改代码中的每个日志记录语句。运用此项目中的程序设计，在进行上述更改时不会触及业务逻辑代码。你甚至很少更改任何现有代码（容器代码除外），多数时候只添加新代码，因此QA工作量大大减少。你可以使用此程序作为下一个微服务应用的基础框架，省去了从头开始的麻烦。你唯一需要做的就是熟悉本框架的内部结构。如果你有Spring（Java）背景或来自面向对象的经历，或者知道清晰架构（Clean Architecture）或SOLID (面向对象设计)，那么这些代码应该对你很熟悉。</p>
 
-<p>The series is not about how to create a quick working prototype, but about how to create an application with a good design that easily adapts to changes, for example, you may want to split part of functions into a separate Microservice, or add transaction support after a business feature is up-running, or switch to a better logger, but don’t want to change every logging statement in your code. By applying the design in this project, business logic code is never touched when making the above changes. You seldom change any existing code (except for the container code), but only add new code, thus the QA effort was greatly reduced. You can use this application as the starting point to base your next application on. The only cost is to figure how different pieces of the application are wired together. If you have Spring (Java) background or coming from object-oriented paradigm, or know Clean Architecture or SOLID, the code should be pretty familiar to you.</p>
-
-<p>You don’t need to read articles in the following order. If you are familiar with <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>³ or <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID</a>⁴, you can read the articles in any order without a problem. However, I do recommend you start from the first one, which will give you a overview of the whole project, then you can pick the ones you are interested in.</p>
+<p>你无需按以下顺序阅读文章。 如果你熟悉<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">清晰架构（Clean Architecture）</a>³或<a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID (面向对象设计)</a>⁴，你可以按任意顺序阅读文章而不会有任何问题。 但我还是建议你至少先读完第一篇，它将为你提供整个项目的概述，然后你可以选择后面的任何一篇的文章。</p>
 
 <ol>
-<li><p><a href="https://jfeng45.github.io/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/clean_architecture_design_principle/">清晰架构（Clean Architecture）的Go微服务: 设计原则</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/transaction_support/">清晰架构（Clean Architecture）的Go微服务: 事物管理</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">清晰架构（Clean Architecture）的Go微服务: 日志管理</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/application_container/">清晰架构（Clean Architecture）的Go微服务: 程序容器（Application Container）</a></p></li>
 
-<li><p><a href="https://jfeng45.github.io/posts/dependency_injection/">Go Microservice with Clean architecture: Dependency Injection</a></p></li>
+<li><p><a href="https://jfeng45.github.io/posts/dependency_injection/">清晰架构（Clean Architecture）的Go微服务: 依赖注入（Dependency Injection）</a></p></li>
 
-<li><p>Go Microservice with Clean architecture: Robust Service</p></li>
+<li><p>清晰架构（Clean Architecture）的Go微服务: 服务的健壮性</p></li>
 </ol>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1] <a href="https://gobyexample.com/">Go by Example</a></p>
 
@@ -184,17 +199,26 @@
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/clean_architecture_with_go/">en: Go Microservice with Clean Architecture</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></li>
         
-            <li><a href="/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+            <li><a href="/posts/clean_architecture_design_principle/">清晰架构（Clean Architecture）的Go微服务: 设计原则</a></li>
         
     </ul>
 
@@ -203,51 +227,51 @@
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -258,39 +282,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -299,12 +323,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -314,17 +339,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

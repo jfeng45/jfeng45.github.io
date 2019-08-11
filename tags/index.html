@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -26,7 +26,7 @@
 
     <title>
       
-        Tags | Software Craftsman
+        Tags | 
       
     </title>
 
@@ -35,7 +35,7 @@
     <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
 
     
-    <link href="https://jfeng45.github.io/tags/index.xml" rel="alternate" type="application/rss+xml" title="Software Craftsman" />
+    <link href="https://jfeng45.github.io/tags/index.xml" rel="alternate" type="application/rss+xml" title="" />
     
 
     
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,15 +101,13 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
-
-
+            
 
 
 
@@ -104,51 +119,53 @@
 
 
 
-        </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -159,39 +176,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -200,12 +217,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -215,17 +233,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

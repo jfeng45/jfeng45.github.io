@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Application Container" />
+<meta property="og:description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/application_container/" />
+<meta property="article:published_time" content="2019-07-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-29T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Container"/>
+<meta name="twitter:description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application"/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">
+    
+
+    
+       <meta name="description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Application Container | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-29">2019-07-29</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/clean-architecture">Clean Architecture</a>
+    
+        <a class="badge badge-primary" href="/en/tags/application-container">Application Container</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>One philosophy of Clean Architecture is to isolate framework for the application, so the framework won’t take over your application and you decide when and where to use them. In this application, I purposely not using any libraries at the beginning so I can have a better control on the project structure. Only after the whole application structure is laid out, I will consider replacing some components of the application with libraries. This way, the impact of introducing a framework or a library is isolated by the right dependency. Currently, I only used two libraries <a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a>¹ and <a href="https://github.com/go-yaml/yaml/tree/v2.2.2">YAML</a>² besides logger, database, gRPC and Protobuf (which can’t be avoided), and all others are Go’s standard libraries.</p>
+
+<p>You can use the project as the foundation to build your application upon. You may ask then the framework will take over the whole application, right? Yes, that is correct. The truth is that you need a basic framework as the foundation to build your application no matter it is home grown or a third party one. That foundation needs to have the right dependency and solid design in place, then you can decide whether to introduce other libraries or not. You surely can build one for yourself, but you probably will end up spending a lot of time and energy to make it solid. Instead of building your own, you can use this project as a starting point to save you a lot of effort.</p>
+
+<p>The application container is the most complex piece of the project and is the key component to glue all different parts of the application together. The other parts of the project are straight forward and easy to understand, but not this one. The good news is once you understand this piece, then you get the whole application.</p>
+
+<p><strong>Components in “container” package:</strong></p>
+
+<p>There are 5 pieces in the container:</p>
+
+<ol>
+<li>The “container” package: it is responsible for creating concrete types and inject them into other files. There is only one file “container.go” in the top level package, and it has the interface for the container.</li>
+</ol>
+
+<p><img src="/images/container.jpg" alt="container" /></p>
+
+<ol>
+<li>The “servicecontainer” sub-package: Implementation of container interface. Only has one file “serviceContainer.go”, which is the key for “container” package. The following is the code. The starting point of it is “InitApp”, which reads configuration data from a file and set the logger.</li>
+</ol>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ServiceContainer</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">FactoryMap</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
+	<span style="color:#a6e22e">AppConfig</span>  <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ServiceContainer</span>) <span style="color:#a6e22e">InitApp</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#a6e22e">config</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadConfig&#34;</span>)
+	}
+	<span style="color:#a6e22e">sc</span>.<span style="color:#a6e22e">AppConfig</span> = <span style="color:#a6e22e">config</span>
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Log</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadLogger&#34;</span>)
+	}
+
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#75715e">// loads the logger
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">lc</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LogConfig</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#a6e22e">loggerType</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">lc</span>.<span style="color:#a6e22e">Code</span>
+	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">logFactory</span>.<span style="color:#a6e22e">GetLogFactoryBuilder</span>(<span style="color:#a6e22e">loggerType</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lc</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#75715e">// loads the application configurations
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>, <span style="color:#66d9ef">error</span>) {
+
+	<span style="color:#a6e22e">ac</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">ReadConfig</span>(<span style="color:#a6e22e">filename</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;read container&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ac</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<ol>
+<li>The “configs” sub-package: which is responsible for loading application configuration from a YAML file and save them into “appConfig” struct for container to use.</li>
+</ol>
+
+<p><img src="/images/config.jpg" alt="config" /></p>
+
+<ol>
+<li>The “logger” sub-package: It only has one file “logger.go” in it, which provides the logger interface and a “Log” variable to access the logger. Because every file needs logging, it deserves an independent package to avoid circular dependency.</li>
+</ol>
+
+<p><img src="/images/logger.jpg" alt="logger" /></p>
+
+<ol>
+<li>The last part are different type of factories.</li>
+</ol>
+
+<p>They resemble the application layer. For the “usecase” and the “dataservice” layer, there are “usecasefactory” and “dataservicefactory”. Another factory is “datastorefactory”, which is responsible for creating the underline data handler. Because the provider of the data can be gRPC or other types of service besides databases, it is called “datastorefactry” not “databasefactory”. Logging component also has its own factory.</p>
+
+<p><strong>Use Case Factory:</strong></p>
+
+<p>For each use case, such as “registration” , the interface is defined in “usecase” package, but the concrete type is defined in “registration” sub-package under “usecase” package. Also, there is a factory in the container which is responsible to create the concrete use case instance. For the “registration” use case, it is “registrationFactory.go”. The relationship between the use case and the use case factory is one-to-one. And the use case factory is responsible for calling other factories to create the chain of concrete types needed. The lowest level concrete types are sql.DBs and gRPC connections that need to be passed to the persistence layer to access data.</p>
+
+<p>If Go supports generic, you could create a generic builder to build different types of instance. Right now, I have to create one factory for each layer. The other option is using reflection, which I don’t like.</p>
+
+<p><strong>“Registration” Use Case Factory:</strong></p>
+
+<p>Each time a factory is called, it will build a new type.The following is the code that creates the concrete type for “registration” use case. It is the typical implementation of the factory method pattern. If you want to learn more about how the factory method pattern is implemented in Go, please see <a href="https://stackoverflow.com/a/49714445">here</a>³.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Build creates concrete type for RegistrationUseCaseInterface
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">rf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">appConfig</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">UseCaseInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">uc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">appConfig</span>.<span style="color:#a6e22e">UseCase</span>.<span style="color:#a6e22e">Registration</span>
+	<span style="color:#a6e22e">udi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">buildUserData</span>(<span style="color:#a6e22e">c</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">uc</span>.<span style="color:#a6e22e">UserDataConfig</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">tdi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">buildTxData</span>(<span style="color:#a6e22e">c</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">uc</span>.<span style="color:#a6e22e">TxDataConfig</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">registration</span>.<span style="color:#a6e22e">RegistrationUseCase</span>{<span style="color:#a6e22e">UserDataInterface</span>: <span style="color:#a6e22e">udi</span>, <span style="color:#a6e22e">TxDataInterface</span>: <span style="color:#a6e22e">tdi</span>}
+
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ruc</span>, <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">buildUserData</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataConfig</span>) (<span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">UserDataInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">dsi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dataservicefactory</span>.<span style="color:#a6e22e">GetDataServiceFb</span>(<span style="color:#a6e22e">dc</span>.<span style="color:#a6e22e">Code</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span>, <span style="color:#a6e22e">dc</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">udi</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsi</span>.(<span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">UserDataInterface</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">udi</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>Data store factory:</strong></p>
+
+<p>“Registration” use case needs to access database through a handler, which is created by the data store factory. All code is in “datastorefactory” sub-package. I explained in detail how data store factory works in another “<a href="https://jfeng45.github.io/en/posts/dependency_injection/">Dependency Injection</a>”⁴.</p>
+
+<p>Current implementation of the data store factory supports two databases, MySql and CouchDB, and a gRPC cache service; each implementation has it’s own factory file. If a new database is introduced, you just need to add a new factory file and add an entry in “dsFbMap” in the following code.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// To map &#34;database code&#34; to &#34;database interface builder&#34;
+</span><span style="color:#75715e">// Concreate builder is in corresponding factory file. For example, &#34;sqlFactory&#34; is in &#34;sqlFactory&#34;.go
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dsFbMap</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">dsFbInterface</span>{
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">SQLDB</span>:      <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sqlFactory</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">COUCHDB</span>:    <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">couchdbFactory</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CACHE_GRPC</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cacheGrpcFactory</span>{},
+}
+
+<span style="color:#75715e">// DataStoreInterface serve as a marker to indicate the return type for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataStoreInterface</span> <span style="color:#66d9ef">interface</span>{}
+
+<span style="color:#75715e">// The builder interface for factory method pattern
+</span><span style="color:#75715e">// Every factory needs to implement Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">dsFbInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataStoreConfig</span>) (<span style="color:#a6e22e">DataStoreInterface</span>, <span style="color:#66d9ef">error</span>)
+}
+
+<span style="color:#75715e">//GetDataStoreFb is accessors for factoryBuilderMap
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetDataStoreFb</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">dsFbInterface</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dsFbMap</span>[<span style="color:#a6e22e">key</span>]
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p>The following is the code for MySql database factory, which implemented “dsFbInterface” in above code. It creates the MySql database handler.</p>
+
+<p>The container has a registry inside it to serve as a cache for things created by data store factory like a DB or a gRPC connection, which are only created once for the whole application. Whenever you need them, you first try to retrieve it from the registry, if not found, then create a new one and put it into the registry. That is what the following code did in the “Build” method.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// sqlFactory is receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">sqlFactory</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#75715e">// implement Build method for SQL database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sqlFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dsc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataStoreConfig</span>) (<span style="color:#a6e22e">DataStoreInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>
+	<span style="color:#75715e">//if it is already in container, return
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">found</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">key</span>); <span style="color:#a6e22e">found</span> {
+		<span style="color:#a6e22e">sdb</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">value</span>.(<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>)
+		<span style="color:#a6e22e">sdt</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">databasehandler</span>.<span style="color:#a6e22e">SqlDBTx</span>{<span style="color:#a6e22e">DB</span>: <span style="color:#a6e22e">sdb</span>}
+		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;found db in container for key:&#34;</span>, <span style="color:#a6e22e">key</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sdt</span>, <span style="color:#66d9ef">nil</span>
+	}
+
+	<span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">DriverName</span>, <span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">UrlAddress</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#75715e">// check the connection
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Ping</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">dt</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">databasehandler</span>.<span style="color:#a6e22e">SqlDBTx</span>{<span style="color:#a6e22e">DB</span>: <span style="color:#a6e22e">db</span>}
+	<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">db</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">dt</span>, <span style="color:#66d9ef">nil</span>
+
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>Grpc Factory:</strong></p>
+
+<p>For “listUser” use case, it needs to call a gRPC Microservice (Cache service), and the factory is “cacheFactory.go”. Currently, all handlers of data service are created by the data store factory. The following is the code for gRPC factory for cache service. The “Build” method works very similar to the “SqlFactory”.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// DataStoreInterface serve as a marker to indicate the return type for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataStoreInterface</span> <span style="color:#66d9ef">interface</span>{}
+
+<span style="color:#75715e">// cacheGrpcFactory is an empty receiver for Build method
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">cacheGrpcFactory</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">cgf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">cacheGrpcFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dsc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataStoreConfig</span>) 
+     (<span style="color:#a6e22e">DataStoreInterface</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>
+	<span style="color:#75715e">//if it is already in container, return
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">found</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">key</span>); <span style="color:#a6e22e">found</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>.(<span style="color:#f92672">*</span><span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">ClientConn</span>), <span style="color:#66d9ef">nil</span>
+	}
+	<span style="color:#75715e">//not in map, need to create one
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;doesn&#39;t find cacheGrpc key=%v need to created a new one\n&#34;</span>, <span style="color:#a6e22e">key</span>)
+
+	<span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">UrlAddress</span>, <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">WithInsecure</span>())
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">conn</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">err</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>Logger factory:</strong></p>
+
+<p>Logger also has it’s own sub-package called “loggerfactory” and the structure is very similar to “datastorefactory” sub-package. “logFactory.go” has the logger factory builder interface and the map. Each individual logger has its own factory file. The following is the code for the log factory:</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// logger mapp to map logger code to logger builder
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">logfactoryBuilderMap</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">logFbInterface</span>{
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">ZAP</span>:    <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ZapFactory</span>{},
+	<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LOGRUS</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">LogrusFactory</span>{},
+}
+
+<span style="color:#75715e">// interface for logger factory
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">logFbInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Build</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LogConfig</span>) <span style="color:#66d9ef">error</span>
+}
+
+<span style="color:#75715e">// accessors for factoryBuilderMap
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetLogFactoryBuilder</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">logFbInterface</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">logfactoryBuilderMap</span>[<span style="color:#a6e22e">key</span>]
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the code for ZAP factory. It is similar to the data store factory. There is only one difference. Since logger-creation function is only called once, there is no need for the registry.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// receiver for zap factory
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ZapFactory</span> <span style="color:#66d9ef">struct</span>{}
+
+<span style="color:#75715e">// build zap logger
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">mf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ZapFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">lc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LogConfig</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">zap</span>.<span style="color:#a6e22e">RegisterLog</span>(<span style="color:#f92672">*</span><span style="color:#a6e22e">lc</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<h2 id="configuration-file">Configuration file:</h2>
+
+<p>The configuration file gives you a overall idea of how the application is putting together:</p>
+
+<p><img src="/images/config1.jpg" alt="config1" /></p>
+
+<p>The above image shows the first half of the file. The first section is the database config it supports; the second section is the Microservice with gRPC; the third section is the loggers it supports; the fourth section is the logger used by the app at run-time</p>
+
+<p>The following image shows the second half of the file. It lists all the use cases of the app and the data service that each use case needs.</p>
+
+<p><img src="/images/config2.jpg" alt="config2" /></p>
+
+<h3 id="what-data-should-be-saved-in-the-config-file">What data should be saved in the config file?</h3>
+
+<p>Different components have different configuration items, some may have many such as loggers. We don’t need to save all configuration items in the configuration file, which can make it too big to manage. Usually we only need to save the options that need to be changed at run-time or those that can change value among different environments.</p>
+
+<h2 id="how-is-the-design-evolved">How is the design evolved?</h2>
+
+<p>The container seems to have a lot of stuff in it, the question is do we need all of them? We can certainly simplify it if you don’t need all features. When I first created it, it is quite simple and I kept adding functionalities to it and eventually it took the current form.</p>
+
+<p>When it is started, I was just thinking to use the factory method pattern to create concrete types and there is no logging, no configuration files, no registry.</p>
+
+<p>I started with the use case and the data store factory. Initially, for each use case, a new database handler is created, which is not ideal. So, I added a registry to cache all connections to make sure they are only created once.</p>
+
+<p>Then I found (I got some inspiration from <a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">here</a>⁵) it is better to put all the configuration information in a file, so I can change it without changing the code. I created a YAML file (appConfig[type].yaml) and “appConfig.go” to load the content from the file into an application configuration struct-“appConfig” and pass it to factory builders. The “[type]” can be “prod”, “dev”, “test” and so on. The config file is loaded only once. Currently, it didn’t use any third party lib, but I am thinking to switch to <a href="https://github.com/spf13/viper">Vipe</a>⁶ in the future, so it can support dynamic reloading of application configurations from a configuration server. To make the switch, I only need to change one file, “appConfig.go”.</p>
+
+<p>For logging, I’d like only one instance of logger so I can set the same logging configurations for the whole application. I created a logger package inside the container. I also tried different logging libraries to figure out which one is the best, then I created a logging factory to make it easier to add new loggers in the future. Please read “<a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">application logging</a>”⁷ for detail.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1] <a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a></p>
+
+<p>[2] <a href="https://github.com/go-yaml/yaml/tree/v2.2.2">YAML support for the Go language</a></p>
+
+<p>[3]<a href="https://stackoverflow.com/a/49714445">Golang Factory Method</a></p>
+
+<p>[4]<a href="https://jfeng45.github.io/en/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a></p>
+
+<p>[5] <a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">How I pass around shared resources (databases, configuration, etc) within Golang projects</a></p>
+
+<p>[6]<a href="https://github.com/spf13/viper">viper</a></p>
+
+<p>[7]<a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/application_container/">zh: 清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a></li>
+        
+            <li><a href="/en/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+        
+            <li><a href="/en/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

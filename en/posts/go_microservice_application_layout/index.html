@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Application Layout" />
+<meta property="og:description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/go_microservice_application_layout/" />
+<meta property="article:published_time" content="2019-07-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-21T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Layout"/>
+<meta name="twitter:description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-micro-service-with-clean-architecture-application-layout-e6216dbb835a">
+    
+
+    
+       <meta name="description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it.">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Application Layout | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-21">2019-07-21</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/grpc">Grpc</a>
+    
+        <a class="badge badge-primary" href="/en/tags/clean-architecture">Clean Architecture</a>
+    
+        <a class="badge badge-primary" href="/en/tags/microservice">Microservice</a>
+    
+        <a class="badge badge-primary" href="/en/tags/application-layout">Application Layout</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>I created a Microservice with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project. This is the first one, which is about project structure.</p>
+
+<h2 id="project-layout-resource">Project layout resource</h2>
+
+<p>The best resource for Go’s standard project layout probably is “<a href="https://github.com/golang-standards/project-layout">Standard Go Project Layout</a>”¹ on Github, but it is not a good fit for my project. After reading <a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Sylvain Wallez’s article</a>², I finally got some context information on the reason behind it. Go is designed for API and network servers and most Go projects on Github are written as libraries, so “Standard Go Project Layout” probably is a good fit. Business Microservice project is a totally different animal, which requires a different project structure. I did adopt some of advice from “Standard Go Project Layout” that is applicable, which counts for about 30%.</p>
+
+<p>Generally speaking, there are two different ways to create an application layout: based on business features or based on technical layout. It is <a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">common agreement</a>³ that based on business features is better, which is true for monolithic project. In Microservice architecture, the situation changed because each service has it’s own repository. So in-side each Microservice, it actually makes sense to create the project structure based on technical layout.</p>
+
+<p>I also found some good advice from Ben Johnson on <a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">application structure</a>⁴ and <a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">package layout</a>⁵. But it didn’t give a whole solution for my project, so I decided to create my own. Project layout depends on the project requirements and here are them.</p>
+
+<h2 id="project-requirements">Project Requirements:</h2>
+
+<ol>
+<li><p>Support different databases ( Sql and NoSql database) on data persistence layer</p></li>
+
+<li><p>Support data coming from other Microservices using different protocols such as gRPC or REST</p></li>
+
+<li><p>Loose coupled and highly cohesive</p></li>
+
+<li><p>Support easy and consistent logging and be able to change it ( for example, logging level and logging provider) without modifying logging statements in every file.</p></li>
+
+<li><p>Support business level transaction.</p></li>
+</ol>
+
+<p>Project layout is also influenced by application design. I applied <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Bob Martin’s Clean Architecture</a>⁶ with Go’s <a href="https://talks.golang.org/2012/splash.article">simplicity</a>⁷ design style.</p>
+
+<p>On the business logic side, there are three layers: “model”, which is domain model; “dataservice”, which is data persistence (database) layer; “usecase”, which is business logic layer.</p>
+
+<h2 id="top-level-project-structure">Top level project structure:</h2>
+
+<p><img src="/images/serviceTmpl.jpg" alt="service tmpl" /></p>
+
+<p><strong>adapter:</strong> this is the interface between your application and outside data service, for example another gRPC service. All the data conversion and transformation happened here, so your business logic code doesn’t need to be aware of the detail implementation (whether it gRPC or REST) of outside services.</p>
+
+<p><strong>cmd:</strong> the command. All different types of “main.go” are here and you can have multiple ones. This is the starting point of the application.</p>
+
+<p><strong>config:</strong> configuration code and data for the application, including configuration files.</p>
+
+<p><strong>container:</strong> the dependency injection container, which is responsible for creating concrete types and injecting them into each function.</p>
+
+<p><strong>dataservice:</strong> persistence layer, which is responsible for retrieving and modifying data for the domain model. It only depends on the model layer. Data service could get data from database or from other Microservices by RPC or RESTFul call.</p>
+
+<p><strong>model</strong>: domain module layer, which has domain structs. All other layers depend on them and they don’t depend on any other layers.</p>
+
+<p><strong>script:</strong> scripts related to setting up an application, for example, database scripts.</p>
+
+<p><strong>tool:</strong> third-party tools.</p>
+
+<p><strong>usecase</strong> : This is an important layer and the entry point of business logic. Each business feature is implemented by a use case. It is the top level layer, so no other layer depends on it ( except “cmd”), but it depends on other layers.</p>
+
+<p>Use case and data service layer functions are all called by interface, so the implementation can be changed easily.</p>
+
+<h2 id="sub-folder-under-each-top-level"><strong>Sub folder under each top level:</strong></h2>
+
+<p><strong>adapter:</strong></p>
+
+<p><img src="/images/adapter.jpg" alt="adapter" /></p>
+
+<p>When a program needs to interact with Microservices or other outside services, you need to create interfaces to reduce dependency. For example, the cache service is a gRPC Microservice. Each outside service will have it’s own sub-package and files. For example, cache service has “cacheclient” package and “cacheClient.go” file, which defines the types and the methods to interact with outside “cache” Microservice.</p>
+
+<p>In our example, not like other data service, “cacheClient.go” doesn’t define an interface for cache service. Actually it has one, but the interface is defined in “dataservice” package because cache service is also a data service. The more clear way probably is creating an interface in both packages, that will keep the package structure consist. But the two interfaces will be identical and redundant, so I removed the one in adapter.</p>
+
+<p>Since we also need to expose the application itself as a gRPC service, “userclient” sub-package is created here. “generatedclient” sub-package has generated code for gRPC and Protobuf. “userGrpc.go” is created to handle format translation between domain model structs and gRPC structs.</p>
+
+<p><strong>cmd:</strong></p>
+
+<p><img src="/images/cmd.jpg" alt="cmd" /></p>
+
+<p>The command of the app, and starting point for the app. You can either run the application as a local app or run it as a Microservice application, in which case, you have both client side (grpcClientMain.go) and server side (grpcServerMain.go) main files. All future main files will also go here, for example, web application server main file.</p>
+
+<p><strong>config:</strong></p>
+
+<p><img src="/images/config.jpg" alt="config" /></p>
+
+<p>Save all application configuration files here. “appConfig.go” is responsible for reading from configuration files and load them into application configuration structs. You can have different configuration files (YAML files) for different environments, for example “Dev” and “Prod”.</p>
+
+<p><strong>container:</strong></p>
+
+<p><img src="/images/container.jpg" alt="container" /></p>
+
+<p>The most complex package in this app, which creates the concrete structs for each interface and injects them into other layers. The sub-level structure in it resembles the application layer, which also have “use case”, “data service” and “data store” layer.</p>
+
+<p>Under the top level, “container.go” defines the container interface, and the implementation file “serviceContainer.go” is in “servicecontainer” package. It is the entry point or this package, which glues other code in this folder together. “registrationFactory.go” in “usecasefactory” sub-package and other factories using factory method pattern to create structs. <a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Logging</a>⁸ doesn’t belongs to any application layer, so I created a separate sub-package “loggerfactory” for it. It also has a “logger” sub-package to define logging interface. I explain everything in this package in my article “<a href="https://jfeng45.github.io/en/posts/application_container/">Application Container</a>”⁹.</p>
+
+<p><strong>dataservice:</strong></p>
+
+<p><img src="/images/dataservice.jpg" alt="dataservice" /></p>
+
+<p>The persistence layer for domain model. There is one file-“dataService.go” on the top level, which has all the interfaces for data service, including data services provided by other Microservices ( for example, gRPC). Other packages only need to depend on the top level data service interfaces and don’t need to be aware of the implementation detail of a specific database.</p>
+
+<p>For each type in the domain model, there is a corresponding data service. For example, for model “User”, there is a “userdata” sub-package, which has all implementations of user persistence service including MySql and CouchDB.</p>
+
+<p><strong>model:</strong></p>
+
+<p><img src="/images/model.jpg" alt="model" /></p>
+
+<p>This layer doesn’t need to have an interface, and models are all concrete structs.</p>
+
+<p><strong>Script:</strong></p>
+
+<p><img src="/images/scripts.jpg" alt="script" /></p>
+
+<p>Currently it only has database scripts for MySql.</p>
+
+<p><strong>tool:</strong></p>
+
+<p><img src="/images/tools.jpg" alt="tool" /></p>
+
+<p>This package is for third-party tools. If you don’t want to depend on third-party library directly, or you need to enhance those tools, create a wrapper here. Don’t be confused with “adapter” package, which is also dealing with third-part libraries, but those are only for application level data service. “tool” package is more for lower level libraries.</p>
+
+<p><strong>useCase:</strong></p>
+
+<p><img src="/images/usecase.jpg" alt="use case" /></p>
+
+<p>There is one file “useCase.go” under top level folder, which has all the use case interfaces. Currently, there are three use cases: “RegistrationUseCase” , “ListUserUseCase” and “ListCourse”.</p>
+
+<p>For each use case, there is a sub-package for it. The files in that sub-package define the concrete structs that implement the use case interface. All other packages only depend on the use case interface in the top level and don’t need to be aware of the implementation detail of each use case.</p>
+
+<h3 id="potential-problem">Potential problem:</h3>
+
+<p>This application layout ends up with a lot of small sub-packages each only has one or a few files in it. This contradicts with the Go idiom “<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html#_consider_fewer_larger_packages">Consider fewer, larger packages</a>”¹⁰, which suggests creating package like this for use case:</p>
+
+<p><img src="/images/usecaseNew.jpg" alt="use case alt" /></p>
+
+<p>If you write a library for others to import into their code, it is a good rule to put code into one big package, so people don’t need multiple import statements in order to use your library. But inside your application, it is fine to have small packages, especially when you only expose interfaces to other layers.</p>
+
+<p>Here is why small package is better for the use case layer. First “useCase.go” only defines interfaces in it, and other packages ( except container) only depend on interfaces, so “useCase.go” deserves a standalone package. Second, it is more clear to separate each use case by folder.</p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>For a gRPC Microservice project, the “Standard Go Project Layout” may not be a good fit. The common agreement that creating the application layout based on business logic instead of technical layout is a good advice for monolithic project, not necessarily for Microservice project. This article uses a real application as an example to show what could be a good Microservice application layout and the reason behind it.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1]<a href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a></p>
+
+<p>[2]<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Go: the Good, the Bad and the Ugly</a></p>
+
+<p>[3]<a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">Package by feature, not layer</a></p>
+
+<p>[4]<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">Structuring Applications in Go</a></p>
+
+<p>[5]<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout</a></p>
+
+<p>[6]<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Code Blog</a></p>
+
+<p>[7]<a href="https://talks.golang.org/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a></p>
+
+<p>[8]<a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
+
+<p>[9]<a href="https://jfeng45.github.io/en/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p>
+
+<p>[10]<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html">Practical Go: Real world advice for writing maintainable Go programs</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/go_microservice_application_layout/">zh: 清晰架构（Clean Architecture）的Go微服务: 程序结构</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Application Container" />
-<meta property="og:description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application" />
+<meta property="og:title" content="清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）" />
+<meta property="og:description" content="程序容器（Application Container）负责创建具体类型并将它们注入每个函数。 它是本程序中最复杂的部分" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/application_container/" />
 <meta property="article:published_time" content="2019-07-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-29T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Container"/>
-<meta name="twitter:description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application"/>
+<meta name="twitter:title" content="清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）"/>
+<meta name="twitter:description" content="程序容器（Application Container）负责创建具体类型并将它们注入每个函数。 它是本程序中最复杂的部分"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-application-container-477cc3a11e77">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/application_container/">
     
 
     
-       <meta name="description" content="Application container is responsible for creating concrete types and inject them into each function. It is the most complex piece in the application">
+       <meta name="description" content="程序容器（Application Container）负责创建具体类型并将它们注入每个函数。 它是本程序中最复杂的部分">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Application Container | Software Craftsman
+        清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container） | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a>
+    <a class="text-dark" href="/posts/application_container/">清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</a>
 </h5>
 
     
@@ -105,27 +122,29 @@
         <time datetime="2019-07-29">2019-07-29</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/grpc">Grpc</a>
     
-        <a class="badge badge-primary" href="/tags/application-container">Application Container</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+    
+        <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -134,27 +153,25 @@
 <article class="blog-post">
     
 
-<p>One philosophy of Clean Architecture is to isolate framework for the application, so the framework won’t take over your application and you decide when and where to use them. In this application, I purposely not using any libraries at the beginning so I can have a better control on the project structure. Only after the whole application structure is laid out, I will consider replacing some components of the application with libraries. This way, the impact of introducing a framework or a library is isolated by the right dependency. Currently, I only used two libraries “ozzo-validation”¹ and YAML² besides logger, database, gRPC and Protobuf (which can’t be avoided), and all others are Go’s standard libraries.</p>
+<p>清晰架构（Clean Atchitecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序中，我特意不在开始时使用任何框架，因此我可以更好地控制程序结构。只有在整个程序结构布局完成之后，我才会考虑用某些库替换本程序的某些组件。这样，引入的框架或第三方库的影响就会被正确的依赖关系所隔离。目前，除了logger，数据库，gRPC和Protobuf（这是无法避免的）之外，我只使用了两个第三方库<a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a>¹和<a href="https://github.com/go-yaml/yaml/tree/v2.2.2">YAML</a>²，而其他所有库都是Go的标准库。</p>
 
-<p>You can use the project as the foundation to build your application upon. You may ask then the framework will take over the whole application, right? Yes, that is correct. The truth is that you need a basic framework as the foundation to build your application no matter it is home grown or a third party one. That foundation needs to have the right dependency and solid design in place, then you can decide whether to introduce other libraries or not. You surely can build one for yourself, but you probably will end up spending a lot of time and energy to make it solid. Instead of building your own, you can use this project as a starting point to save you a lot of effort.</p>
+<p>你可以使用本程序作为构建应用程序的基础。你可能会问，那么本框架岂不是要接管整个应用程序吗？是的。但事实是，无论是你自建框架还是引进第三方框架，你都需要一个基本框架作为构建应用程序的基础。该基础需要具有正确的依赖性和可靠的设计，然后你可以决定是否引入其他库。你当然可以自己建立一个框架，但你最终可能会花费大量的时间和精力来完善它。你也可以使用本程序作为起点，而不是构建自己的项目，从而为你节省大量时间和精力。</p>
 
-<p>The application container is the most complex piece of the project and is the key component to glue all different parts of the application together. The other parts of the project are straight forward and easy to understand, but not this one. The good news is once you understand this piece, then you get the whole application.</p>
+<p>程序容器是项目中最复杂的部分，是将应用程序的不同部分粘合在一起的关键组件。本程序的其他部分是直截了当且易于理解的，但这一部分不是。好消息是，一旦你理解了这一部分，那么整个程序就都在掌控之中。</p>
 
-<p><strong>Components in “container” package:</strong></p>
+<h5 id="容器包-container-package-的组成部分"><strong>容器包（“container” package）的组成部分:</strong></h5>
 
-<p>There are 5 pieces in the container:</p>
-
-<ol>
-<li>The “container” package: it is responsible for creating concrete types and inject them into other files. There is only one file “container.go” in the top level package, and it has the interface for the container.</li>
-</ol>
-
-<p><img src="/images/container.jpg" alt="container" /></p>
+<p><br/>
+容器包由五部分组成:</p>
 
 <ol>
-<li>The “servicecontainer” sub-package: Implementation of container interface. Only has one file “serviceContainer.go”, which is the key for “container” package. The following is the code. The starting point of it is “InitApp”, which reads configuration data from a file and set the logger.</li>
-</ol>
+<li><p>“容器”（“container”）包：它负责创建具体类型并将它们注入其他文件。 顶级包中只有一个文件“container.go”，它定义容器的接口。</p>
 
-<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<p><img src="/images/container.jpg" alt="container" /></p></li>
+
+<li><p>“servicecontainer”子包：容器接口的实现。 只有一个文件“serviceContainer.go”，这是“容器”包的关键。 以下是代码。 它的起点是“InitApp”，它从文件中读取配置数据并设置日志记录器（logger)。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -195,78 +212,74 @@
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ServiceContainer</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">FactoryMap</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
-	<span style="color:#a6e22e">AppConfig</span>  <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>
-}
-
-<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ServiceContainer</span>) <span style="color:#a6e22e">InitApp</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
-	<span style="color:#a6e22e">config</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadConfig&#34;</span>)
-	}
-	<span style="color:#a6e22e">sc</span>.<span style="color:#a6e22e">AppConfig</span> = <span style="color:#a6e22e">config</span>
-	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Log</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadLogger&#34;</span>)
-	}
-
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}
-
-<span style="color:#75715e">// loads the logger
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">lc</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LogConfig</span>) <span style="color:#66d9ef">error</span> {
-	<span style="color:#a6e22e">loggerType</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">lc</span>.<span style="color:#a6e22e">Code</span>
-	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">logFactory</span>.<span style="color:#a6e22e">GetLogFactoryBuilder</span>(<span style="color:#a6e22e">loggerType</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lc</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}
-
-<span style="color:#75715e">// loads the application configurations
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>, <span style="color:#66d9ef">error</span>) {
-
-	<span style="color:#a6e22e">ac</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">ReadConfig</span>(<span style="color:#a6e22e">filename</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;read container&#34;</span>)
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ac</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></td></tr></table>
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ServiceContainer</span> <span style="color:#66d9ef">struct</span> {
+        <span style="color:#a6e22e">FactoryMap</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}
+        <span style="color:#a6e22e">AppConfig</span>  <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>
+    }
+    
+    <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ServiceContainer</span>) <span style="color:#a6e22e">InitApp</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+        <span style="color:#a6e22e">config</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadConfig&#34;</span>)
+        }
+        <span style="color:#a6e22e">sc</span>.<span style="color:#a6e22e">AppConfig</span> = <span style="color:#a6e22e">config</span>
+        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Log</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;loadLogger&#34;</span>)
+        }
+    
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+    
+    <span style="color:#75715e">// loads the logger
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadLogger</span>(<span style="color:#a6e22e">lc</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">LogConfig</span>) <span style="color:#66d9ef">error</span> {
+        <span style="color:#a6e22e">loggerType</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">lc</span>.<span style="color:#a6e22e">Code</span>
+        <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">logFactory</span>.<span style="color:#a6e22e">GetLogFactoryBuilder</span>(<span style="color:#a6e22e">loggerType</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lc</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+        }
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    }
+    
+    <span style="color:#75715e">// loads the application configurations
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">loadConfig</span>(<span style="color:#a6e22e">filename</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">AppConfig</span>, <span style="color:#66d9ef">error</span>) {
+    
+        <span style="color:#a6e22e">ac</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">ReadConfig</span>(<span style="color:#a6e22e">filename</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;read container&#34;</span>)
+        }
+        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ac</span>, <span style="color:#66d9ef">nil</span>
+    }
+    </code></pre></td></tr></table>
 </div>
-</div>
-<br/></p>
+</div></li>
 
-<ol>
-<li>The “configs” sub-package: which is responsible for loading application configuration from a YAML file and save them into “appConfig” struct for container to use.</li>
+<li><p>“configs”子包：负责从YAML文件加载程序配置，并将它们保存到“appConfig”结构中以供容器使用。</p>
+
+<p><img src="/images/config.jpg" alt="config" /></p></li>
+
+<li><p>“logger”子包：它里面只有一个文件“logger.go”，它提供了日志记录器接口和一个“Log”变量来访问日志记录器。 因为每个文件都需要依赖记录，所以它需要一个独立的包来避免循环依赖。</p>
+
+<p><img src="/images/logger.jpg" alt="logger" /></p></li>
+
+<li><p>最后一部分是不同类型的工厂（factory）。</p>
+
+<p>它的内部分层与应用层分层相匹配。 对于“usecase”和“dataservice”层，有“usecasefactory”和“dataservicefactory”。 另一个工厂是“datastorefactory”，它负责创建底层数据处理链接。 因为数据提供者可以是gRPC或除数据库之外的其他类型的服务，所以它被称为“datastorefactry”而不是“databasefactory”。 日志记录组件（logger）也有自己的工厂。</p></li>
 </ol>
 
-<p><img src="/images/config.jpg" alt="config" /></p>
+<p><strong>用例工厂（Use Case Factory）:</strong></p>
 
-<ol>
-<li>The “logger” sub-package: It only has one file “logger.go” in it, which provides the logger interface and a “Log” variable to access the logger. Because every file needs logging, it deserves an independent package to avoid circular dependency.</li>
-</ol>
+<p>对于每个用例，例如“registration”，接口在“usecase”包中定义，但具体类型在“usecase”包下的“registration”子包中定义。 此外，容器包中有一个对应的工厂负责创建具体的用例实例。 对于“注册（registration）”用例，它是“registrationFactory.go”。 用例与用例工厂之间的关系是一对一的。 用例工厂负责创建此用例的具体类型（concrete type）并调用其他工厂来创建具体类型所需的成员（member in a struct)。 最低级别的具体类型是sql.DBs和gRPC连接，它们需要被传递给持久层，这样才能访问数据库中的数据。</p>
 
-<p><img src="/images/logger.jpg" alt="logger" /></p>
+<p>如果Go支持泛型，你可以创建一个通用工厂来构建不同类型的实例。 现在，我必须为每一层创建一个工厂。 另一个选择是使用反射（refection)，但它有不少问题，因此我没有采用。</p>
 
-<ol>
-<li>The last part are different type of factories.</li>
-</ol>
+<p><strong>“Registration” 用例工厂（Use Case Factory）:</strong></p>
 
-<p>They resemble the application layer. For the “usecase” and the “dataservice” layer, there are “usecasefactory” and “dataservicefactory”. Another factory is “datastorefactory”, which is responsible for creating the underline data handler. Because the provider of the data can be gRPC or other types of service besides databases, it is called “datastorefactry” not “databasefactory”. Logging component also has its own factory.</p>
-
-<p><strong>Use Case Factory:</strong></p>
-
-<p>For each use case, such as “registration” , the interface is defined in “usecase” package, but the concrete type is defined in “registration” sub-package under “usecase” package. Also, there is a factory in the container which is responsible to create the concrete use case instance. For the “registration” use case, it is “registrationFactory.go”. The relationship between the use case and the use case factory is one-to-one. And the use case factory is responsible for calling other factories to create the chain of concrete types needed. The lowest level concrete types are sql.DBs and gRPC connections that need to be passed to the persistence layer to access data.</p>
-
-<p>If Go supports generic, you could create a generic builder to build different types of instance. Right now, I have to create one factory for each layer. The other option is using reflection, which I don’t like.</p>
-
-<p><strong>“Registration” Use Case Factory:</strong></p>
-
-<p>Each time a factory is called, it will build a new type.The following is the code that creates the concrete type for “registration” use case. It is the typical implementation of the factory method pattern. If you want to learn more about how the factory method pattern is implemented in Go, please see <a href="https://stackoverflow.com/a/49714445">here</a>³.</p>
+<p>每次调用工厂时，它都会构建一个新类型。以下是“注册（Registration）”用例创建具体类型的代码。 它是工厂方法模式（factory method pattern）的典型实现。 如果你想了解有关如何在Go中实现工厂方法模式的更多信息，请参阅<a href="https://stackoverflow.com/a/49714445">此处</a>³.</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -325,11 +338,11 @@
 
 <p><br/></p>
 
-<p><strong>Data store factory:</strong></p>
+<p><strong>数据存储工厂（Data store factory）:</strong></p>
 
-<p>“Registration” use case needs to access database through a handler, which is created by the data store factory. All code is in “datastorefactory” sub-package. I explained in detail how data store factory works in another “<a href="https://jfeng45.github.io/posts/dependency_injection/">Dependency Injection</a>”⁴.</p>
+<p>“注册（Registration）”用例需要通过数据存储工厂创建的数据库链接来访问数据库。 所有代码都在“datastorefactory”子包中。 我详细解释了数据存储工厂如何工作，请看这篇文章<a href="https://jfeng45.github.io/posts/dependency_injection/">依赖注入（Dependency Injection）</a>。</p>
 
-<p>Current implementation of the data store factory supports two databases, MySql and CouchDB, and a gRPC cache service; each implementation has it’s own factory file. If a new database is introduced, you just need to add a new factory file and add an entry in “dsFbMap” in the following code.</p>
+<p>数据存储工厂的当前实现支持两个数据库和一个微服务，MySql和CouchDB，以及gRPC缓存服务; 每个实现都有自己的工厂文件。 如果引入了新数据库，你只需添加一个新的工厂文件，并在以下代码中的“dsFbMap”中添加一个条目。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -382,9 +395,9 @@
 
 <p><br/></p>
 
-<p>The following is the code for MySql database factory, which implemented “dsFbInterface” in above code. It creates the MySql database handler.</p>
+<p>以下是MySql数据库工厂的代码，它实现了上面的代码中定义的“dsFbInterface”。 它创建了MySql数据库链接。</p>
 
-<p>The container has a registry inside it to serve as a cache for things created by data store factory like a DB or a gRPC connection, which are only created once for the whole application. Whenever you need them, you first try to retrieve it from the registry, if not found, then create a new one and put it into the registry. That is what the following code did in the “Build” method.</p>
+<p>容器内部有一个注册表（registry），用作数据存储工厂创建的链接（如DB或gRPC连接）的缓存，它们在整个应用程序创建一次。 无论何时需要它们，需首先从注册表中检索它，如果没有找到，则创建一个新的并将其放入注册表中。 以下是“Build”代码。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -453,7 +466,7 @@
 
 <p><strong>Grpc Factory:</strong></p>
 
-<p>For “listUser” use case, it needs to call a gRPC Microservice (Cache service), and the factory is “cacheFactory.go”. Currently, all handlers of data service are created by the data store factory. The following is the code for gRPC factory for cache service. The “Build” method works very similar to the “SqlFactory”.</p>
+<p>对于“listUser”用例，它需要调用gRPC微服务（缓存服务），而创建它的工厂是“cacheFactory.go”。 目前，数据服务的所有链接都是由数据存储工厂创建的。 以下是gRPC工厂的代码。 “Build”方法与“SqlFactory”的非常相似。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -512,7 +525,7 @@
 
 <p><strong>Logger factory:</strong></p>
 
-<p>Logger also has it’s own sub-package called “loggerfactory” and the structure is very similar to “datastorefactory” sub-package. “logFactory.go” has the logger factory builder interface and the map. Each individual logger has its own factory file. The following is the code for the log factory:</p>
+<p>Logger有自己的子包名为“loggerfactory”，其结构与“datastorefactory”子包非常相似。 “logFactory.go”定义了日志记录器工厂构建器接口（builder interface）和映射（map）。 每个单独的日志记录器都有自己的工厂文件。 以下是日志工厂的代码：</p>
 
 <p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -552,7 +565,7 @@
 </div>
 <br/></p>
 
-<p>The following is the code for ZAP factory. It is similar to the data store factory. There is only one difference. Since logger-creation function is only called once, there is no need for the registry.</p>
+<p>以下是ZAP工厂的代码。 它类似于数据存储工厂。 只有一个区别。 由于记录器创建功能仅被调用一次，因此不需要注册表。</p>
 
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -585,43 +598,48 @@
 
 <p><br/></p>
 
-<h2 id="configuration-file">Configuration file:</h2>
+<h5 id="配置文件"><strong>配置文件:</strong></h5>
 
-<p>The configuration file gives you a overall idea of how the application is putting together:</p>
+<p><br/></p>
+
+<p>配置文件使你可以全面了解程序的整体结构：</p>
 
 <p><img src="/images/config1.jpg" alt="config1" /></p>
 
-<p>The above image shows the first half of the file. The first section is the database config it supports; the second section is the Microservice with gRPC; the third section is the loggers it supports; the fourth section is the logger used by the app at run-time</p>
+<p>上图显示了文件的前半部分。 第一部分是它支持的数据库配置; 第二部分是带有gRPC的微服务; 第三部分是它支持的日志记录器; 第四部分是本程序在运行时使用的日志记录器</p>
 
-<p>The following image shows the second half of the file. It lists all the use cases of the app and the data service that each use case needs.</p>
+<p>下图显示了文件的后半部分。 它列出了应用程序的所有用例以及每个用例所需的数据服务。</p>
 
 <p><img src="/images/config2.jpg" alt="config2" /></p>
 
-<h3 id="what-data-should-be-saved-in-the-config-file">What data should be saved in the config file?</h3>
+<h5 id="配置文件中应保存哪些数据"><strong>配置文件中应保存哪些数据？</strong></h5>
 
-<p>Different components have different configuration items, some may have many such as loggers. We don’t need to save all configuration items in the configuration file, which can make it too big to manage. Usually we only need to save the options that need to be changed at run-time or those that can change value among different environments.</p>
+<p><br/>
+不同的组件具有不同的配置项，一些组件可能具有许多配置项，例如日志记录器。 我们不需要在配置文件中保存所有配置项，这可能使其太大而无法管理。 通常我们只需要保存需要在运行时更改的选项或者可以在不同环境中（dev, prod, qa)值不同的选项。</p>
 
-<h2 id="how-is-the-design-evolved">How is the design evolved?</h2>
+<h5 id="设计是如何进化的"><strong>设计是如何进化的?</strong></h5>
 
-<p>The container seems to have a lot of stuff in it, the question is do we need all of them? We can certainly simplify it if you don’t need all features. When I first created it, it is quite simple and I kept adding functionalities to it and eventually it took the current form.</p>
+<p><br/>
+容器包里似乎有太多东西，问题是我们是否需要所有这些？如果你不需要所有功能，我们当然可以简化它。当我开始创建它时，它非常简单，我不断添加功能，最终它才越来越复杂。</p>
 
-<p>When it is started, I was just thinking to use the factory method pattern to create concrete types and there is no logging, no configuration files, no registry.</p>
+<p>最开始时，我只是想使用工厂方法模式来创建具体类型，没有日志记录，没有配置文件，没有注册表。</p>
 
-<p>I started with the use case and the data store factory. Initially, for each use case, a new database handler is created, which is not ideal. So, I added a registry to cache all connections to make sure they are only created once.</p>
+<p>我从用例和数据存储工厂开始。最初，对于每个用例，都会创建一个新的数据库链接，这并不理想。因此，我添加了一个注册表来缓存所有连接，以确保它们只创建一次。</p>
 
-<p>Then I found (I got some inspiration from <a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">here</a>⁵) it is better to put all the configuration information in a file, so I can change it without changing the code. I created a YAML file (appConfig[type].yaml) and “appConfig.go” to load the content from the file into an application configuration struct-“appConfig” and pass it to factory builders. The “[type]” can be “prod”, “dev”, “test” and so on. The config file is loaded only once. Currently, it didn’t use any third party lib, but I am thinking to switch to <a href="https://github.com/spf13/viper">Vipe</a>⁶ in the future, so it can support dynamic reloading of application configurations from a configuration server. To make the switch, I only need to change one file, “appConfig.go”.</p>
+<p>然后我发现（我从<a href="https://itnext.io/how-i-pass-around-shared-resources-databases-configuration-etc-within-golang-projects-b27af4d8e8a">这里</a>获得了一些灵感⁵）将所有配置信息放在一个文件中进行集中管理是个好主意，这样我就可以在不改变代码的情况下进行更改。
+我创建了一个YAML文件（appConfig [type] .yaml）和“appConfig.go”来将文件中的内容加载到应用程序配置结构（struct） - “appConfig”中并将其传递给工厂构建器（factory builder）。 “[type]”可以是“prod”，“dev”，“test”等。配置文件只加载一次。目前，它没有使用任何第三方库，但我想将来切换到<a href="https://github.com/spf13/viper">Vipe</a>⁶，因为它可以支持从配置服务器中动态重新加载程序配置。要切换到Vipe，我只需要更改一个文件“appConfig.go”。</p>
 
-<p>For logging, I’d like only one instance of logger so I can set the same logging configurations for the whole application. I created a logger package inside the container. I also tried different logging libraries to figure out which one is the best, then I created a logging factory to make it easier to add new loggers in the future. Please read “<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">application logging</a>”⁷ for detail.</p>
+<p>对于日志记录，整个程序我只想要一个logger实例，这样我就可以为整个程序设置相同的日志配置。我在容器内创建了一个日志记录器包。我还尝试了不同的日志库来确定哪一个是最好的，然后我创建了一个日志工厂，以便将来更容易添加新的日志记录器。有关详细信息，请阅读<a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">日志管理</a>⁷。</p>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1] <a href="https://github.com/go-ozzo/ozzo-validation">ozzo-validation</a></p>
 
@@ -639,21 +657,30 @@
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/application_container/">en: Go Microservice with Clean Architecture: Application Container</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a></li>
+            <li><a href="/posts/dependency_injection/">清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）</a></li>
         
-            <li><a href="/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+            <li><a href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a></li>
         
-            <li><a href="/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
-            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+            <li><a href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a></li>
         
     </ul>
 
@@ -662,51 +689,51 @@
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -717,39 +744,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -758,12 +785,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -773,17 +801,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

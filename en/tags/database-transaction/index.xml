@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Database Transaction on </title>
+    <link>https://jfeng45.github.io/en/tags/database-transaction/</link>
+    <description>Recent content in Database Transaction on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Wed, 24 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/en/tags/database-transaction/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go Microservice with Clean Architecture: Transaction Support</title>
+      <link>https://jfeng45.github.io/en/posts/transaction_support/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/transaction_support/</guid>
+      <description>In order to support the transaction in the business layer, I tried to get a Spring like declarative transaction management in Go, but couldn’t find it, so I decided to write one. Transaction is easy to implement in Go, but it is pretty difficult to get it right.
+Requirement:  Separate business logic from transaction code. One should only think about business logic when writing a use case, no need to be aware of transaction management.</description>
+    </item>
+    
+  </channel>
+</rss>

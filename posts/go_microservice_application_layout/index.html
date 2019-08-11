@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Application Layout" />
-<meta property="og:description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it." />
+<meta property="og:title" content="清晰架构（Clean Architecture）的Go微服务: 程序结构" />
+<meta property="og:description" content="“标准Go项目结构”不适合Go微服务gRPC项目。 本文使用一个真正的应用程序来展示什么是好的微服务应用程序结构及其背后的原因。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/go_microservice_application_layout/" />
 <meta property="article:published_time" content="2019-07-21T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-21T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Application Layout"/>
-<meta name="twitter:description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it."/>
+<meta name="twitter:title" content="清晰架构（Clean Architecture）的Go微服务: 程序结构"/>
+<meta name="twitter:description" content="“标准Go项目结构”不适合Go微服务gRPC项目。 本文使用一个真正的应用程序来展示什么是好的微服务应用程序结构及其背后的原因。"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-micro-service-with-clean-architecture-application-layout-e6216dbb835a">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/go_microservice_application_layout/">
     
 
     
-       <meta name="description" content="&#34;Standard Go Project Layout&#34; is not a good fit for Go Microservice gRPC project. This article Using a real application to show what is a good what is a good Microservice application layout and the reason behind it.">
+       <meta name="description" content="“标准Go项目结构”不适合Go微服务gRPC项目。 本文使用一个真正的应用程序来展示什么是好的微服务应用程序结构及其背后的原因。">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Application Layout | Software Craftsman
+        清晰架构（Clean Architecture）的Go微服务: 程序结构 | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a>
+    <a class="text-dark" href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a>
 </h5>
 
     
@@ -105,31 +122,31 @@
         <time datetime="2019-07-21">2019-07-21</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
         <a class="badge badge-primary" href="/tags/grpc">Grpc</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
-        <a class="badge badge-primary" href="/tags/microservice">Microservice</a>
+        <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
     
-        <a class="badge badge-primary" href="/tags/application-layout">Application Layout</a>
+        <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -138,147 +155,155 @@
 <article class="blog-post">
     
 
-<p>I created a Microservice with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project. This is the first one, which is about project structure.</p>
+<p>我使用Go和gRPC创建了一个微服务，并试图找出最佳的程序结构，它可以用作我未来程序的模板。 我有Java背景，并发现自己在Java和Go之间挣扎，它们之间的编程理念完全不同。我写了一系列关于在项目工作中做出的设计决策和取舍的文章。 这是其中的第一篇， 是关于程序结构的。</p>
 
-<h2 id="project-layout-resource">Project layout resource</h2>
+<h5 id="程序结构的资源"><strong>程序结构的资源</strong></h5>
 
-<p>The best resource for Go’s standard project layout probably is “<a href="https://github.com/golang-standards/project-layout">Standard Go Project Layout</a>”¹ on Github, but it is not a good fit for my project. After reading <a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Sylvain Wallez’s article</a>², I finally got some context information on the reason behind it. Go is designed for API and network servers and most Go projects on Github are written as libraries, so “Standard Go Project Layout” probably is a good fit. Business Microservice project is a totally different animal, which requires a different project structure. I did adopt some of advice from “Standard Go Project Layout” that is applicable, which counts for about 30%.</p>
+<p><br/></p>
 
-<p>Generally speaking, there are two different ways to create an application layout: based on business features or based on technical layout. It is <a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">common agreement</a>³ that based on business features is better, which is true for monolithic project. In Microservice architecture, the situation changed because each service has it’s own repository. So in-side each Microservice, it actually makes sense to create the project structure based on technical layout.</p>
+<p>Go的标准程序结构的最佳资源可能是Github上的<a href="https://github.com/golang-standards/project-layout">标准Go程序结构</a>¹，但它不适合我的项目。在阅读了<a href="https://bluxte.net/musings/2018/04/10/go-good-bad-ugly/">Sylvain Wallez的文章</a>²之后，我终于得到了一些关于其背后原因的信息。 Go起初是专为API和网络服务器而设计，Github上的大多数Go项目都是以库的形式编写的，因此“标准Go程序结构”可能非常适合。 商业微服务项目是一种完全不同的动物，需要不同的程序结构。但还是我采用了“标准Go程序结构”中适用的一些建议，这些建议约占30％。</p>
 
-<p>I also found some good advice from Ben Johnson on <a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">application structure</a>⁴ and <a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">package layout</a>⁵. But it didn’t give a whole solution for my project, so I decided to create my own. Project layout depends on the project requirements and here are them.</p>
+<p>一般来说，创建应用程序结构有两种不同的方法：基于业务功能或基于技术结构。<a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">大家的共识</a>³是基于业务功能的更好，对于单体项目（monolithic project）来说也确实如此。在微服务架构中，情况发生了变化，因为每个服务都有自己的存储库。因此，在每个微服务中，基于技术结构创建项目结构实际上是可行的。</p>
 
-<h2 id="project-requirements">Project Requirements:</h2>
+<p>我还在<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">应用程序结构</a>⁴和<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">包结构</a>⁵上找到了Ben Johnson的一些好建议。但它没有为我的项目提供完整的解决方案，所以我决定创建自己的程序结构。程序结构取决于项目要求，以下是需求。</p>
 
-<ol>
-<li><p>Support different databases ( Sql and NoSql database) on data persistence layer</p></li>
+<h5 id="项目需求"><strong>项目需求</strong>:</h5>
 
-<li><p>Support data coming from other Microservices using different protocols such as gRPC or REST</p></li>
+<p><br/></p>
 
-<li><p>Loose coupled and highly cohesive</p></li>
+<p>1.在数据持久层上支持不同的数据库（Sql和NoSql数据库）</p>
 
-<li><p>Support easy and consistent logging and be able to change it ( for example, logging level and logging provider) without modifying logging statements in every file.</p></li>
+<p>2.使用不同的协议（如gRPC或REST）支持来自其他微服务的数据</p>
 
-<li><p>Support business level transaction.</p></li>
-</ol>
+<p>3.松散耦合和高度内聚</p>
 
-<p>Project layout is also influenced by application design. I applied <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Bob Martin’s Clean Architecture</a>⁶ with Go’s <a href="https://talks.golang.org/2012/splash.article">simplicity</a>⁷ design style.</p>
+<p>4.支持简单一致的日志记录，并能够更改它（例如，日志记录级别和日志记录库），而无需修改程序中的日志记录语句。</p>
 
-<p>On the business logic side, there are three layers: “model”, which is domain model; “dataservice”, which is data persistence (database) layer; “usecase”, which is business logic layer.</p>
+<p>5.支持业务级别的事物交易。</p>
 
-<h2 id="top-level-project-structure">Top level project structure:</h2>
+<p>程序结构也受到程序设计的影响。 我采用了 <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Bob Martin的清晰架构（Clean Architecture</a>⁶ 和 Go的 <a href="https://talks.golang.org/2012/splash.article">简洁</a>⁷ 设计风格.</p>
+
+<p>在业务逻辑方面，有三层：“模型（model）”，即域模型; “数据服务（dataservice）”，它是数据持久性（数据库）层; “用例（usecase）”，这是业务逻辑层。</p>
+
+<h5 id="顶层程序结构"><strong>顶层程序结构:</strong></h5>
+
+<p><br/></p>
 
 <p><img src="/images/serviceTmpl.jpg" alt="service tmpl" /></p>
 
-<p><strong>adapter:</strong> this is the interface between your application and outside data service, for example another gRPC service. All the data conversion and transformation happened here, so your business logic code doesn’t need to be aware of the detail implementation (whether it gRPC or REST) of outside services.</p>
+<p><strong>adapter:</strong> 这是应用程序和外部数据服务之间的接口，例如另一个gRPC服务。 所有数据转换都发生在这里，这样你的业务逻辑代码不需要了解外部服务的具体实现（无论是gRPC还是REST）。</p>
 
-<p><strong>cmd:</strong> the command. All different types of “main.go” are here and you can have multiple ones. This is the starting point of the application.</p>
+<p><strong>cmd:</strong> 命令。 所有不同类型的“main.go”都在这里，你可以有多个。 这是应用程序的起点。</p>
 
-<p><strong>config:</strong> configuration code and data for the application, including configuration files.</p>
+<p><strong>config:</strong> 设置程序和配置数据，包括配置文件。</p>
 
-<p><strong>container:</strong> the dependency injection container, which is responsible for creating concrete types and injecting them into each function.</p>
+<p><strong>container:</strong> 应用程序依赖注入容器，负责创建具体类型并将它们注入每个函数。</p>
 
-<p><strong>dataservice:</strong> persistence layer, which is responsible for retrieving and modifying data for the domain model. It only depends on the model layer. Data service could get data from database or from other Microservices by RPC or RESTFul call.</p>
+<p><strong>dataservice:</strong> 持久层，负责检索和修改域模型的数据。 它只依赖（depend）于模型（model）层。 数据服务可以通过RPC或RESTFul调用从数据库或其他微服务获取数据。</p>
 
-<p><strong>model</strong>: domain module layer, which has domain structs. All other layers depend on them and they don’t depend on any other layers.</p>
+<p><strong>model</strong>: 域模型层，具有域结构（model struct）。 所有其他层依赖于此层，而此层不依赖于任何其他层。</p>
 
-<p><strong>script:</strong> scripts related to setting up an application, for example, database scripts.</p>
+<p><strong>script:</strong> 与设置应用程序相关的脚本，例如，数据库脚本。</p>
 
-<p><strong>tool:</strong> third-party tools.</p>
+<p><strong>tool:</strong> 第三方工具。</p>
 
-<p><strong>usecase</strong> : This is an important layer and the entry point of business logic. Each business feature is implemented by a use case. It is the top level layer, so no other layer depends on it ( except “cmd”), but it depends on other layers.</p>
+<p><strong>usecase</strong> : 这是一个重要的层并且是业务逻辑的切入点。 每个业务功能都由用例实现。 它是程序顶层，因此没有其他层依赖于它（“cmd”除外），但它依赖于其他层。</p>
 
-<p>Use case and data service layer functions are all called by interface, so the implementation can be changed easily.</p>
+<p>用例和数据服务层功能全部由接口调用，因此可以轻松更改实现。</p>
 
-<h2 id="sub-folder-under-each-top-level"><strong>Sub folder under each top level:</strong></h2>
+<h5 id="顶级包下的子文件包"><strong>顶级包下的子文件包:</strong></h5>
+
+<p><br/></p>
 
 <p><strong>adapter:</strong></p>
 
 <p><img src="/images/adapter.jpg" alt="adapter" /></p>
 
-<p>When a program needs to interact with Microservices or other outside services, you need to create interfaces to reduce dependency. For example, the cache service is a gRPC Microservice. Each outside service will have it’s own sub-package and files. For example, cache service has “cacheclient” package and “cacheClient.go” file, which defines the types and the methods to interact with outside “cache” Microservice.</p>
+<p>当程序需要与微服务或其他外部服务进行交互时，你需要创建接口以减少依赖性。例如，本程序中的“缓存服务”是一个gRPC微服务。每个外部服务都有自己的子包和文件。例如，缓存服务具有“cacheclient”包和“cacheClient.go”文件，该文件定义了与外部“缓存”微服务交互的类型和方法。</p>
 
-<p>In our example, not like other data service, “cacheClient.go” doesn’t define an interface for cache service. Actually it has one, but the interfaced is defined in “dataservice” package because cache service is also a data service. The more clear way probably is creating an interface in both packages, that will keep the package structure consist. But the two interfaces will be identical and redundant, so I removed the one in adapter.</p>
+<p>在我们的示例中，与其他数据服务不同，“cacheClient.go”文件没有定义缓存服务的接口。实际上它有一个，但是interface是在“dataservice”包中定义的，因为“缓存服务”也是一个数据服务。更明确的方法可能是在两个包中各自创建一个接口，这将保持包结构的统一。但是这两个接口将是相同且冗余的，所以我删除了适配器中的接口。</p>
 
-<p>Since we also need to expose the application itself as a gRPC service, “userclient” sub-package is created here. “generatedclient” sub-package has generated code for gRPC and Protobuf. “userGrpc.go” is created to handle format translation between domain model structs and gRPC structs.</p>
+<p>由于我们还需要将应用程序本身发布为gRPC服务，因此需要在此处创建“userclient”子包。 “generatedclient”子包是为gRPC和Protobuf生成的代码。“userGrpc.go”用来处理域模型结构和gRPC结构之间的格式转换。</p>
 
 <p><strong>cmd:</strong></p>
 
 <p><img src="/images/cmd.jpg" alt="cmd" /></p>
 
-<p>The command of the app, and starting point for the app. You can either run the application as a local app or run it as a Microservice application, in which case, you have both client side (grpcClientMain.go) and server side (grpcServerMain.go) main files. All future main files will also go here, for example, web application server main file.</p>
+<p>应用程序的命令，是整个程序的起点。 你可以将应用程序作为本地应用程序运行，也可以将其作为微服务应用程序运行，在这种情况下，你同时拥有客户端（grpcClientMain.go）和服务器端（grpcServerMain.go）主文件。 所有未来的主文件也将在此处，例如，Web应用程序服务器主文件。</p>
 
 <p><strong>config:</strong></p>
 
 <p><img src="/images/config.jpg" alt="config" /></p>
 
-<p>Save all application configuration files here. “appConfig.go” is responsible for reading from configuration files and load them into application configuration structs. You can have different configuration files (YAML files) for different environments, for example “Dev” and “Prod”.</p>
+<p>在此保存所有应用配置文件。 “appConfig.go”负责从配置文件中读取并数据将它们加载到应用程序配置结构中。 你可以为不同的环境提供不同的配置文件（YAML文件），例如“Dev”和“Prod”。</p>
 
 <p><strong>container:</strong></p>
 
 <p><img src="/images/container.jpg" alt="container" /></p>
 
-<p>The most complex package in this app, which creates the concrete structs for each interface and injects them into other layers. The sub-level structure in it resembles the application layer, which also have “use case”, “data service” and “data store” layer.</p>
+<p>本程序中最复杂的包，它为每个接口创建具体结构并将它们注入其他层。此包中的子包结构类似于应用逻辑分层，它还具有“用例（usecase）”，“数据服务（dataservice）”和“数据存储（datastore）”层。</p>
 
-<p>Under the top level, “container.go” defines the container interface, and the implementation file “serviceContainer.go” is in “servicecontainer” package. It is the entry point or this package, which glues other code in this folder together. “registrationFactory.go” in “usecasefactory” sub-package and other factories using factory method pattern to create structs. <a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">Logging</a>⁸ doesn’t belongs to any application layer, so I created a separate sub-package “loggerfactory” for it. It also has a “logger” sub-package to define logging interface. I explain everything in this package in my article “<a href="https://jfeng45.github.io/posts/application_container/">Application Container</a>”⁹.</p>
+<p>在本包顶层，“container.go”定义容器接口，它的实现文件“serviceContainer.go”在“servicecontainer”子包中。它是此包的入口点，它将此包中的其他代码粘合在一起。 “usecasefactory”子包中的“registrationFactory.go”和其他工厂（factory）使用工厂方法模式（factory method pattern）创建具体结构（struct）。 <a href="https://jfeng45.github.io/posts/go_logging_and_error_handling/">日志</a>⁸不属于任何应用层，因此我为它创建了一个单独的子包“loggerfactory”。它还有一个“logger”子包来定义日志记录接口。我在文章<a href="https://jfeng45.github.io/posts/application_container/">程序容器</a><sup>9</sup>中解释了这个包中的所有内容。</p>
 
 <p><strong>dataservice:</strong></p>
 
 <p><img src="/images/dataservice.jpg" alt="dataservice" /></p>
 
-<p>The persistence layer for domain model. There is one file-“dataService.go” on the top level, which has all the interfaces for data service, including data services provided by other Microservices ( for example, gRPC). Other packages only need to depend on the top level data service interfaces and don’t need to be aware of the implementation detail of a specific database.</p>
+<p>域模型的持久层。 顶层只有一个文件 - “dataService.go”，它具有数据服务的所有接口，包括其他微服务提供的数据服务（例如gRPC）。 其他包只需要依赖于顶级数据服务接口，而不需要了解特定数据库的实现细节。</p>
 
-<p>For each type in the domain model, there is a corresponding data service. For example, for model “User”, there is a “userdata” sub-package, which has all implementations of user persistence service including MySql and CouchDB.</p>
+<p>对于域模型中的每种类型，都有相应的数据服务。 例如，对于模型“User”，有一个“userdata”子包，它包含用户持久性服务的所有实现，包括sqldb（MySql）和CouchDB。</p>
 
 <p><strong>model:</strong></p>
 
 <p><img src="/images/model.jpg" alt="model" /></p>
 
-<p>This layer doesn’t need to have an interface, and models are all concrete structs.</p>
+<p>该层不需要接口，模型都是具体结构。</p>
 
 <p><strong>Script:</strong></p>
 
 <p><img src="/images/scripts.jpg" alt="script" /></p>
 
-<p>Currently it only has database scripts for MySql.</p>
+<p>目前它只有MySql的数据库脚本。</p>
 
 <p><strong>tool:</strong></p>
 
 <p><img src="/images/tools.jpg" alt="tool" /></p>
 
-<p>This package is for third-party tools. If you don’t want to depend on third-party library directly, or you need to enhance those tools, create a wrapper here. Don’t be confused with “adapter” package, which is also dealing with third-part libraries, but those are only for application level data service. “tool” package is more for lower level libraries.</p>
+<p>此程序包适用于第三方工具。 如果你不想直接依赖第三方库，或者需要增强这些第三方库，请在此处进行封装。 不要与“adapter”包混淆，后者也处理第三方库，但只适用于应用程序级数据服务。 “tool”包更适用于较低级别的库。</p>
 
 <p><strong>useCase:</strong></p>
 
 <p><img src="/images/usecase.jpg" alt="use case" /></p>
 
-<p>There is one file “useCase.go” under top level folder, which has all the use case interfaces. Currently, there are three use cases: “RegistrationUseCase” , “ListUserUseCase” and “ListCourse”.</p>
+<p>顶级包下只有一个文件“useCase.go”，它包含所有用例接口。 目前，有三个用例：“RegistrationUseCase”，“ListUserUseCase”和“ListCourse”。</p>
 
-<p>For each use case, there is a sub-package for it. The files in that sub-package define the concrete structs that implement the use case interface. All other packages only depend on the use case interface in the top level and don’t need to be aware of the implementation detail of each use case.</p>
+<p>每个用例都有一个子包。 该子包中的文件定义了实现用例接口的具体结构。 所有其他包仅依赖于顶级的用例接口，不需要了解每个用例的实现细节。</p>
 
-<h3 id="potential-problem">Potential problem:</h3>
+<h5 id="可能的问题"><strong>可能的问题:</strong></h5>
 
-<p>This application layout ends up with a lot of small sub-packages each only has one or a few files in it. This contradicts with the Go idiom “<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html#_consider_fewer_larger_packages">Consider fewer, larger packages</a>”¹⁰, which suggests creating package like this for use case:</p>
+<p><br/></p>
+
+<p>这个程序结构最终会产生很多小的子包，每个子包只有一个或几个文件。 这与Go习惯用法“<a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html#_consider_fewer_larger_packages">考虑更少，更大的包</a>¹⁰相矛盾. 以下才是习惯用法应创建的包：</p>
 
 <p><img src="/images/usecaseNew.jpg" alt="use case alt" /></p>
 
-<p>If you write a library for others to import into their code, it is a good rule to put code into one big package, so people don’t need multiple import statements in order to use your library. But inside your application, it is fine to have small packages, especially when you only expose interfaces to other layers.</p>
+<p>如果你为其他人编写一个外部库，那么将代码放入一个大包中是一个很好的规则，因为人们不需要多个import语句来使用你的库。 但是在你自己的应用程序中，拥有小包是可以的，特别是当你只将接口暴露给其他层时。</p>
 
-<p>Here is why small package is better for the use case layer. First “useCase.go” only defines interfaces in it, and other packages ( except container) only depend on interfaces, so “useCase.go” deserves a standalone package. Second, it is more clear to separate each use case by folder.</p>
+<p>本程序为什要用小包呢？ 首先“useCase.go”只定义接口，而其他包（容器除外）仅依赖于接口，因此“useCase.go”需要一个独立的包。 其次，用文件夹分隔每个用例使程序更清晰易读。</p>
 
-<h2 id="conclusion">Conclusion:</h2>
+<h5 id="结论"><strong>结论:</strong></h5>
 
-<p>For a gRPC Microservice project, the “Standard Go Project Layout” may not be a good fit. The common agreement that creating the application layout based on business logic instead of technical layout is a good advice for monolithic project, not necessarily for Microservice project. This article uses a real application as an example to show what could be a good Microservice application layout and the reason behind it.</p>
+<p>对于gRPC微服务项目，“标准Go程序结构”可能不太适合。 基于业务逻辑而不是技术结构创建应用程序结构对单体项目是一个很好的建议，不一定适合微服务项目。 本文使用一个真实的应用程序作为示例来展示什么是一个很好的微服务应用程序结构及其背后的原因。</p>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1]<a href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a></p>
 
@@ -302,6 +327,15 @@
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/go_microservice_application_layout/">en: Go Microservice with Clean Architecture: Application Layout</a>
+        </li>
+        
+      </ul>
+    
 
     
 
@@ -310,51 +344,51 @@
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -365,39 +399,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -406,12 +440,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -421,17 +456,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

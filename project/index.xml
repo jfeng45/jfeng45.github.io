@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Projects on Software Craftsman</title>
+    <title>Projects on </title>
     <link>https://jfeng45.github.io/project/</link>
-    <description>Recent content in Projects on Software Craftsman</description>
+    <description>Recent content in Projects on </description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-Hans</language>
     <lastBuildDate>Mon, 02 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/project/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Go Microservice Template Project with Clean Architecture</title>
+      <title>基于清晰架构（Clean Architecture）的Go微服务</title>
       <link>https://jfeng45.github.io/project/go-microservice-template/</link>
       <pubDate>Mon, 02 Jul 2018 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/project/go-microservice-template/</guid>
-      <description>A project to show the application layout for a Microservice application in gRPC and Go. It applied Clean Architecture design and used dependency injection to inject concrete types into each function.</description>
+      <description>&lt;p&gt;一个gRPC和Go微服务应用程序项目，用于显示程序的分层结构。 它应用了清晰架构（Clean Architecture）设计并使用依赖注入(Dependency Injection)将具体类型注入到每个函数中。&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>Go gRPC Project</title>
+      <title>Go gRPC 项目</title>
       <link>https://jfeng45.github.io/project/go-grpc/</link>
       <pubDate>Sun, 17 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/project/go-grpc/</guid>
-      <description>A project to learn writing Microservice in GRPC and Go, and it is not intended for production use. I originally took the code form Alan Shreve&amp;rsquo;s gRPC cache service and made some changes on retry and timeout features.</description>
+      <description>&lt;p&gt;一个可以用来学习用GRPC和Go编写微服务的项目，它不适合生产环境使用。 我最初使用Alan Shreve的gRPC缓存服务代码，并对重试和超时功能进行了一些更改。&lt;/p&gt;</description>
     </item>
     
   </channel>

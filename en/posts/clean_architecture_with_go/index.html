@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture" />
+<meta property="og:description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/clean_architecture_with_go/" />
+<meta property="article:published_time" content="2019-07-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-22T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture"/>
+<meta name="twitter:description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-a08fa916a5db">
+    
+
+    
+       <meta name="description" content="I wrote a series of articles on Go Microservice with gRPC in Clean Architecture and SOLID design. It talked about best practice in application design, application layout and project structure, logging, error handling, transaction management, application container and Dependency Injection.">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-22">2019-07-22</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/grpc">Grpc</a>
+    
+        <a class="badge badge-primary" href="/en/tags/clean-architecture">Clean Architecture</a>
+    
+        <a class="badge badge-primary" href="/en/tags/microservice">Microservice</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>I created a Microservice project with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I also tried to apply the best practice in application design and programming, such as Clean Architecture, Dependency Injection, logging, error handling and so on, to the Go Microservice application. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different. I wrote a series of articles about decisions and trade-offs I made when working on the project.</p>
+
+<p><strong>Who is the audience?</strong></p>
+
+<p>Knowing basic Go is not required for reading the articles, but definitely will help you. If you don’t know Go and can’t figure what the code is doing, then you probably want to learn some basic Go from “<a href="https://gobyexample.com/">Go by Example</a>”¹ (You don’t need to finish all of the topics, just the first several). The “Transaction support” one in this series is database heavy and require some database knowledge in Go and you can acquire it from “<a href="http://go-database-sql.org/index.html">Go database/sql tutorial</a>”². If you are interested in Go Microservice programming and thinking about the code design and application layers, project structure, coding style, logging, transaction management and Dependency Injection, then this series is perfect for you.</p>
+
+<p><strong>What is it about?</strong></p>
+
+<p>The series is not about how to create a quick working prototype, but about how to create an application with a good design that easily adapts to changes, for example, you may want to split part of functions into a separate Microservice, or add transaction support after a business feature is up-running, or switch to a better logger, but don’t want to change every logging statement in your code. By applying the design in this project, business logic code is never touched when making the above changes. You seldom change any existing code (except for the container code), but only add new code, thus the QA effort was greatly reduced. You can use this application as the starting point to base your next application on. The only cost is to figure how different pieces of the application are wired together. If you have Spring (Java) background or coming from object-oriented paradigm, or know Clean Architecture or SOLID, the code should be pretty familiar to you.</p>
+
+<p>You don’t need to read articles in the following order. If you are familiar with <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>³ or <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID</a>⁴, you can read the articles in any order without a problem. However, I do recommend you start from the first one, which will give you a overview of the whole project, then you can pick the ones you are interested in.</p>
+
+<ol>
+<li><p><a href="https://jfeng45.github.io/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></p></li>
+
+<li><p><a href="https://jfeng45.github.io/en/posts/dependency_injection/">Go Microservice with Clean architecture: Dependency Injection</a></p></li>
+
+<li><p>Go Microservice with Clean architecture: Robust Service</p></li>
+</ol>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1] <a href="https://gobyexample.com/">Go by Example</a></p>
+
+<p>[2] <a href="http://go-database-sql.org/index.html">Go database/sql tutorial</a></p>
+
+<p>[3]<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Code Blog</a></p>
+
+<p>[4] <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">S.O.L.I.D is for the first five object-oriented design (OOD) principles introduced by Robert C. Martin, popularly known as Uncle Bob and the acronym is introduced later by Michael Feathers</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/clean_architecture_with_go/">zh: 清晰架构（Clean Architecture）的Go微服务</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

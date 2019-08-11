@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go微服务 on </title>
+    <link>https://jfeng45.github.io/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+    <description>Recent content in Go微服务 on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）</title>
+      <link>https://jfeng45.github.io/posts/dependency_injection/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/dependency_injection/</guid>
+      <description>在清晰架构（Clean Atchitecture）中，应用程序的每一层（用例，数据服务和域模型）仅依赖于其他层的接口而不是具体类型。 在运行时，</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</title>
+      <link>https://jfeng45.github.io/posts/application_container/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/application_container/</guid>
+      <description>清晰架构（Clean Atchitecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 日志管理</title>
+      <link>https://jfeng45.github.io/posts/go_logging_and_error_handling/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_logging_and_error_handling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 编码风格</title>
+      <link>https://jfeng45.github.io/posts/coding_style/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/coding_style/</guid>
+      <description>编码风格在编程中是一个相对乏味的主题，但是合适的编码风格对一个有效的程序员是至关重要的。 它有三个组成部分： 程序结构 （ application layout） 编码规则</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Atchitecture）的Go微服务: 事物管理</title>
+      <link>https://jfeng45.github.io/posts/transaction_support/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/transaction_support/</guid>
+      <description>为了支持业务层中的事务，我试图在Go中查找类似Spring的声明式事务管理，但是没找到，所以我决定自己写一个。 事务很容易在Go中实现，但很难</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
+      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 程序设计</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_application_design/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_application_design/</guid>
+      <description>我使用Go和gRPC创建了一个微服务，并将程序设计和编程的最佳实践应用于该项目。 我写了一系列关于在项目工作中做出的设计决策和取舍的文章，此篇</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 设计原则</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_design_principle/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_design_principle/</guid>
+      <description>设计灵感: 我最近写了一个Go微服务应用程序，这个程序的设计来自三个灵感： 清晰架构&amp;rdquo;Clean Architecture&amp;rdquo</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 程序结构</title>
+      <link>https://jfeng45.github.io/posts/go_microservice_application_layout/</link>
+      <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_microservice_application_layout/</guid>
+      <description>我使用Go和gRPC创建了一个微服务，并试图找出最佳的程序结构，它可以用作我未来程序的模板。 我有Java背景，并发现自己在Java和Go之间</description>
+    </item>
+    
+  </channel>
+</rss>

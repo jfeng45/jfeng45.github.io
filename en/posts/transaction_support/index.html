@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Transaction Support" />
+<meta property="og:description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/transaction_support/" />
+<meta property="article:published_time" content="2019-07-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-24T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Transaction Support"/>
+<meta name="twitter:description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction ."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-microservice-with-clean-architecture-transaction-support-61eb0f886a36">
+    
+
+    
+       <meta name="description" content="A business level transaction management system in Go that fulfilled most features of the declarative transaction .">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Transaction Support | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/transaction_support/">Go Microservice with Clean Architecture: Transaction Support</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-24">2019-07-24</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/database-transaction">Database Transaction</a>
+    
+        <a class="badge badge-primary" href="/en/tags/clean-architecture">Clean Architecture</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>In order to support the transaction in the business layer, I tried to get a Spring like declarative transaction management in Go, but couldn’t find it, so I decided to write one. Transaction is easy to implement in Go, but it is pretty difficult to get it right.</p>
+
+<h2 id="requirement"><strong>Requirement:</strong></h2>
+
+<ol>
+<li><p>Separate business logic from transaction code.
+One should only think about business logic when writing a use case, no need to be aware of transaction management. If later on, there is a need to add transaction support, you can just write a wrapper on top of existing business logic, and no need to change any other code. Transaction implementation detail should be transparent to business logic.</p></li>
+
+<li><p>Transaction logic should be applied to the use case layer ( business logic)
+Not on the persistence layer.</p></li>
+
+<li><p>The data service (data persistence) layer should be transparent to the transaction logic.
+Meaning the persistence code should be the same whether it supports transaction or not</p></li>
+
+<li><p>You have the choice to delay the transaction supporting decision later.
+You can write a use case without transaction and later on to enable the transaction on that use case without modifying existing code. You only add new code.</p></li>
+</ol>
+
+<p>The solution I came up with is not a declarative transaction management even though it is a pretty close one. Creating a real declarative transaction management needs a lot of effort, so I built a simple one which can fulfill most features of the declarative transaction.</p>
+
+<h2 id="solution"><strong>Solution:</strong></h2>
+
+<p>The solution spreads all different layers of the application and I will explain them one by one.</p>
+
+<p><strong>Wrapper for database handler</strong></p>
+
+<p>In Go’s “sql” lib, there are two database handler sql.DB and sql.Tx. When there is no transaction, you use sql.DB to access database; when there is a transaction, you use sql.Tx. In order to share code, the persistence layer needs to support both. A wrapper is created as a receiver for database access methods, so it can work with both. I got the rough idea from <a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">here</a>¹.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SqlGdbc (SQL Go database connection) is a wrapper for SQL database handler ( can be *sql.DB or *sql.Tx)
+</span><span style="color:#75715e">// It should be able to work with all SQL data that follows SQL standard.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SqlGdbc</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Result</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Prepare</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Stmt</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) (<span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Rows</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#a6e22e">QueryRow</span>(<span style="color:#a6e22e">query</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">args</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">interface</span>{}) <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Row</span>
+	<span style="color:#75715e">// If need transaction support, add this interface
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Transactioner</span>
+}
+
+<span style="color:#75715e">// SqlDBTx is the concrete implementation of sqlGdbc by using *sql.DB
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SqlDBTx</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">DB</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>
+}
+
+<span style="color:#75715e">// SqlConnTx is the concrete implementation of sqlGdbc by using *sql.Tx
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SqlConnTx</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">DB</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Tx</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>Both Database handler the SqlDBTx and the sqlConnTx need to implement the SqlGdbc interface (including “Transactioner”) interface to get it work. “Transactioner” interface needs to be implemented for each database to support the transaction.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Transactioner is the transaction interface for database handler
+</span><span style="color:#75715e">// It should only be applicable to SQL database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Transactioner</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// Rollback a transaction
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Rollback</span>() <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// Commit a transaction
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Commit</span>() <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// TxEnd commits a transaction if no errors, otherwise rollback
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// txFunc is the operations wrapped in a transaction
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">TxEnd</span>(<span style="color:#a6e22e">txFunc</span> <span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">error</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// TxBegin gets *sql.DB from receiver and return a SqlGdbc, which has a *sql.Tx
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">TxBegin</span>() (<span style="color:#a6e22e">SqlGdbc</span>, <span style="color:#66d9ef">error</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>Transaction code for database handler</strong></p>
+
+<p>The following are the implementation code for “Transactioner” interface, among them, only TxBegin() is implemented on SqlDBTx(sql.DB) because a transaction starts from sql.DB, all others are on SqlConnTx(sql.Tx). I got the idea from <a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">here</a>².</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// TransactionBegin starts a transaction
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sdt</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">SqlDBTx</span>) <span style="color:#a6e22e">TxBegin</span>() (<span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">tx</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sdt</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">Begin</span>()
+	<span style="color:#a6e22e">sct</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">SqlConnTx</span>{<span style="color:#a6e22e">tx</span>}
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sct</span>, <span style="color:#a6e22e">err</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sct</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">SqlConnTx</span>) <span style="color:#a6e22e">TxEnd</span>(<span style="color:#a6e22e">txFunc</span> <span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">error</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#a6e22e">tx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sct</span>.<span style="color:#a6e22e">DB</span>
+
+	<span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">p</span> <span style="color:#f92672">:=</span> recover(); <span style="color:#a6e22e">p</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">tx</span>.<span style="color:#a6e22e">Rollback</span>()
+			panic(<span style="color:#a6e22e">p</span>) <span style="color:#75715e">// re-throw panic after Rollback
+</span><span style="color:#75715e"></span>		} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">tx</span>.<span style="color:#a6e22e">Rollback</span>() <span style="color:#75715e">// err is non-nil; don&#39;t change it
+</span><span style="color:#75715e"></span>		} <span style="color:#66d9ef">else</span> {
+			<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">tx</span>.<span style="color:#a6e22e">Commit</span>() <span style="color:#75715e">// if Commit returns error update err with commit err
+</span><span style="color:#75715e"></span>		}
+	}()
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">txFunc</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sct</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">SqlConnTx</span>) <span style="color:#a6e22e">Rollback</span>() <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sct</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">Rollback</span>()
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>The transaction interface on use case layer</strong></p>
+
+<p>In the use case layer, you can have two versions of the same function, one with the transaction and one without, and their names can share the same prefix and the transaction one can add ”withTx” as a suffix. For example, in the following code, “ModifyAndUnregister” is the one without transaction and “ModifyAndUnregisterWithTx” is the one with transaction. “EnableTxer” is the only interface for transaction support on the use case layer, any “use case” with transaction support need to have it. All the code here is the use case level ( including “EnableTxer”) code, no database stuff involved.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RegistrationUseCaseInterface</span> <span style="color:#66d9ef">interface</span> {
+<span style="color:#f92672">...</span>
+	<span style="color:#75715e">// ModifyAndUnregister change user information and then unregister the user based on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is created to illustrate transaction, no real use.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ModifyAndUnregister</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// ModifyAndUnregisterWithTx change user information and then unregister the user based on the User.Id passed in.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It supports transaction
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is created to illustrate transaction, no real use.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ModifyAndUnregisterWithTx</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// EnableTx enable transaction support on use case. Need to be included for each use case needs transaction
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It replaces the underline database handler to sql.Tx for each data service that used by this use case
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnableTxer</span>
+}
+<span style="color:#75715e">// EnableTxer is the transaction interface for use case layer
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">EnableTxer</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">EnableTx</span>()
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p>The followings are the example of business logic code with and without transaction. The “modifyAndUnregister(ruc, user)” is the business function shared by transaction and non-transaction use case functions. You do need to wrap the business function with TxBegin() and TxEnd() (which are in TxDataInterface) to support transaction, and those are data service layer interfaces, and has nothing to do with the database access layer. The use case also implemented the “EnableTx()” interface, which basically switched the underline database handler from sql.DB to sql.Tx.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// The use case of ModifyAndUnregister without transaction
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationUseCase</span>) <span style="color:#a6e22e">ModifyAndUnregister</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">modifyAndUnregister</span>(<span style="color:#a6e22e">ruc</span>, <span style="color:#a6e22e">user</span>)
+}
+
+<span style="color:#75715e">// The use case of ModifyAndUnregister with transaction
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationUseCase</span>) <span style="color:#a6e22e">ModifyAndUnregisterWithTx</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#a6e22e">tdi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">TxDataInterface</span>.<span style="color:#a6e22e">TxBegin</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">EnableTx</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">tdi</span>.<span style="color:#a6e22e">TxEnd</span>(<span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">error</span> {
+		<span style="color:#75715e">// wrap the business function inside the TxEnd function
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">modifyAndUnregister</span>(<span style="color:#a6e22e">ruc</span>, <span style="color:#a6e22e">user</span>)
+	})
+}
+
+<span style="color:#75715e">// The business function will be wrapped inside a transaction and inside a non-transaction function
+</span><span style="color:#75715e">// It needs to be written in a way that every error will be returned so it can be catched by TxEnd() function,
+</span><span style="color:#75715e">// which will handle commit and rollback
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">modifyAndUnregister</span>(<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationUseCase</span>, <span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#a6e22e">udi</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">UserDataInterface</span>
+	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">modifyUser</span>(<span style="color:#a6e22e">udi</span>, <span style="color:#a6e22e">user</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">unregisterUser</span>(<span style="color:#a6e22e">udi</span>, <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">Name</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">ruc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RegistrationUseCase</span>) <span style="color:#a6e22e">EnableTx</span>() {
+	<span style="color:#75715e">// Only UserDataInterface need transaction support here. If there are other data services need it,
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// then they also need to enable transaction here
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">UserDataInterface</span>.<span style="color:#a6e22e">EnableTx</span>(<span style="color:#a6e22e">ruc</span>.<span style="color:#a6e22e">TxDataInterface</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p>Why do I call the function “EnbaleTx” in “TxDataInterface” to replace the underline database handler instead of doing it directly in the use case? Because sql.DB and sql.Tx are several layers down, to do that will mess up the dependency. The trick is to have TxBegin() and TxEnd() on each layer and call them layer by layer down to maintain the appropriate dependency relationship.</p>
+
+<p><strong>Transaction interface on the data service layer</strong></p>
+
+<p>We talked about transaction functions on the use case layer and the data store layer, and we also need transaction functions in the data service layer to connect those two together. The following code is the transaction interface (“TxDataInterface”) for the data service layer. “TxDataInterface” is a data service layer interface created solely for facilitating transaction. The interface only needs to be implemented once for each database. There is also an “EnableTxer” interface ( This is a data service layer interface, don’t be confused with the “EnableTxer” interface in use case layer), which will enable the transaction support for a data service type, such as “UserDataInterface”.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// TxDataInterface represents operations needed for transaction support.
+</span><span style="color:#75715e">// It only needs to be implemented once for each database
+</span><span style="color:#75715e">// For sqlGdbc, it is implemented for SqlDBTx in transaction.go
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TxDataInterface</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// TxBegin starts a transaction. It gets a DB handler from the receiver and return a TxDataInterface, which has a
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// *sql.Tx inside. Any data access wrapped inside a transaction will go through the *sql.Tx
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">TxBegin</span>() (<span style="color:#a6e22e">TxDataInterface</span>, <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// TxEnd is called at the end of a transaction and based on whether there is an error, it commits or rollback the
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// transaction.
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// txFunc is the business function wrapped in a transaction
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">TxEnd</span>(<span style="color:#a6e22e">txFunc</span> <span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">error</span>) <span style="color:#66d9ef">error</span>
+	<span style="color:#75715e">// Return the underline transaction handler, sql.Tx
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">GetTx</span>() <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>
+}
+
+<span style="color:#75715e">// This interface needs to be included in every data service interface that needs transaction support
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">EnableTxer</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#75715e">// EnableTx enables transaction, basically it replaces the underling database handle sql.DB with sql.Tx
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnableTx</span>(<span style="color:#a6e22e">dataInterface</span> <span style="color:#a6e22e">TxDataInterface</span>)
+}
+
+<span style="color:#75715e">// UserDataInterface represents interface for user data access through database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserDataInterface</span> <span style="color:#66d9ef">interface</span> {
+<span style="color:#f92672">...</span>
+	<span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#a6e22e">rowsAffected</span> <span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Insert adds a user to a database. The returned resultUser has a Id, which is auto generated by database
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">Insert</span>(<span style="color:#a6e22e">user</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>) (<span style="color:#a6e22e">resultUser</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>)
+	<span style="color:#75715e">// Need to add this for transaction support
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnableTxer</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p>The following code is the implementation for “TxDataInterface”. “TxDataSql” is the concrete type for “TxDataInterface”. It calls underline database handler’s begin and end function to do the real transaction work.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// TxDataSql is the generic implementation for transaction for SQL database
+</span><span style="color:#75715e">// You only need to do it once for each SQL database
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TxDataSql</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">DB</span> <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TxDataSql</span>) <span style="color:#a6e22e">TxEnd</span>(<span style="color:#a6e22e">txFunc</span> <span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">error</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">tds</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">TxEnd</span>(<span style="color:#a6e22e">txFunc</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TxDataSql</span>) <span style="color:#a6e22e">TxBegin</span>() (<span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">TxDataInterface</span>, <span style="color:#66d9ef">error</span>) {
+
+	<span style="color:#a6e22e">sqlTx</span>, <span style="color:#66d9ef">error</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">tds</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">TxBegin</span>()
+	<span style="color:#a6e22e">tdi</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">TxDataSql</span>{<span style="color:#a6e22e">sqlTx</span>}
+	<span style="color:#a6e22e">tds</span>.<span style="color:#a6e22e">DB</span> = <span style="color:#a6e22e">tdi</span>.<span style="color:#a6e22e">DB</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">tdi</span>, <span style="color:#66d9ef">error</span>
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TxDataSql</span>) <span style="color:#a6e22e">GetTx</span>() <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">tds</span>.<span style="color:#a6e22e">DB</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p><strong>Transaction strategy:</strong></p>
+
+<p>You may ask why I need “TxDataSql” in above code? It is true that transaction can be implemented without it, actually it was working that way before. However, I sill need to implement “TxDataInterface” in some data service to begin and end a transaction. Since that is done in use case layer, which doesn’t know which data service type implemented the interface, you have to implement the “TxDataInterface” on every data service interface ( for example, “UserDataInterface”, and “CourseDataInterface” ) to guarantee that “use case” won’t choose the wrong “data service” that doesn’t have the interface. After creating “TxDataSql”, I only need to implement “TxDataInterface” once in “TxDataSql”, then each data service type only needs to implement “EnableTx()”.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// UserDataSql is the SQL implementation of UserDataInterface
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserDataSql</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">DB</span> <span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">uds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">UserDataSql</span>) <span style="color:#a6e22e">EnableTx</span>(<span style="color:#a6e22e">tx</span> <span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">TxDataInterface</span>) {
+	<span style="color:#a6e22e">uds</span>.<span style="color:#a6e22e">DB</span> = <span style="color:#a6e22e">tx</span>.<span style="color:#a6e22e">GetTx</span>()
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">uds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">UserDataSql</span>) <span style="color:#a6e22e">FindByName</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#75715e">//logger.Log.Debug(&#34;call FindByName() and name is:&#34;, name)
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">uds</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">QUERY_USER_BY_NAME</span>, <span style="color:#a6e22e">name</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">retrieveUser</span>(<span style="color:#a6e22e">rows</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p><br/></p>
+
+<p>The above code is the implementation for “UserDataService”. “EnableTx()” method retrieves sql.Tx from “TxDataInterface” and replace the sql.DB inside “UserDataSql” to sql.Tx.</p>
+
+<p>Data access method (for example, FindByName() ) is shared between transaction and non-transaction code and doesn’t need to know whether the passed receiver “UserDataSql.DB” is sql.DB or sql.Tx.</p>
+
+<p><strong>Dependency leak:</strong></p>
+
+<p>There is one flaw in the implementation, which breaks my design and makes it imperfect. It is the function “GetTx()” in “TxDataInterface”, which is a data service layer interface, thus it shouldn’t depend on gdbc.SqlGdbc (database interface). You may think the implementation code of data service layer need to access database anyway, which is true for now. However, you can change the implementation to call a gRPC Microservice in the future. If the interface doesn’t depend on SQL interface, you are free to change the implementation, but if not, the interface sticks with SQL forever even though your implementation has changed.</p>
+
+<p>Why is it the only place to break the dependency? Because for other interfaces, the container is responsible to create concrete types, and the rest part of the application only uses the interface. But for transaction, after the concrete type is created, the underline database handler needs to be replace from sql.DB to sql.Tx, which breaks the design.</p>
+
+<p>Is there a fix for it? Yes, the container can create sql.Tx instead of sql.DB for functions needing transaction so I don’t need to do it in use case level later. However, a flag is needed in the configuration file to indicate whether a function needs transaction or not for every function in a use case. That is too big a change, so I decided to live with an imperfect design for now and try to revisit it later.</p>
+
+<h2 id="benefit">Benefit:</h2>
+
+<p>With this implementation, the transaction code is almost transparent to business logic (except the flaw I mentioned above), you don’t have the database level transaction code such as Tx.Begin, Tx.Commit and Tx.Rollback (you do need the business level function Tx.Begin and Tx.End though) mixed with business logic code, you don’t even have those in your persistence code. To enable transaction on the use case layer, you just need to implement EnableTx() on the use case and wrap the business function among “TxBegin()”, EnableTx() and “TxEnd()” as above example showed. On persistence layer, most transaction code has already been implemented by “txDataService.go”, you just need to implement “EnableTx” for a particular data service. The real meat for transaction support is in “transaction.go” file, which implemented “Transactioner” interface, which has four methods, “Rollback”, “Commit”, “TxBegin” and “TxEnd”</p>
+
+<h2 id="steps-to-add-transaction-support-to-a-use-case"><strong>Steps to add transaction support to a use case:</strong></h2>
+
+<p>Let say we need to add transaction support for one function in the use case “listCourse”, the following are the steps</p>
+
+<ol>
+<li><p>Implement “EnableTxer” interface in list course use case ( “listCourse.go”)</p></li>
+
+<li><p>Implement “EnableTxer” interface in the domain model’s ( “course”) data service layer ( courseDataMysql.go)</p></li>
+
+<li><p>Create a new transaction enabled function and wrap the existing business function among “TxBegin()”, EnableTx() and “TxEnd()”</p></li>
+</ol>
+
+<h2 id="limitations"><strong>Limitations:</strong></h2>
+
+<p>First, it is still not declarative transaction yet; second it didn’t fully achieved #4 in the requirement. To change a use case function from non-transaction to transaction, you either create a new function with transaction enabled, which need to change the calling function; or you modify the existing function and wrap it into a transaction and both of them need small code change. In order to achieve #4, a lot more code need to be added, so I postpone it to a later time. Third, it doesn’t support nested transaction, so you need to manually make sure nested transaction is not happening in the code. If the code-base is not too complex, this is easy to do. If you have a really complex code-base with a lot of transaction and non-transaction code intervened, then it is time to implement nested transaction or find a solution supporting it. I didn’t take time to look into how much effort it takes to add nested transaction, but it may not be trivial. If you are interested in it, <a href="https://github.com/golang/go/issues/7898">here</a>³ are some discussions. So far, for most use cases, the current solution probably strikes a good balance between the effort and the reward.</p>
+
+<h2 id="applied-scope"><strong>Applied Scope:</strong></h2>
+
+<p>First, it only supports transaction for SQL database. If you have a NoSql database, it won’t work (Most NoSql databases don’t support transaction anyway). Second, if your transaction boundary across databases (for example, among different Microservers), then it won’t work. The common idiom for that situation is to use <a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">Saga</a>⁴, basically you write a compensation action for each action in a transaction and execute the compensation action one by one during the rollback phase. It should not be difficult to add Sage solution in the current framework.</p>
+
+<h2 id="other-database-related-issues">Other database related issues:</h2>
+
+<p><strong>Close connection</strong></p>
+
+<p>I never called Close() function for database connections because there is no need to do it. You either pass in a sql.DB or a sql.Tx as a receiver for a persistence function. For sql.DB, the database will automatically create a connection pool and manage connections for you. When a connection is done, it will be returned to the connection pool and no need to close. For sql.Tx, at the end of a transaction, you either commit or rollback, after that the connection is returned to the connection pool and no need to close. Please see reference <a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">here</a>⁵ and <a href="http://go-database-sql.org/connection-pool.html">here</a>⁶ for detail.</p>
+
+<p><strong>O/R mapping</strong></p>
+
+<p>I looked at couple O/R mapping libraries briefly and didn’t find them providing the needed functionality. I think O/R mapping is a good fit for two situations. First, your application is mostly CRUD, not much query or search; second, the developers are not familiar with SQL. If those are not the case, O/R mapping doesn’t provide much help. There are two features I want from an extension database library, one is loading sql.row to my domain model structs (include handling of NULL value) , the other is automatically closing the sql types such as sql.statement or sql.rows. There are some <a href="https://github.com/jmoiron/sqlx">sql extension</a>⁷ libraries seem to provide at least some of those functionalities. I haven’t got a chance to try it yet, but it seems worth a try.</p>
+
+<p><strong>Defer:</strong></p>
+
+<p>You will make a lot of repeated calls to close database types (such as statements, rows ) when work with a database, like the one-“defer row.close()” in the following code. You want to do it right though, which is always put “defer” after error handling function because if not, when there is an error, “rows” will be nil, which will cause panic and the error handling code will not be executed.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">uds</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">UserDataSql</span>) <span style="color:#a6e22e">Find</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">User</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">uds</span>.<span style="color:#a6e22e">DB</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#a6e22e">QUERY_USER_BY_ID</span>, <span style="color:#a6e22e">id</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+	}
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">retrieveUser</span>(<span style="color:#a6e22e">rows</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p><strong>Panic:</strong></p>
+
+<p>I saw a lot of Go database code generated a panic instead of an error when there is a database error, which could cause a problem in Microservice environment, where you always want to keep the service running. Let’s say when you have a SQL error in an update statement, then users won’t be able to access that function, which is bad. But if because that, the whole service or website is shutdown, then it is much worse. So the right way to do is propagating the error to upper level and let it decide what to do. What if it is a third party library, who generates the panic? Then, you need to catch and recover from the panic to keep your service running. I gave an example of it in another article “<a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Application Logging</a>”⁸.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="references">References:</h2>
+
+<p>[1]<a href="https://stackoverflow.com/questions/26593867/db-transaction-in-golang">db transaction in golang</a></p>
+
+<p>[2]<a href="https://stackoverflow.com/questions/16184238/database-sql-tx-detecting-commit-or-rollback/23502629#23502629">database/sql Tx — detecting Commit or Rollback</a></p>
+
+<p>[3]<a href="https://github.com/golang/go/issues/7898">database/sql: nested transaction or save point support</a></p>
+
+<p>[4]<a href="https://www.youtube.com/watch?v=xDuwrtwYHu8">GOTO 2015 • Applying the Saga Pattern • Caitie McCaffrey — YouTube</a></p>
+
+<p>[5]<a href="https://www.vividcortex.com/blog/2015/09/22/common-pitfalls-go/">Common Pitfalls When Using database/sql in Go</a></p>
+
+<p>[6]<a href="http://go-database-sql.org/connection-pool.html">Go database/sql tutorial</a></p>
+
+<p>[7]<a href="https://github.com/jmoiron/sqlx">sqlx</a></p>
+
+<p>[8]<a href="https://jfeng45.github.io/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/transaction_support/">zh: 清晰架构（Clean Atchitecture）的Go微服务: 事物管理</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/coding_style/">Go Microservice with Clean Architecture: Coding Style</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a></li>
+        
+            <li><a href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

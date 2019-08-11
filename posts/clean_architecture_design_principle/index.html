@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<meta property="og:title" content="Go Microservice with Clean Architecture: Design Principle" />
-<meta property="og:description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom." />
+<meta property="og:title" content="清晰架构（Clean Architecture）的Go微服务: 设计原则" />
+<meta property="og:description" content="我使用Spring的基于接口的编程和依赖注入（Dependency Injection）来实现Bob Martin的清晰架构（Clean Architecture），并遵循了Go的简单编程风格。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jfeng45.github.io/posts/clean_architecture_design_principle/" />
 <meta property="article:published_time" content="2019-07-22T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-07-22T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go Microservice with Clean Architecture: Design Principle"/>
-<meta name="twitter:description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom."/>
+<meta name="twitter:title" content="清晰架构（Clean Architecture）的Go微服务: 设计原则"/>
+<meta name="twitter:description" content="我使用Spring的基于接口的编程和依赖注入（Dependency Injection）来实现Bob Martin的清晰架构（Clean Architecture），并遵循了Go的简单编程风格。"/>
 
 
 
     
-      <link rel="canonical" href="https://medium.com/@jfeng45/go-micro-service-with-clean-architecture-design-principle-118d2eeef1e6">
+      <link rel="canonical" href="https://jfeng45.github.io/posts/clean_architecture_design_principle/">
     
 
     
-       <meta name="description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom.">
+       <meta name="description" content="我使用Spring的基于接口的编程和依赖注入（Dependency Injection）来实现Bob Martin的清晰架构（Clean Architecture），并遵循了Go的简单编程风格。">
     
 
     <title>
       
-        Go Microservice with Clean Architecture: Design Principle | Software Craftsman
+        清晰架构（Clean Architecture）的Go微服务: 设计原则 | 
       
     </title>
 
@@ -43,13 +43,15 @@
     
   </head>
   <body>
+  <div id="container">
     
       
 
 <header class="blog-header">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="/">
-            Software Craftsman
+            
+码农工匠
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -61,22 +63,37 @@
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Home</a>
+                        <a class="nav-link" href="/introduction">首页</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="/posts">文章</a>
                     
                 </li>
                 
                 <li class="nav-item ">
                     
-                        <a class="nav-link" href="/project/">Project</a>
+                        <a class="nav-link" href="/project/">项目</a>
                     
                 </li>
                 
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        语言
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
             </ul>
             
         </div>
@@ -84,17 +101,17 @@
 </header>
 
     
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
 
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
-
-          
+            
 
 <header>
     <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a>
+    <a class="text-dark" href="/posts/clean_architecture_design_principle/">清晰架构（Clean Architecture）的Go微服务: 设计原则</a>
 </h5>
 
     
@@ -105,25 +122,25 @@
         <time datetime="2019-07-22">2019-07-22</time>
     
     
-        by <span rel="author">Jin Feng</span>
+       <span rel="author">冯进</span>
     
 </div>
 
     
 <div class="blog-post-tags text-secondary">
-    <strong>Tags:</strong>
+    <strong>标签:</strong>
     
         <a class="badge badge-primary" href="/tags/golang">Golang</a>
     
-        <a class="badge badge-primary" href="/tags/clean-architecture">Clean Architecture</a>
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
     
 </div>
 
     
 <div class="blog-post-categories text-secondary">
-    <strong>Categories:</strong>
+    <strong>分类:</strong>
     
-        <a class="badge badge-primary" href="/categories/go-microservice">Go Microservice</a>
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
     
 </div>
 
@@ -132,30 +149,34 @@
 <article class="blog-post">
     
 
-<h2 id="inspiration-of-design">Inspiration of design:</h2>
+<h5 id="设计灵感"><strong>设计灵感:</strong></h5>
 
-<p>I wrote a Go Microservice application recently and the design of this application coming from three inspirations:</p>
+<p><br/></p>
+
+<p>我最近写了一个Go微服务应用程序，这个程序的设计来自三个灵感：</p>
 
 <ul>
-<li><p><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>¹ and <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID</a>² design <a href="https://dave.cheney.net/2016/08/20/solid-go-design">principle</a>³</p></li>
+<li><p><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">清晰架构&rdquo;Clean Architecture&rdquo;</a>¹ and <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID (面向对象设计)</a>² 设计 <a href="https://dave.cheney.net/2016/08/20/solid-go-design">Go SOLID</a>³</p></li>
 
-<li><p><a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans">Spring’s application context</a>⁴</p></li>
+<li><p><a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans">Spring的容器技术（Spring’s application context）</a>⁴</p></li>
 
-<li><p><a href="https://talks.golang.org/2012/splash.article">Go’s concise design</a>⁵ especially <a href="https://spf13.com/post/is-go-object-oriented">Go’s implementation of object-oriented design</a>⁶</p></li>
+<li><p><a href="https://talks.golang.org/2012/splash.article">Go的简洁设计</a>⁵ 特别是 <a href="https://spf13.com/post/is-go-object-oriented">Go的面向对象的设计</a>⁶</p></li>
 </ul>
 
-<p>I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom. Trade-offs have been made when there are conflicts among them. I only applied Clean Architecture&rsquo;s high-level design principles (mainly SOLID), so the detail of the implementation may be different from other implementations.</p>
+<p>我使用Spring的基于接口的编程和依赖注入（Dependency Injection）来实现Bob Martin的清晰架构（Clean Architecture），并遵循了Go的简单编程风格。当它们之间存在冲突时，进行了取舍。我只采用了Clean Architecture的设计原则（主要是SOLID），因此实现的细节可能与其他SOLID实现不同。</p>
 
-<p>Coming from Java background, I am quite familiar with the first two design ideas. After learning Go, I gradually identified Go’s concise design. Generally speaking, there are two different programming style, one is object-oriented; the other is non object-oriented, which believes the idea of creating simplest code that works without up-front design. Go is closer to the second camp, even though it has some object-oriented features. Programming in Go gives me a new perspective to reevaluate object-oriented programming and influenced my coding style. The result is that I am doing object-oriented design only when it is necessary and I prefer a solution with smaller effort than a perfect solution taking a lot of effort.</p>
+<p>我来自Java背景，对前两个设计思想非常熟悉。在学习了Go之后，我逐渐认同了Go的简单风格。粗略来说，有两种不同的编程风格，一种是面向对象的， 它强调设计;另一种是非面向对象的，它信奉用最简单的代码来实现用户需要的功能，无需预先设计。 Go更接近第二阵营，尽管它有一些面向对象的功能。 Go的编程思路为我提供了一个重新评估面向对象编程的新视角，并影响了我的编码风格。结果是我只在必要时才进行面向对象的设计，而我更倾向于使用更简单的解决方案而不是完美的方案。</p>
 
-<h2 id="design-principle">Design principle:</h2>
+<h5 id="设计原则"><strong>设计原则:</strong></h5>
+
+<p><br/></p>
 
 <ol>
-<li><p><a href="https://en.wikipedia.org/wiki/Interface-based_programming">Programming on interface</a>⁷</p>
+<li><p><a href="https://en.wikipedia.org/wiki/Interface-based_programming">基于接口编程（Programming on interface）</a>⁷</p>
 
-<p>There are three major layers in this application , use case, data service and domain model, among them only domain model has no interface because there is no need. When you access outside services, you do that through interface.</p>
+<p>本程序有三个主要业务层，用例（usecase），数据服务（dataservice）和域模型（model），其中只有域模型没有接口，因为没有必要。 当你访问外部服务时，你可以通过接口进行访问。</p>
 
-<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
 <table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
@@ -197,126 +218,137 @@
     </code></pre></td></tr></table>
 </div>
 </div>
-<br/></p>
 
-<p>The key of interface-based programming is to pass in interfaces into a function as parameters and return interfaces instead of concrete types. For example, in the above code, look at the return-“dataservice.UserDataInterface”, which is an interface, not a struct. The calling function doesn’t need to know the returned concrete struct because the interface encapsulates all the information it needed. This gives you a great flexibility to replace the returned struct with another one without impact the calling function.</p></li>
+<p><br/>
+基于接口的编程的关键是将接口作为参数传递给函数，并返回接口而不是具体类型。 例如，在上面的代码中，返回值-“dataservice.UserDataInterface”，它是一个接口，而不是struct。 调用函数不需要知道返回的具体结构，因为接口封装了它需要的所有信息。 这使你可以非常灵活地将返回的结构替换为另一个结构，而不会影响调用函数。</p></li>
 
-<li><p>Create concrete type by dependency injection through the factory method pattern.</p>
+<li><p>用工厂方法模式（factory method pattern）通过依赖注入（Dependency Injection）创建具体类型.</p>
 
-<p>The application container is responsible for creating concrete types and inject them into functions. It will be explained in detail in another “<a href="https://jfeng45.github.io/posts/dependency_injection/">Dependency Injection</a>”⁸.</p></li>
+<p>程序容器负责创建具体类型并将其注入函数。 我将在 “<a href="https://jfeng45.github.io/posts/dependency_injection/">依赖注入（Dependency Injection）</a>”⁸中进行详细解释.</p></li>
 
-<li><p>Set up correct dependency</p>
+<li><p>建立正确的依赖关系</p>
 
-<p>It means the following</p>
+<p>它意味着以下内容:<br/></p>
 
 <ul>
-<li><p>Each layer or component in the application has it’s own package. The interface is defined on the top level package and the concrete type is hidden in sub-packages.</p></li>
-
-<li><p>Dependency between different layers is only on interfaces not on concrete types</p></li>
-
-<li><p>The hierarchy of dependency from top level down is: “use case”, “data service” and “model”.</p></li>
+<li>程序中的各层或组件都有自己的单独的包。 接口在顶级包中定义，具体类型隐藏在子包中。</li>
+<li>不同层之间仅依赖于接口而不依赖于具体类型</li>
+<li>从顶层向下的依赖层次是：“用例”，“数据服务”和“模型”。
+    
+   <br/>
+<br /></li>
 </ul>
 
-<p>One way to measure quality of dependency is by the size of the import, the shorter the import the better the dependency relationship.</p></li>
+<p>衡量依赖关系质量的一种方法是看导入（import）语句的多少，导入语句越少，依赖关系越好。</p></li>
 
-<li><p><a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">Open-close principle</a>⁹</p>
+<li><p><a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">开闭原则（Open-close principle）</a>⁹</p>
 
-<p>This is my favorite design principle among all of them. It basically says whenever a new feature is added, instead of modifying existing code, trying to add new code. The way to do it is by apply #1 and #2 in above. There are many great real world examples of this principle, such as, <a href="https://en.wikipedia.org/wiki/Data_access_object">DAO</a>¹⁰. The benefit is that you can’t mess up existing code because only new code is added, which will greatly reduce the QA effort.</p></li>
+<p>这是我最喜欢的设计原则。 它要求你在需要添加新功能时，不要修改现有代码，而是添加新代码。 实现它的方法是使用上面讲到的＃1和＃2。 这个原则有许多很好的现实世界的例子，例如，<a href="https://en.wikipedia.org/wiki/Data_access_object">数据访问对象（DAO）</a>¹⁰。 好处是你不会无意中搞乱现有代码，因为只添加新代码，这将大大减少测试工作量。</p></li>
 </ol>
 
-<h2 id="is-the-design-over-engineered">Is the design over-engineered?</h2>
+<h5 id="是否过度设计了"><strong>是否过度设计了?</strong></h5>
 
-<p>Compared with similar solution in Java, the code in this application is quite concise thanks to Go’s simple design of the language itself. But for people coming from other programming paradigms, the design of this application may be overkill. I also asked myself the same question. In order to get the answer, cost and benefit need to be compared to arrive the conclusion.</p>
+<p><br/></p>
 
-<p>There are two types of change, business logic change and technical change. When writing business code, you don’t want to focuse on whether the data is from MongoDB or MySQL or a Microservice. When making technical changes, the nightmare is to accidentally break business features. A good design separates those two types of concern and make you only focus on one perspective at a time.</p>
+<p>与Java中的类似解决方案相比，由于Go的语言本身的简单设计，本程序中的代码量要少很多，也非常简洁。 但是对于来自其他编程语言（特别是动态语言如PHP，Ruby）的人来说，这个程序的设计可能有些重。 我也问了自己同样的问题。 为了得到答案，需要比较成本和收益以得出最终结论。</p>
 
-<p>Generally speaking, technical changes are not happening as often as business changes, but with the spread of Microservice, new technology will be adopted faster, which will speed up the technical changes.</p>
+<p>通常来说有两种类型的需求变更，业务逻辑变更和技术方案变更。 在编写业务代码时，你不希望关注数据是来自MongoDB还是MySQL还是微服务。 在进行技术修改时，最大的噩梦是意外破坏业务逻辑。 一个好的设计将这两种类型的编码在程序中分开，让你一次只关注一个。</p>
 
-<h2 id="benefits-of-the-design">Benefits of the design:</h2>
+<p>一般来说，技术方案变更不会像业务逻辑变化那样频繁发生，但随着微服务的普及，新技术将被更快地采用，这将加速技术变更。</p>
 
-<p>The following are couple examples to show you what steps are needed to make some changes. If you get a little confused with this section, you may want to read “<a href="https://jfeng45.github.io/posts/clean_architecture_application_design/">application design</a>”¹¹ first, which will give you an overview of the application structure.</p>
+<h5 id="设计带来的好处"><strong>设计带来的好处:</strong></h5>
 
-<h3 id="change-from-mysql-to-mongodb">Change from MySQL to MongoDB:</h3>
+<p><br/></p>
 
-<p>First, lets say we need to change the persistence layer of the domain model “User” from MySQL to MongoDB. The following are the steps:</p>
+<p>以下是几个示例，向你展示当需求变更时需要对程序进行的改动。 如果你看不太懂本节，可能需要先阅读“<a href="https://jfeng45.github.io/posts/clean_architecture_application_design/">程序设计</a>¹¹，它将为你提供程序结构的描述。</p>
+
+<h5 id="从mysql改成mongodb"><strong>从MySQL改成MongoDB:</strong></h5>
+
+<p><br/></p>
+
+<p>首先，假设我们需要将域模型“User”的持久层从MySQL更改为MongoDB。以下是步骤：</p>
 
 <ol>
-<li><p>Add new configuration information for MongoDB in the “appConfig[type].yaml” file</p></li>
+<li><p>在“appConfig [type] .yaml”文件中添加MongoDB的新配置信息</p></li>
 
-<li><p>Change the value of “userConfig” under “useCaseConfig” section in “appConfig[type].yaml” file to point to MongoDB instead of MySql</p></li>
+<li><p>将“appConfig [type] .yaml”文件中“useCaseConfig”部分下的“userConfig”值更改为指向MongoDB而不是MySql</p></li>
 
-<li><p>Create a new struct type for MongoDB in “appConfig.go”</p></li>
+<li><p>在“appConfig.go”中为MongoDB创建一个新的结构类型</p></li>
 
-<li><p>Add a new constant for MongoDB in “configValidator.go” and create validation rules.</p></li>
+<li><p>在“configValidator.go”中为MongoDB添加一个新常量并创建校验规则。</p></li>
 
-<li><p>Create a new MongoDB factory in “datastorefactory” package and add a new entry for MongoDB in “dbFactoryBuilderMap” in “datstoreFactory.go”.</p></li>
+<li><p>在“datastorefactory”包中创建一个新的MongoDB工厂（MongoDB factory），并在“datstoreFactory.go”的“dbFactoryBuilderMap”中为MongoDB添加一个新条目。</p></li>
 
-<li><p>Create a new folder “mongodb” under “userdata” and add the code for MongoDB implementation.</p></li>
+<li><p>在“userdata”下创建一个新文件夹“mongodb”，并添加MongoDB实现的代码。</p></li>
 </ol>
 
-<p>By applying the current design, the impact of the change is greatly reduced. There is no touch on the business logic code. The changes only cover the data service layer and the app container layer, and there is no change for the “use case” or model layer. For the data service layer (step 6), we only add new code for MongoDB and didn’t change any of the existing MySql code.</p>
+<p>通过当前的设计，大大减少了需求变化带来的影响。整个代码修改没有涉及业务逻辑代码。更改仅涵盖数据服务层和应用程序容器，“用例”或“模型”层没有任何更改。对于数据服务层（步骤6），我们只为MongoDB添加新代码，并且没有更改任何现有的MySql代码。</p>
 
-<p>Through steps 1 to 5, we make changes to the container (Dependency Injection) to inject MongoDB into the application, and this part changes the existing code, but only touches the type creation part, everything else is intact.</p>
+<p>通过步骤1到5，我们对容器（依赖注入）进行了更改以将MongoDB注入到应用程序中，这部分更改了现有代码，但只触及了类型创建部分，其他一切代码都完好无损。</p>
 
-<h3 id="change-registration-use-case-to-call-rest-service">Change registration use case to call REST service:</h3>
+<h5 id="改变用户注册用例-registration-use-case-调用另一个restful服务"><strong>改变用户注册用例（registration use case）调用另一个RESTFul服务:</strong></h5>
 
-<p>Second, lets say with more features added, the application becomes bigger and bigger and you decide to split part of the functionality into another Microservice, for example payment service. Now, you code need to call another Microservice, which is implemented in RESTFul protocol. The following are the steps:</p>
+<p><br/></p>
+
+<p>其次，假设随着功能增多，应用程序变得越来越大，你决定将部分功能拆分为另一个微服务，例如支付服务。现在，你的代码需要调用另一个微服务，它是用RESTFul协议中实现的。以下是步骤：</p>
 
 <ol>
-<li><p>Add a new entry for RESTFul config in the “appConfig[type].yaml” file</p></li>
+<li><p>在“appConfig [type] .yaml”文件中为RESTFul配置添加新条目</p></li>
 
-<li><p>Change the value of “userConfig” under “useCaseConfig” section to point to RESTFul config</p></li>
+<li><p>将“useCaseConfig”部分下的“userConfig”值更改为指向RESTFul配置</p></li>
 
-<li><p>Create a new struct type for RESTFul User config in “appConfig.go”</p></li>
+<li><p>在“appConfig.go”中为RESTFul用户配置创建新的结构类型</p></li>
 
-<li><p>Add a new constant for RESTFul in “configValidator.go” and create validation rules.</p></li>
+<li><p>在“configValidator.go”中为RESTFul添加一个新常量并创建校验规则。</p></li>
 
-<li><p>Create a new RESTFul factory in “datastorefactory” sub-package</p></li>
+<li><p>在“datastorefactory”子包中创建一个新的RESTFul工厂</p></li>
 
-<li><p>Add a new RESTFul data interface into “RegistrationUseCase” struct and modify “registrationFactory.go” to create a concrete type for it.</p></li>
+<li><p>将新的RESTFul数据接口添加到“RegistrationUseCase”结构中，并修改“registrationFactory.go”为其创建具体类型。</p></li>
 
-<li><p>Create a new folder under “adapter” and create the code for RESTFul implementation of payment service.</p></li>
+<li><p>在“adaptor”下创建一个新文件夹，并为RESTFul支付服务创建代码。</p></li>
 </ol>
 
-<p>Through steps 1 to 6, we make changes to the container (Dependency Injection) to inject RESTFul into the application, and this part touches the existing code. But by restricting the changes to the container, it greatly reduced the impact of the modification and protected the business logic from being accidentally changed. Step 7 is the real implementation of the RESTFul service.</p>
+<p>通过步骤1到6，我们对容器（依赖注入）进行了更改，以将RESTFul注入到程序中，此部分将触及现有代码。但是通过把更改限制在只对容器，它大大降低了修改的影响，并保护业务逻辑不会被意外更改。第7步是RESTFul服务的真正实现。</p>
 
-<h2 id="cost-of-design">Cost of Design:</h2>
+<h5 id="设计的成本"><strong>设计的成本:</strong></h5>
 
-<p>Next, let’s evaluate the cost of the design.</p>
+<p><br/></p>
+
+<p>接下来，让我们评估设计的成本。</p>
 
 <ol>
-<li><p>Create interface for use case layer</p></li>
+<li><p>为用例（usecase）层创建接口</p></li>
 
-<li><p>Create interface for data service layer</p></li>
+<li><p>为数据服务层（dataservice）创建接口</p></li>
 
-<li><p>Create interface for calling other Microservices</p></li>
+<li><p>创建调用其他微服务的接口</p></li>
 
-<li><p>Create application container to do Dependency Injection</p></li>
+<li><p>创建程序容器以执行依赖注入</p></li>
 </ol>
 
-<p>Steps 1 to 3 has little extra work and for step 3, you probably need to do it anyway.</p>
+<p>步骤1到3几乎没有额外的工作，对于第3步，你可能无法绕过。</p>
 
-<p>Step 4 is pretty involved and has some complexity. It is the result of interface-based programming. Each function is calling another one by the interface, but you do need a place to create the concrete type, and that is the application container, where all the complexity is in. Most complexity is coming from the fact that we want to make it easy to create new types in the future, so the container has to be flexible enough to accommodate new types.</p>
+<p>第4步有一定的工作量，并且比较复杂性。这是基于接口编程的结果。每个函数都通过接口调用另一个函数，但是你需要一个地方来创建具体的类型，那就是应用程序容器，其中所有的复杂性都在其中。大多数复杂性来自于我们希望简化创建新类型带来的工作，因此容器必须足够灵活以适应新类型的加入。</p>
 
-<p>If you know that your application won’t have many new types induced, or you’d rather spend a lot more time in the future and save some time now, then you can make it a lot simpler by the following steps. First, remove logger package if you don’t need the flexibility of switching to another logger. Second, remove the “config” package. That way you don’t read the configuration from a YAML file, but you also lost the flexibility to change the application behavior by configuration file. Third, you can even remove the factory method pattern. However, you will also lose all the benefit mentioned above and may risk breaking business features when working on technical changes.</p>
+<p>如果你的程序不会引入很多新类型，或者你宁愿将来花费更多时间但想现在节省一些时间，那么你可以通过以下步骤使其更加简单。首先，如果你不需要灵活地切换到另一个日志记录器，请删除“logger”包。其次，删除“config”包。这样你不需从YAML文件中读取配置，但是你也失去了通过配置文件更改应用程序行为的灵活性。第三，你甚至可以删除工厂方法模式。但是，你还将失去上述所有优势，并且可能会在进行技术更改时冒险破坏业务逻辑的风险。</p>
 
-<p><strong>Configuration Management:</strong></p>
+<p><strong>配置管理:</strong></p>
 
-<p>Some complexity coming from the need to read the configuration from a file. In the future, the configuration could be read from a configuration server ( a central place to manage application configuration). In a Microservice environment ( especially a Docker or Kubernetes one), the server URL are dynamically generated and destroyed, which can’t be managed in a static file. I consider the feature of loading application configuration dynamically as a must have rather than nice to have. With the current design, I can easily change the “appConfig.go” to use <a href="https://github.com/spf13/viper">Viper</a>¹², which supports configuration management.</p>
+<p>某些修改的复杂性来自需要从文件中读取配置。 它是为了将来可以从配置服务器（configuration server）（管理应用程序配置的程序）读取配置做准备。 在微服务环境（特别是Docker或Kubernetes环境）中，服务器URL是动态生成和销毁的，无法在静态文件中进行管理。 我认为动态加载应用程序配置的功能是必须的而不是可有可无的。 使用当前的设计，我可以轻松地将“appConfig.go”更改为使用<a href="https://github.com/spf13/viper">Viper</a>¹²，它支持配置管理。</p>
 
-<h2 id="conclusion"><strong>Conclusion:</strong></h2>
+<h5 id="结论"><strong>结论:</strong></h5>
 
-<p>The current design added some complexity to the application, but some of it may not be avoided in the dynamic deploying (docker or Kubernetes) environment. Overall, you get a great benefit over some extra work, so I don’t think the design is over-engineered.</p>
+<p>当前的设计为程序增加了一些复杂性，但在动态部署（docker或Kubernetes）环境中可能无法避免其中的一些。 总的来说，你可以从这些额外的工作中获得很大的好处，所以我不认为这个设计是过度的。</p>
 
-<h2 id="source-code">Source Code:</h2>
+<h5 id="源程序"><strong>源程序:</strong></h5>
 
-<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+<p>完整的源程序链接 <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
 
-<h2 id="other-articles">Other articles:</h2>
+<h5 id="其他文章"><strong>其他文章:</strong></h5>
 
-<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+<p>请在这里阅读本系列的其他文章 “<a href="https://jfeng45.github.io/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>”.</p>
 
-<h2 id="reference">Reference:</h2>
+<h5 id="索引"><strong>索引:</strong></h5>
 
 <p>[1]<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Code Blog</a></p>
 
@@ -344,17 +376,26 @@
 
 
     
+      <h4>翻译</h4>
+      <ul>
+        
+        <li>
+          <a href="/en/posts/clean_architecture_design_principle/">en: Go Microservice with Clean Architecture: Design Principle</a>
+        </li>
+        
+      </ul>
+    
 
     
 
-    <h4>See also</h4>
+    <h4>相关文章</h4>
     <ul>
         
-            <li><a href="/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+            <li><a href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a></li>
         
-            <li><a href="/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+            <li><a href="/posts/clean_architecture_application_design/">清晰架构（Clean Architecture）的Go微服务: 程序设计</a></li>
         
-            <li><a href="/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+            <li><a href="/posts/go_microservice_application_layout/">清晰架构（Clean Architecture）的Go微服务: 程序结构</a></li>
         
     </ul>
 
@@ -363,51 +404,51 @@
 
 
 
-        </div>
+          </div>
 
-        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
     
         
 
 
 <section>
-    <h4>Recent Posts</h4>
+    <h4>最新文章</h4>
     <ol class="list-unstyled">
         
         <li>
-            <a href="/posts/application_container/">Application Container</a>
+            <a href="/posts/dependency_injection/">依赖注入</a>
         </li>
         
         <li>
-            <a href="/posts/dependency_injection/">Dependency Injection</a>
+            <a href="/posts/application_container/">程序容器</a>
         </li>
         
         <li>
-            <a href="/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+            <a href="/posts/go_logging_and_error_handling/">日志管理和错误处理</a>
         </li>
         
         <li>
-            <a href="/posts/coding_style/">Coding Style</a>
+            <a href="/posts/coding_style/">编码风格</a>
         </li>
         
         <li>
-            <a href="/posts/transaction_support/">Transaction Support</a>
+            <a href="/posts/transaction_support/">事物管理</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go Microservice Series</a>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+            <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_design_principle/">Design Principle</a>
+            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
         </li>
         
         <li>
-            <a href="/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -418,39 +459,39 @@
         <section>
     
         
-        <h4>Categories</h4>
+        <h4>分类</h4>
         <p>
             
-            <a class="badge badge-primary" href="/categories/go-microservice">go-microservice</a>
+            <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
             
         </p>
         
     
         
-        <h4>Tags</h4>
+        <h4>标签</h4>
         <p>
-            
-            <a class="badge badge-primary" href="/tags/application-container">application-container</a>
-            
-            <a class="badge badge-primary" href="/tags/application-layout">application-layout</a>
-            
-            <a class="badge badge-primary" href="/tags/clean-architecture">clean-architecture</a>
-            
-            <a class="badge badge-primary" href="/tags/coding-style">coding-style</a>
-            
-            <a class="badge badge-primary" href="/tags/database-transaction">database-transaction</a>
-            
-            <a class="badge badge-primary" href="/tags/dependency-injection">dependency-injection</a>
-            
-            <a class="badge badge-primary" href="/tags/error-handling">error-handling</a>
             
             <a class="badge badge-primary" href="/tags/golang">golang</a>
             
             <a class="badge badge-primary" href="/tags/grpc">grpc</a>
             
-            <a class="badge badge-primary" href="/tags/logging">logging</a>
+            <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
             
-            <a class="badge badge-primary" href="/tags/microservice">microservice</a>
+            <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
+            
+            <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8">程序容器</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">程序结构</a>
+            
+            <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
+            
+            <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
             
         </p>
         
@@ -459,12 +500,13 @@
     
 </aside>
 
+        </div>
       </div>
-    </div>
-    
-
-    
       
+    </div>
+    <div id="footer">
+      
+        
 
 
 
@@ -474,17 +516,18 @@
 
 <footer class="blog-footer-bs w-100">
     <nav class="navbar navbar-light bg-light">
-        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
-        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap</p>
+        <p class="w-100 text-center"><a href="#">回到头部</a></p>
     </nav>
 </footer>
 
-    
-
+      
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
   </body>
 </html>

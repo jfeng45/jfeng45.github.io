@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Go Microservice with Clean Architecture: Design Principle" />
+<meta property="og:description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/clean_architecture_design_principle/" />
+<meta property="article:published_time" content="2019-07-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-22T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Microservice with Clean Architecture: Design Principle"/>
+<meta name="twitter:description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/@jfeng45/go-micro-service-with-clean-architecture-design-principle-118d2eeef1e6">
+    
+
+    
+       <meta name="description" content="I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom.">
+    
+
+    <title>
+      
+        Go Microservice with Clean Architecture: Design Principle | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/clean_architecture_design_principle/">Go Microservice with Clean Architecture: Design Principle</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-07-22">2019-07-22</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/clean-architecture">Clean Architecture</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<h2 id="inspiration-of-design">Inspiration of design:</h2>
+
+<p>I wrote a Go Microservice application recently and the design of this application coming from three inspirations:</p>
+
+<ul>
+<li><p><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture</a>¹ and <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID</a>² design <a href="https://dave.cheney.net/2016/08/20/solid-go-design">principle</a>³</p></li>
+
+<li><p><a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans">Spring’s application context</a>⁴</p></li>
+
+<li><p><a href="https://talks.golang.org/2012/splash.article">Go’s concise design</a>⁵ especially <a href="https://spf13.com/post/is-go-object-oriented">Go’s implementation of object-oriented design</a>⁶</p></li>
+</ul>
+
+<p>I used Spring’s interface-based programming and Dependency Injection to implement Bob Martin’s Clean Architecture with Go’s simplicity idiom. Trade-offs have been made when there are conflicts among them. I only applied Clean Architecture&rsquo;s high-level design principles (mainly SOLID), so the detail of the implementation may be different from other implementations.</p>
+
+<p>Coming from Java background, I am quite familiar with the first two design ideas. After learning Go, I gradually identified Go’s concise design. Generally speaking, there are two different programming style, one is object-oriented; the other is non object-oriented, which believes the idea of creating simplest code that works without up-front design. Go is closer to the second camp, even though it has some object-oriented features. Programming in Go gives me a new perspective to reevaluate object-oriented programming and influenced my coding style. The result is that I am doing object-oriented design only when it is necessary and I prefer a solution with smaller effort than a perfect solution taking a lot of effort.</p>
+
+<h2 id="design-principle">Design principle:</h2>
+
+<ol>
+<li><p><a href="https://en.wikipedia.org/wiki/Interface-based_programming">Programming on interface</a>⁷</p>
+
+<p>There are three major layers in this application , use case, data service and domain model, among them only domain model has no interface because there is no need. When you access outside services, you do that through interface.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#75715e">// sqlUserDataServiceFactory is a empty receiver for Build method
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">sqlUserDataServiceFactory</span> <span style="color:#66d9ef">struct</span>{}
+    
+    <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">sudsf</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sqlUserDataServiceFactory</span>) <span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">container</span>.<span style="color:#a6e22e">Container</span>, <span style="color:#a6e22e">dataConfig</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">DataConfig</span>)
+        (<span style="color:#a6e22e">dataservice</span>.<span style="color:#a6e22e">UserDataInterface</span>, <span style="color:#66d9ef">error</span>) {
+    
+        <span style="color:#a6e22e">dsc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dataConfig</span>.<span style="color:#a6e22e">DataStoreConfig</span>
+        <span style="color:#a6e22e">dsi</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">datastorefactory</span>.<span style="color:#a6e22e">GetDataStoreFb</span>(<span style="color:#a6e22e">dsc</span>.<span style="color:#a6e22e">Code</span>).<span style="color:#a6e22e">Build</span>(<span style="color:#a6e22e">c</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">dsc</span>)
+        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrap</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+        }
+        <span style="color:#a6e22e">ds</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dsi</span>.(<span style="color:#a6e22e">gdbc</span>.<span style="color:#a6e22e">SqlGdbc</span>)
+        <span style="color:#a6e22e">uds</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sqldb</span>.<span style="color:#a6e22e">UserDataSql</span>{<span style="color:#a6e22e">DB</span>: <span style="color:#a6e22e">ds</span>}
+        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Log</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;uds:&#34;</span>, <span style="color:#a6e22e">uds</span>.<span style="color:#a6e22e">DB</span>)
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">uds</span>, <span style="color:#66d9ef">nil</span>
+    
+    }
+    </code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The key of interface-based programming is to pass in interfaces into a function as parameters and return interfaces instead of concrete types. For example, in the above code, look at the return-“dataservice.UserDataInterface”, which is an interface, not a struct. The calling function doesn’t need to know the returned concrete struct because the interface encapsulates all the information it needed. This gives you a great flexibility to replace the returned struct with another one without impact the calling function.</p></li>
+
+<li><p>Create concrete type by dependency injection through the factory method pattern.</p>
+
+<p>The application container is responsible for creating concrete types and inject them into functions. It will be explained in detail in another “<a href="https://jfeng45.github.io/en/posts/dependency_injection/">Dependency Injection</a>”⁸.</p></li>
+
+<li><p>Set up correct dependency</p>
+
+<p>It means the following</p>
+
+<ul>
+<li><p>Each layer or component in the application has it’s own package. The interface is defined on the top level package and the concrete type is hidden in sub-packages.</p></li>
+
+<li><p>Dependency between different layers is only on interfaces not on concrete types</p></li>
+
+<li><p>The hierarchy of dependency from top level down is: “use case”, “data service” and “model”.</p></li>
+</ul>
+
+<p>One way to measure quality of dependency is by the size of the import, the shorter the import the better the dependency relationship.</p></li>
+
+<li><p><a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">Open-close principle</a>⁹</p>
+
+<p>This is my favorite design principle among all of them. It basically says whenever a new feature is added, instead of modifying existing code, trying to add new code. The way to do it is by apply #1 and #2 in above. There are many great real world examples of this principle, such as, <a href="https://en.wikipedia.org/wiki/Data_access_object">DAO</a>¹⁰. The benefit is that you can’t mess up existing code because only new code is added, which will greatly reduce the QA effort.</p></li>
+</ol>
+
+<h2 id="is-the-design-over-engineered">Is the design over-engineered?</h2>
+
+<p>Compared with similar solution in Java, the code in this application is quite concise thanks to Go’s simple design of the language itself. But for people coming from other programming paradigms, the design of this application may be overkill. I also asked myself the same question. In order to get the answer, cost and benefit need to be compared to arrive the conclusion.</p>
+
+<p>There are two types of change, business logic change and technical change. When writing business code, you don’t want to focuse on whether the data is from MongoDB or MySQL or a Microservice. When making technical changes, the nightmare is to accidentally break business features. A good design separates those two types of concern and make you only focus on one perspective at a time.</p>
+
+<p>Generally speaking, technical changes are not happening as often as business changes, but with the spread of Microservice, new technology will be adopted faster, which will speed up the technical changes.</p>
+
+<h2 id="benefits-of-the-design">Benefits of the design:</h2>
+
+<p>The following are couple examples to show you what steps are needed to make some changes. If you get a little confused with this section, you may want to read “<a href="https://jfeng45.github.io/en/posts/clean_architecture_application_design/">application design</a>”¹¹ first, which will give you an overview of the application structure.</p>
+
+<h3 id="change-from-mysql-to-mongodb">Change from MySQL to MongoDB:</h3>
+
+<p>First, lets say we need to change the persistence layer of the domain model “User” from MySQL to MongoDB. The following are the steps:</p>
+
+<ol>
+<li><p>Add new configuration information for MongoDB in the “appConfig[type].yaml” file</p></li>
+
+<li><p>Change the value of “userConfig” under “useCaseConfig” section in “appConfig[type].yaml” file to point to MongoDB instead of MySql</p></li>
+
+<li><p>Create a new struct type for MongoDB in “appConfig.go”</p></li>
+
+<li><p>Add a new constant for MongoDB in “configValidator.go” and create validation rules.</p></li>
+
+<li><p>Create a new MongoDB factory in “datastorefactory” package and add a new entry for MongoDB in “dbFactoryBuilderMap” in “datstoreFactory.go”.</p></li>
+
+<li><p>Create a new folder “mongodb” under “userdata” and add the code for MongoDB implementation.</p></li>
+</ol>
+
+<p>By applying the current design, the impact of the change is greatly reduced. There is no touch on the business logic code. The changes only cover the data service layer and the app container layer, and there is no change for the “use case” or model layer. For the data service layer (step 6), we only add new code for MongoDB and didn’t change any of the existing MySql code.</p>
+
+<p>Through steps 1 to 5, we make changes to the container (Dependency Injection) to inject MongoDB into the application, and this part changes the existing code, but only touches the type creation part, everything else is intact.</p>
+
+<h3 id="change-registration-use-case-to-call-rest-service">Change registration use case to call REST service:</h3>
+
+<p>Second, lets say with more features added, the application becomes bigger and bigger and you decide to split part of the functionality into another Microservice, for example payment service. Now, you code need to call another Microservice, which is implemented in RESTFul protocol. The following are the steps:</p>
+
+<ol>
+<li><p>Add a new entry for RESTFul config in the “appConfig[type].yaml” file</p></li>
+
+<li><p>Change the value of “userConfig” under “useCaseConfig” section to point to RESTFul config</p></li>
+
+<li><p>Create a new struct type for RESTFul User config in “appConfig.go”</p></li>
+
+<li><p>Add a new constant for RESTFul in “configValidator.go” and create validation rules.</p></li>
+
+<li><p>Create a new RESTFul factory in “datastorefactory” sub-package</p></li>
+
+<li><p>Add a new RESTFul data interface into “RegistrationUseCase” struct and modify “registrationFactory.go” to create a concrete type for it.</p></li>
+
+<li><p>Create a new folder under “adapter” and create the code for RESTFul implementation of payment service.</p></li>
+</ol>
+
+<p>Through steps 1 to 6, we make changes to the container (Dependency Injection) to inject RESTFul into the application, and this part touches the existing code. But by restricting the changes to the container, it greatly reduced the impact of the modification and protected the business logic from being accidentally changed. Step 7 is the real implementation of the RESTFul service.</p>
+
+<h2 id="cost-of-design">Cost of Design:</h2>
+
+<p>Next, let’s evaluate the cost of the design.</p>
+
+<ol>
+<li><p>Create interface for use case layer</p></li>
+
+<li><p>Create interface for data service layer</p></li>
+
+<li><p>Create interface for calling other Microservices</p></li>
+
+<li><p>Create application container to do Dependency Injection</p></li>
+</ol>
+
+<p>Steps 1 to 3 has little extra work and for step 3, you probably need to do it anyway.</p>
+
+<p>Step 4 is pretty involved and has some complexity. It is the result of interface-based programming. Each function is calling another one by the interface, but you do need a place to create the concrete type, and that is the application container, where all the complexity is in. Most complexity is coming from the fact that we want to make it easy to create new types in the future, so the container has to be flexible enough to accommodate new types.</p>
+
+<p>If you know that your application won’t have many new types induced, or you’d rather spend a lot more time in the future and save some time now, then you can make it a lot simpler by the following steps. First, remove logger package if you don’t need the flexibility of switching to another logger. Second, remove the “config” package. That way you don’t read the configuration from a YAML file, but you also lost the flexibility to change the application behavior by configuration file. Third, you can even remove the factory method pattern. However, you will also lose all the benefit mentioned above and may risk breaking business features when working on technical changes.</p>
+
+<p><strong>Configuration Management:</strong></p>
+
+<p>Some complexity coming from the need to read the configuration from a file. In the future, the configuration could be read from a configuration server ( a central place to manage application configuration). In a Microservice environment ( especially a Docker or Kubernetes one), the server URL are dynamically generated and destroyed, which can’t be managed in a static file. I consider the feature of loading application configuration dynamically as a must have rather than nice to have. With the current design, I can easily change the “appConfig.go” to use <a href="https://github.com/spf13/viper">Viper</a>¹², which supports configuration management.</p>
+
+<h2 id="conclusion"><strong>Conclusion:</strong></h2>
+
+<p>The current design added some complexity to the application, but some of it may not be avoided in the dynamic deploying (docker or Kubernetes) environment. Overall, you get a great benefit over some extra work, so I don’t think the design is over-engineered.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in <a href="https://github.com/jfeng45/servicetmpl">github</a>: <a href="https://github.com/jfeng45/servicetmpl">https://github.com/jfeng45/servicetmpl</a></p>
+
+<h2 id="other-articles">Other articles:</h2>
+
+<p>Please read the rest of the articles in this series in “<a href="https://jfeng45.github.io/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a>”.</p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1]<a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Code Blog</a></p>
+
+<p>[2]<a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">S.O.L.I.D is for the first five object-oriented design (OOD) principles introduced by Robert C. Martin, popularly known as Uncle Bob and the acronym is introduced later by Michael Feathers</a></p>
+
+<p>[3]<a href="https://dave.cheney.net/2016/08/20/solid-go-design">SOLID Go Design</a></p>
+
+<p>[4]<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans">IoC Container ( Dependency Injection)</a></p>
+
+<p>[5]<a href="https://talks.golang.org/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a></p>
+
+<p>[6]<a href="https://spf13.com/post/is-go-object-oriented/">Is Go An Object Oriented Language?</a></p>
+
+<p>[7]<a href="https://en.wikipedia.org/wiki/Interface-based_programming">Interface-based programming</a></p>
+
+<p>[8] <a href="https://jfeng45.github.io/en/posts/dependency_injection/">Go Microservice with Clean architecture: Dependency Injection</a></p>
+
+<p>[9]<a href="https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle">Open–closed principle</a></p>
+
+<p>[10]<a href="https://en.wikipedia.org/wiki/Data_access_object">Data access object</a></p>
+
+<p>[11]<a href="https://jfeng45.github.io/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></p>
+
+<p>[12]<a href="https://github.com/spf13/viper">viper</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/clean_architecture_design_principle/">zh: 清晰架构（Clean Architecture）的Go微服务: 设计原则</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_application_design/">Go Microservice with Clean Architecture: Application Design</a></li>
+        
+            <li><a href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+    </ul>
+
+
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_microservice_application_layout/">Go Microservice Application Layout</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

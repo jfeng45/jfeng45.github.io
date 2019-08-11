@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>编码风格 on </title>
+    <link>https://jfeng45.github.io/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/</link>
+    <description>Recent content in 编码风格 on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Wed, 24 Jul 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 编码风格</title>
+      <link>https://jfeng45.github.io/posts/coding_style/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/coding_style/</guid>
+      <description>编码风格在编程中是一个相对乏味的主题，但是合适的编码风格对一个有效的程序员是至关重要的。 它有三个组成部分： 程序结构 （ application layout） 编码规则</description>
+    </item>
+    
+  </channel>
+</rss>

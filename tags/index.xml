@@ -1,42 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Software Craftsman</title>
+    <title>Tags on </title>
     <link>https://jfeng45.github.io/tags/</link>
-    <description>Recent content in Tags on Software Craftsman</description>
+    <description>Recent content in Tags on </description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-Hans</language>
     <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Application Container</title>
-      <link>https://jfeng45.github.io/tags/application-container/</link>
-      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/application-container/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Clean Architecture</title>
-      <link>https://jfeng45.github.io/tags/clean-architecture/</link>
-      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/clean-architecture/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Dependency Injection</title>
-      <link>https://jfeng45.github.io/tags/dependency-injection/</link>
-      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/dependency-injection/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Golang</title>
@@ -48,65 +21,92 @@
     </item>
     
     <item>
-      <title>Error Handling</title>
-      <link>https://jfeng45.github.io/tags/error-handling/</link>
-      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/error-handling/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Logging</title>
-      <link>https://jfeng45.github.io/tags/logging/</link>
-      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/logging/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Microservice</title>
-      <link>https://jfeng45.github.io/tags/microservice/</link>
-      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/microservice/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Coding Style</title>
-      <link>https://jfeng45.github.io/tags/coding-style/</link>
-      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/coding-style/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Database Transaction</title>
-      <link>https://jfeng45.github.io/tags/database-transaction/</link>
-      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/tags/database-transaction/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Grpc</title>
       <link>https://jfeng45.github.io/tags/grpc/</link>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/tags/grpc/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Application Layout</title>
-      <link>https://jfeng45.github.io/tags/application-layout/</link>
+      <title>依赖注入</title>
+      <link>https://jfeng45.github.io/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>清晰架构</title>
+      <link>https://jfeng45.github.io/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>程序容器</title>
+      <link>https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E5%AE%B9%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>“微服务”</title>
+      <link>https://jfeng45.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>日志管理</title>
+      <link>https://jfeng45.github.io/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>错误处理</title>
+      <link>https://jfeng45.github.io/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</link>
+      <pubDate>Thu, 25 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>事物管理</title>
+      <link>https://jfeng45.github.io/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编码风格</title>
+      <link>https://jfeng45.github.io/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>程序结构</title>
+      <link>https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/</link>
       <pubDate>Sun, 21 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jfeng45.github.io/tags/application-layout/</guid>
+      <guid>https://jfeng45.github.io/tags/%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
     
