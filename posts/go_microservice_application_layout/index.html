@@ -165,7 +165,7 @@
 
 <p>一般来说，创建应用程序结构有两种不同的方法：基于业务功能或基于技术结构。<a href="http://www.javapractices.com/topic/TopicAction.do?Id=205">大家的共识</a>³是基于业务功能的更好，对于单体项目（monolithic project）来说也确实如此。在微服务架构中，情况发生了变化，因为每个服务都有自己的存储库。因此，在每个微服务中，基于技术结构创建项目结构实际上是可行的。</p>
 
-<p>我还在<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">应用程序结构</a>⁴和<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">包结构</a>⁵上找到了Ben Johnson的一些好建议。但它没有为我的项目提供完整的解决方案，所以我决定创建自己的程序结构。程序结构取决于项目要求，以下是需求。</p>
+<p>我还找到了Ben Johnson关于<a href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">应用程序结构</a>⁴和<a href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">包结构</a>⁵的一些好建议。但它没有为我的项目提供完整的解决方案，所以我决定创建自己的程序结构。程序结构取决于项目要求，以下是需求。</p>
 
 <h5 id="项目需求"><strong>项目需求</strong>:</h5>
 
@@ -181,7 +181,7 @@
 
 <p>5.支持业务级别的事物交易。</p>
 
-<p>程序结构也受到程序设计的影响。 我采用了 <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Bob Martin的清晰架构（Clean Architecture</a>⁶ 和 Go的 <a href="https://talks.golang.org/2012/splash.article">简洁</a>⁷ 设计风格.</p>
+<p>程序结构也受到程序设计的影响。 我采用了 <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Bob Martin的清晰架构（Clean Architecture）</a>⁶ 和 Go的 <a href="https://talks.golang.org/2012/splash.article">简洁</a>⁷ 设计风格.</p>
 
 <p>在业务逻辑方面，有三层：“模型（model）”，即域模型; “数据服务（dataservice）”，它是数据持久性（数据库）层; “用例（usecase）”，这是业务逻辑层。</p>
 
@@ -339,7 +339,23 @@
 
     
 
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
 
+    (function() {
+        
+        
+        if (window.location.hostname == "localhost")
+            return;
+
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = '';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 </article>
 
 
