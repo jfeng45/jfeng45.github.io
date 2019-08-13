@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</title>
+      <title>清晰架构（Clean Architecture）的Go微服务: 程序容器（Application Container）</title>
       <link>https://jfeng45.github.io/posts/application_container/</link>
       <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/posts/application_container/</guid>
-      <description>清晰架构（Clean Atchitecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
+      <description>清晰架构（Clean Architecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
     </item>
     
     <item>

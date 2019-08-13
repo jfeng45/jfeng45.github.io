@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c9b00c44-24b8-46d1-af93-11bec97147cb" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/categories/go微服务/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/categories/go微服务/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/categories/go微服务/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/categories/go微服务/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/categories/go微服务/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/categories/go微服务/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/categories/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/categories/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/en/posts/application_container/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/en/posts/application_container/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/en/posts/dependency_injection/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/en/posts/dependency_injection/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/en/posts/transaction_support/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/en/posts/transaction_support/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/introduction/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/introduction/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/application_container/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/application_container/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/clean_architecture_application_design/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/clean_architecture_application_design/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/clean_architecture_design_principle/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/clean_architecture_design_principle/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/clean_architecture_with_go/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/clean_architecture_with_go/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/coding_style/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/coding_style/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/dependency_injection/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/dependency_injection/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/go_logging_and_error_handling/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/go_logging_and_error_handling/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/go_microservice_application_layout/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/go_microservice_application_layout/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/posts/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/posts/transaction_support/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/posts/transaction_support/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/go-grpc/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/project/go-grpc/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/go-microservice-template/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/project/go-microservice-template/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/project/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/golang/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/golang/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/golang/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/golang/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/golang/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/golang/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/grpc/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/grpc/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/grpc/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/grpc/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/事物管理/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/事物管理/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/事物管理/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/事物管理/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/依赖注入/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/依赖注入/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/依赖注入/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/依赖注入/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/微服务/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/微服务/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/日志管理/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/日志管理/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/清晰架构/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/清晰架构/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/清晰架构/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/清晰架构/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/清晰架构/page/2/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/清晰架构/page/2/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/程序容器/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/程序容器/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/程序容器/index.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tags/程序容器/index.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/程序结构/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/程序结构/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/编码风格/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/编码风格/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tags/错误处理/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags/错误处理/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zh/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/zh/sitemap.xml" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Atchitecture</find>
+    </findStrings>
+    <dirStrings>
+      <dir>C:\jin\blog\jfeng45</dir>
+    </dirStrings>
+  </component>
+  <component name="GOROOT" path="C:\app1\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/jfeng45.iml" />
+        <option value="$PROJECT_DIR$/.idea/misc.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="37" />
+    <option name="y" value="16" />
+    <option name="width" value="1294" />
+    <option name="height" value="690" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="jfeng45" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jfeng45" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="37" y="16" width="1294" height="690" extended-state="1" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24959481" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>

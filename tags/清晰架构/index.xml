@@ -12,21 +12,30 @@
     
     
     <item>
-      <title>清晰架构（Clean Atchitecture）的Go微服务: 依赖注入（Dependency Injection）</title>
+      <title>清晰架构（Clean Architecture）的Go微服务: 依赖注入（Dependency Injection）</title>
       <link>https://jfeng45.github.io/posts/dependency_injection/</link>
       <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/posts/dependency_injection/</guid>
-      <description>在清晰架构（Clean Atchitecture）中，应用程序的每一层（用例，数据服务和域模型）仅依赖于其他层的接口而不是具体类型。 在运行时，</description>
+      <description>在清晰架构（Clean Architecture）中，应用程序的每一层（用例，数据服务和域模型）仅依赖于其他层的接口而不是具体类型。 在运行时，</description>
     </item>
     
     <item>
-      <title>清晰架构（Clean Atchitecture）的Go微服务: 程序容器（Application Container）</title>
+      <title>清晰架构（Clean Architecture）的Go微服务: 程序容器（Application Container）</title>
       <link>https://jfeng45.github.io/posts/application_container/</link>
       <pubDate>Mon, 29 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/posts/application_container/</guid>
-      <description>清晰架构（Clean Atchitecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
+      <description>清晰架构（Clean Architecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务: 事物管理</title>
+      <link>https://jfeng45.github.io/posts/transaction_support/</link>
+      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/transaction_support/</guid>
+      <description>为了支持业务层中的事务，我试图在Go中查找类似Spring的声明式事务管理，但是没找到，所以我决定自己写一个。 事务很容易在Go中实现，但很难</description>
     </item>
     
     <item>
@@ -36,15 +45,6 @@
       
       <guid>https://jfeng45.github.io/posts/coding_style/</guid>
       <description>编码风格在编程中是一个相对乏味的主题，但是合适的编码风格对一个有效的程序员是至关重要的。 它有三个组成部分： 程序结构 （ application layout） 编码规则</description>
-    </item>
-    
-    <item>
-      <title>清晰架构（Clean Atchitecture）的Go微服务: 事物管理</title>
-      <link>https://jfeng45.github.io/posts/transaction_support/</link>
-      <pubDate>Wed, 24 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/posts/transaction_support/</guid>
-      <description>为了支持业务层中的事务，我试图在Go中查找类似Spring的声明式事务管理，但是没找到，所以我决定自己写一个。 事务很容易在Go中实现，但很难</description>
     </item>
     
     <item>
