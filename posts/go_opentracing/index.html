@@ -166,13 +166,13 @@ if (!doNotTrack) {
 并将其传递到整个调用链。 该ID称为<a href="https://hilton.org.uk/blog/microservices-correlation-id">CorrelationID</a>¹，你可以用它来跟踪整个请求并获得各个调用环节的性能指标。
  简单来说有两个问题需要解决。第一，如何在应用程序内部传递ID; 第二，当你需要调用另一个微服务时，如何通过网络传递ID。</p>
 
-<h2 id="什么是opentracing">什么是OpenTracing?</h2>
+<h3 id="什么是opentracing">什么是OpenTracing?</h3>
 
 <p>现在有许多开源的分布式跟踪库可供选择，其中最受欢迎的库可能是<a href="https://zipkin.io/">Zipkin</a>²和<a href="https://www.jaegertracing.io/">Jaeger</a>³。
 选择哪个是一个令人头疼的问题，因为你现在可以选择最受欢迎的一个，但是如果以后有一个更好的出现呢？<a href="https://opentracing.io/docs/getting-started/">OpenTracing</a>⁴
 可以帮你解决这个问题。它建立了一套跟踪库的通用接口，这样你的程序只需要调用这些接口而不被具体的跟踪库绑定，将来可以切换到不同的跟踪库而无需更改代码。Zipkin和Jaeger都支持OpenTracing。</p>
 
-<h2 id="如何跟踪服务器端点-server-endpoints"><strong>如何跟踪服务器端点(server endpoints)?</strong></h2>
+<h3 id="如何跟踪服务器端点-server-endpoints">如何跟踪服务器端点(server endpoints)?</h3>
 
 <p>在下面的程序中我使用“Zipkin”作为跟踪库，用“OpenTracing”作为通用跟踪接口。 跟踪系统中通常有四个组件，下面我用Zipkin作为示例：</p>
 
@@ -405,7 +405,7 @@ if (!doNotTrack) {
 
 <p><img src="/images/microservice/callSpan.png" alt="callSpan" /></p>
 
-<h2 id="怎样跟踪函数内部"><strong>怎样跟踪函数内部?</strong></h2>
+<h3 id="怎样跟踪函数内部">怎样跟踪函数内部?</h3>
 
 <p>上面的图片没有告诉我们函数内部的跟踪细节， 我们需要编写一些代码来获得它。</p>
 
@@ -468,7 +468,7 @@ if (!doNotTrack) {
 
 <p><img src="/images/microservice/traceBetweenServer.png" alt="traceBetweenServer" /></p>
 
-<h2 id="怎样跟踪数据库">怎样跟踪数据库?</h2>
+<h3 id="怎样跟踪数据库">怎样跟踪数据库?</h3>
 
 <p>怎样才能跟踪数据库内部的操作？首先，数据库驱动程序需要支持跟踪，另外你需要将跟踪器(tracer)传递到数据库函数中。
 如果数据库驱动程序不支持跟踪怎么办？现在已经有几个开源驱动程序封装器(Wrapper)，它们可以封装任何数据库驱动程序并使其支持跟踪。
@@ -485,7 +485,7 @@ if (!doNotTrack) {
 在应用程序中创建全局跟踪器时(Global tracer)，你需要决定是使用Zipkin还是Jaeger，但这之后，应用程序或第三方库中的每个函数都只调用OpenTracing接口，
 已经与具体的跟踪库(Zipkin或Jaeger)没关系了。</p>
 
-<h2 id="怎样跟踪服务调用">怎样跟踪服务调用?</h2>
+<h3 id="怎样跟踪服务调用">怎样跟踪服务调用?</h3>
 
 <p>假设我们需要在gRPC服务中调用另外一个微服务(例如RESTFul服务)，该如何跟踪？</p>
 
@@ -562,7 +562,7 @@ if (!doNotTrack) {
  我们可以直接从Go上下文中提取跟踪上下文（opentracing.SpanFromContext（ctx））。 但对于其他基于HTTP的服务（如RESTFul服务），
  情况就并非如此，因此我们需要写代码从服务器端的HTTP头中提取跟踪上下文。 当然，您也可以使用拦截器或过滤器。</p>
 
-<h2 id="跟踪库之间的互兼容性"><strong>跟踪库之间的互兼容性</strong></h2>
+<h3 id="跟踪库之间的互兼容性">跟踪库之间的互兼容性</h3>
 
 <p>你也许会问“如果我的程序使用Zipkin和OpenTracing而需要调用的第三方微服务使用OpenTracing与Jaeger，它们会兼容吗？&rdquo;它看起来于我们之前询问的数据库问题类似，
 但实际上很不相同。对于数据库，因为应用程序和数据库在同一个进程中，它们可以共享相同的全局跟踪器，因此更容易解决。
@@ -573,7 +573,7 @@ OpenTracing没有规定跟踪上下文的格式，而是把决定权留给了实
 对于“Jaeger”来说有一个好处是你可以选择使用“<a href="https://github.com/jaegertracing/jaeger-client-go/tree/master/zipkin">Zipkin兼容性功能</a>&ldquo;¹³来生成Zipkin跟踪上下文， 这样就可以与Zipkin相互兼容了。
  对于其他情况，你需要自己进行手动格式转换(在“inject”和“extract”之间)。</p>
 
-<h2 id="全链路跟踪设计"><strong>全链路跟踪设计</strong></h2>
+<h3 id="全链路跟踪设计">全链路跟踪设计</h3>
 
 <p><strong>尽量少写代码</strong></p>
 
@@ -608,22 +608,22 @@ OpenTracing没有规定跟踪上下文的格式，而是把决定权留给了实
 你可以将“OpenTracing.SpanContext”转换为特定跟踪库的“SpanContext”(Zipkin和Jaeger都可以通过“SpanContext”访问traceID)或将“OpenTracing.SpanContext”转换为字符串并解析它以获取traceID。
  转换为字符串更好，因为它不会破坏程序的依赖关系。 幸运的是不久的将来你就不需要它了，因为OpenTracing将提供访问traceID的方法，请阅读<a href="https://github.com/opentracing/specification/blob/master/rfc/trace_identifiers.md">这里</a>。</p>
 
-<h2 id="opentracing-和-opencensus">OpenTracing 和 OpenCensus</h2>
+<h3 id="opentracing-和-opencensus">OpenTracing 和 OpenCensus</h3>
 
 <p><a href="https://opencensus.io/">OpenCensus</a>¹⁵不是另一个通用跟踪接口，它是一组库，可以用来与其他跟踪库集成以完成跟踪功能，因此它经常与OpenTracing进行比较。
 那么它与OpenTracing兼容吗？答案是否定的。 因此，在选择跟踪接口时(不论是OpenTracing还是OpenCensus)需要小心，以确保你需要调用的其他库支持它。
 一个好消息是，你不需要在将来做出选择，因为它们会<a href="https://medium.com/opentracing/merging-opentracing-and-opencensus-f0fe9c7ca6f0">将项目合并为一个</a>¹⁶。</p>
 
-<h2 id="结论">结论:</h2>
+<h3 id="结论">结论:</h3>
 
 <p>全链路跟踪包括不同的场景，例如在函数内部跟踪，数据库跟踪和跨进程跟踪。 每个场景都有不同的问题和解决方案。如果你想设计更好的跟踪解决方案或为你的应用选择最适合的跟踪工具或库，
 那你需要对每种情况都有清晰的了解。</p>
 
-<h2 id="源码">源码:</h2>
+<h3 id="源码">源码:</h3>
 
 <p><a href="https://github.com/jfeng45/grpcservice">完整源码的github链接</a></p>
 
-<h2 id="索引">索引:</h2>
+<h3 id="索引">索引:</h3>
 
 <p>[1]Correlation IDs for microservices architectures
 <a href="https://hilton.org.uk/blog/microservices-correlation-id">https://hilton.org.uk/blog/microservices-correlation-id</a></p>
