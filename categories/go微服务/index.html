@@ -10,7 +10,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jfeng45.github.io/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/" />
 
-<meta property="og:updated_time" content="2019-07-29T00:00:00+00:00" />
+<meta property="og:updated_time" content="2019-10-01T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go微服务"/>
@@ -131,6 +131,167 @@ if (!doNotTrack) {
         <article class="blog-post">
     <header>
         <h5 class="blog-post-title">
+    <a class="text-dark" href="/posts/go_service_resilience/">Go微服务容错与韧性(Service Resilience)</a>
+</h5>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-10-01">2019-10-01</time>
+    
+    
+       <span rel="author">冯进</span>
+    
+</div>
+
+        
+<div class="blog-post-tags text-secondary">
+    <strong>标签:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/%E5%AE%B9%E9%94%99%E4%B8%8E%E9%9F%A7%E6%80%A7">容错与韧性</a>
+    
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+    
+</div>
+
+        
+<div class="blog-post-categories text-secondary">
+    <strong>分类:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
+    
+</div>
+
+    </header>
+    
+        服务韧性是微服务里非常重要的一项技术，它可以在服务环境不可靠的情况下仍能提供适当的服务，大大提高了服务的容错能力。它使用的技术包括服务超时 （Timeout），服务重试 （Retry），服务限流（Rate Limitting），熔断器 （Circuit Breaker），故障注入（Fault Injection）和舱壁隔离技术（Bulkhead）。 你可以用代码也可以用Service Mesh来实现这些功能，Service Mesh是将来的方向。但实现它们需要大量的工作，因此需要考虑清楚到底哪些服务真正需要它们。
+    
+    
+    <p></p>
+    <a href="/posts/go_service_resilience/">阅读更多 →</a>
+    
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h5 class="blog-post-title">
+    <a class="text-dark" href="/posts/go_opentracing/">Go微服务全链路跟踪详解</a>
+</h5>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-09-21">2019-09-21</time>
+    
+    
+       <span rel="author">冯进</span>
+    
+</div>
+
+        
+<div class="blog-post-tags text-secondary">
+    <strong>标签:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/%E5%85%A8%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA">全链路跟踪</a>
+    
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+    
+</div>
+
+        
+<div class="blog-post-categories text-secondary">
+    <strong>分类:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
+    
+</div>
+
+    </header>
+    
+        全链路跟踪包括不同的场景，例如在函数内部跟踪，数据库跟踪和跨进程跟踪。 每个场景都有不同的问题和解决方案。如果你想设计更好的跟踪解决方案或为你的应用选择最适合的跟踪工具或库， 那你需要对每种情况都有清晰的了解。
+    
+    
+    <p></p>
+    <a href="/posts/go_opentracing/">阅读更多 →</a>
+    
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h5 class="blog-post-title">
+    <a class="text-dark" href="/posts/clean_architecture_with_go/">清晰架构（Clean Architecture）的Go微服务</a>
+</h5>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-08-22">2019-08-22</time>
+    
+    
+       <span rel="author">冯进</span>
+    
+</div>
+
+        
+<div class="blog-post-tags text-secondary">
+    <strong>标签:</strong>
+    
+        <a class="badge badge-primary" href="/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/tags/grpc">Grpc</a>
+    
+        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
+    
+        <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">“微服务”</a>
+    
+</div>
+
+        
+<div class="blog-post-categories text-secondary">
+    <strong>分类:</strong>
+    
+        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
+    
+</div>
+
+    </header>
+    
+        “我写了一系列关于用清晰架构（Clean Architecture）和SOLID设计Go Microservice和gRPC 的文章。它讨论了应用程序设计，应用程序布局和项目结构，日志记录，错误处理，事务管理，应用程序容器（Application Container）和依赖注入（Dependency Injection）。“
+    
+    
+    <p></p>
+    <a href="/posts/clean_architecture_with_go/">阅读更多 →</a>
+    
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h5 class="blog-post-title">
     <a class="text-dark" href="/posts/dependency_injection/">清晰架构（Clean Architecture）的Go微服务: 依赖注入（Dependency Injection）</a>
 </h5>
 
@@ -237,167 +398,6 @@ if (!doNotTrack) {
 
 
 
-    
-        <article class="blog-post">
-    <header>
-        <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/go_logging_and_error_handling/">清晰架构（Clean Architecture）的Go微服务: 日志管理</a>
-</h5>
-
-        
-
-
-<div class="blog-post-date text-secondary">
-    
-        <time datetime="2019-07-25">2019-07-25</time>
-    
-    
-       <span rel="author">冯进</span>
-    
-</div>
-
-        
-<div class="blog-post-tags text-secondary">
-    <strong>标签:</strong>
-    
-        <a class="badge badge-primary" href="/tags/golang">Golang</a>
-    
-        <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
-    
-        <a class="badge badge-primary" href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">错误处理</a>
-    
-        <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
-    
-</div>
-
-        
-<div class="blog-post-categories text-secondary">
-    <strong>分类:</strong>
-    
-        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
-    
-</div>
-
-    </header>
-    
-        “描述了Go Microservice 和gRPC项目中日志管理和错误处理的最佳实践，并比较了两种不同的 记录库ZAP和Logrus。“
-    
-    
-    <p></p>
-    <a href="/posts/go_logging_and_error_handling/">阅读更多 →</a>
-    
-</article>
-
-    
-
-
-
-    
-        <article class="blog-post">
-    <header>
-        <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/transaction_support/">清晰架构（Clean Architecture）的Go微服务: 事物管理</a>
-</h5>
-
-        
-
-
-<div class="blog-post-date text-secondary">
-    
-        <time datetime="2019-07-24">2019-07-24</time>
-    
-    
-       <span rel="author">冯进</span>
-    
-</div>
-
-        
-<div class="blog-post-tags text-secondary">
-    <strong>标签:</strong>
-    
-        <a class="badge badge-primary" href="/tags/golang">Golang</a>
-    
-        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
-    
-        <a class="badge badge-primary" href="/tags/%E4%BA%8B%E7%89%A9%E7%AE%A1%E7%90%86">事物管理</a>
-    
-</div>
-
-        
-<div class="blog-post-categories text-secondary">
-    <strong>分类:</strong>
-    
-        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
-    
-</div>
-
-    </header>
-    
-        Go中的业务级事务管理系统，它完成了声明式事务的大部分功能。
-    
-    
-    <p></p>
-    <a href="/posts/transaction_support/">阅读更多 →</a>
-    
-</article>
-
-    
-
-
-
-    
-        <article class="blog-post">
-    <header>
-        <h5 class="blog-post-title">
-    <a class="text-dark" href="/posts/coding_style/">清晰架构（Clean Architecture）的Go微服务: 编码风格</a>
-</h5>
-
-        
-
-
-<div class="blog-post-date text-secondary">
-    
-        <time datetime="2019-07-24">2019-07-24</time>
-    
-    
-       <span rel="author">冯进</span>
-    
-</div>
-
-        
-<div class="blog-post-tags text-secondary">
-    <strong>标签:</strong>
-    
-        <a class="badge badge-primary" href="/tags/golang">Golang</a>
-    
-        <a class="badge badge-primary" href="/tags/%E6%B8%85%E6%99%B0%E6%9E%B6%E6%9E%84">清晰架构</a>
-    
-        <a class="badge badge-primary" href="/tags/%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC">编码风格</a>
-    
-</div>
-
-        
-<div class="blog-post-categories text-secondary">
-    <strong>分类:</strong>
-    
-        <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">Go微服务</a>
-    
-</div>
-
-    </header>
-    
-        编码风格对于编程高效至关重要。 良好的命名使代码实现自我解释。 它包括三个部分：程序结构，编码规则和风格，命名约定
-    
-    
-    <p></p>
-    <a href="/posts/coding_style/">阅读更多 →</a>
-    
-</article>
-
-    
-
-
-
 
 
 <nav class="blog-pagination">
@@ -438,12 +438,25 @@ if (!doNotTrack) {
                 </li>
             
         
+            
+            
+            
+            
+                
+                
+            
+            
+                <li class="page-item ">
+                    <a class="page-link" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/page/3/">3</a>
+                </li>
+            
+        
         <li class="page-item ">
             <a class="page-link" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         
             <li class="page-item">
-                <a class="page-link" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+                <a class="page-link" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1/page/3/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
             </li>
         
     </ul>
@@ -462,6 +475,22 @@ if (!doNotTrack) {
 <section>
     <h4>最新文章</h4>
     <ol class="list-unstyled">
+        
+        <li>
+            <a href="/posts/go_service_resilience/">Go微服务韧性(Service Resilience)</a>
+        </li>
+        
+        <li>
+            <a href="/posts/go_opentracing/">Go微服务全链路跟踪</a>
+        </li>
+        
+        <li>
+            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/posts/service_calling_each_other/">微服务之间的调用方式</a>
+        </li>
         
         <li>
             <a href="/posts/dependency_injection/">依赖注入</a>
@@ -484,19 +513,7 @@ if (!doNotTrack) {
         </li>
         
         <li>
-            <a href="/posts/clean_architecture_with_go/">Go微服务系列(*****)</a>
-        </li>
-        
-        <li>
             <a href="/posts/clean_architecture_application_design/">清晰架构设计</a>
-        </li>
-        
-        <li>
-            <a href="/posts/clean_architecture_design_principle/">设计原则</a>
-        </li>
-        
-        <li>
-            <a href="/posts/go_microservice_application_layout/">Go微服务程序结构</a>
         </li>
         
     </ol>
@@ -511,6 +528,8 @@ if (!doNotTrack) {
         <p>
             
             <a class="badge badge-primary" href="/categories/go%E5%BE%AE%E6%9C%8D%E5%8A%A1">go微服务</a>
+            
+            <a class="badge badge-primary" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%AE%BE%E8%AE%A1">微服务设计</a>
             
         </p>
         
@@ -527,7 +546,13 @@ if (!doNotTrack) {
             
             <a class="badge badge-primary" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a>
             
+            <a class="badge badge-primary" href="/tags/%E5%85%A8%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA">全链路跟踪</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%AE%B9%E9%94%99%E4%B8%8E%E9%9F%A7%E6%80%A7">容错与韧性</a>
+            
             <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>
+            
+            <a class="badge badge-primary" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%AE%BE%E8%AE%A1">微服务设计</a>
             
             <a class="badge badge-primary" href="/tags/%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86">日志管理</a>
             

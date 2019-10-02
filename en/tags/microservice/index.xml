@@ -6,10 +6,37 @@
     <description>Recent content in Microservice on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-Hans</language>
-    <lastBuildDate>Thu, 25 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/en/tags/microservice/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Service Resilience in Go Microservices</title>
+      <link>https://jfeng45.github.io/en/posts/go_service_resilience/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/go_service_resilience/</guid>
+      <description>Service Resilience means that when the service&amp;rsquo;s operating environment has problems, such as network failure, service overload or some microservice downtime, the program can still provide some level of the services. Then, we say that the service is resilient. It is a very important part of Microservices and is widely discussed. It improves the quality of a service by improving the resilience of services to compensate for environmental deficiencies.</description>
+    </item>
+    
+    <item>
+      <title>How to Do Tracing in Go Microservice?</title>
+      <link>https://jfeng45.github.io/en/posts/go_opentracing/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/go_opentracing/</guid>
+      <description>In Microservice architecture, the calling chain is long and complex, to understand each component and the performance of it, you need something called distributed tracing. The idea is simple, you generate a unique ID at the beginning of each request, and carry it along the whole calling chain. The ID is called Correlation ID¹ and you can use it to trace the performance of the entire request. There are two problems need to be solved.</description>
+    </item>
+    
+    <item>
+      <title>Go Microservice with Clean Architecture</title>
+      <link>https://jfeng45.github.io/en/posts/clean_architecture_with_go/</link>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/clean_architecture_with_go/</guid>
+      <description>I created a Microservice project with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I also tried to apply the best practice in application design and programming, such as Clean Architecture, Dependency Injection, logging, error handling and so on, to the Go Microservice application. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different.</description>
+    </item>
     
     <item>
       <title>Go Microservice with Clean Architecture: Application Logging</title>
@@ -18,15 +45,6 @@
       
       <guid>https://jfeng45.github.io/en/posts/go_logging_and_error_handling/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>Go Microservice with Clean Architecture</title>
-      <link>https://jfeng45.github.io/en/posts/clean_architecture_with_go/</link>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/en/posts/clean_architecture_with_go/</guid>
-      <description>I created a Microservice project with Go and gRPC and tried to figure out what is the best project layout, which can be used as a template for my future projects. I also tried to apply the best practice in application design and programming, such as Clean Architecture, Dependency Injection, logging, error handling and so on, to the Go Microservice application. I came from Java background and found myself keeping struggling between Java and Go idioms, which are quite different.</description>
     </item>
     
     <item>

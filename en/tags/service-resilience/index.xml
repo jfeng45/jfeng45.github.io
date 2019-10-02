@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Service Resilience on </title>
+    <link>https://jfeng45.github.io/en/tags/service-resilience/</link>
+    <description>Recent content in Service Resilience on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/en/tags/service-resilience/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Service Resilience in Go Microservices</title>
+      <link>https://jfeng45.github.io/en/posts/go_service_resilience/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/go_service_resilience/</guid>
+      <description>Service Resilience means that when the service&amp;rsquo;s operating environment has problems, such as network failure, service overload or some microservice downtime, the program can still provide some level of the services. Then, we say that the service is resilient. It is a very important part of Microservices and is widely discussed. It improves the quality of a service by improving the resilience of services to compensate for environmental deficiencies.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>全链路跟踪 on </title>
+    <link>https://jfeng45.github.io/tags/%E5%85%A8%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA/</link>
+    <description>Recent content in 全链路跟踪 on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Sat, 21 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/tags/%E5%85%A8%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go微服务全链路跟踪详解</title>
+      <link>https://jfeng45.github.io/posts/go_opentracing/</link>
+      <pubDate>Sat, 21 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_opentracing/</guid>
+      <description>在微服务架构中，调用链是漫长而复杂的，要了解其中的每个环节及其性能，你需要全链路跟踪。 它的原理很简单，你可以在每个请求开始时生成一个唯一的I</description>
+    </item>
+    
+  </channel>
+</rss>

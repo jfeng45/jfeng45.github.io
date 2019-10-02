@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tracing on </title>
+    <link>https://jfeng45.github.io/en/tags/tracing/</link>
+    <description>Recent content in Tracing on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Wed, 28 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/en/tags/tracing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>How to Do Tracing in Go Microservice?</title>
+      <link>https://jfeng45.github.io/en/posts/go_opentracing/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/en/posts/go_opentracing/</guid>
+      <description>In Microservice architecture, the calling chain is long and complex, to understand each component and the performance of it, you need something called distributed tracing. The idea is simple, you generate a unique ID at the beginning of each request, and carry it along the whole calling chain. The ID is called Correlation ID¹ and you can use it to trace the performance of the entire request. There are two problems need to be solved.</description>
+    </item>
+    
+  </channel>
+</rss>

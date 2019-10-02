@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Service Resilience in Go Microservices" />
+<meta property="og:description" content="Service resilience makes the service still available when the environment is unreliable.Technologies used include Timeouts, Retry, Rate Limiting, Circuit Breaker, Fault Injection, and Bulkhead." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/go_service_resilience/" />
+<meta property="article:published_time" content="2019-10-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-10-01T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Service Resilience in Go Microservices"/>
+<meta name="twitter:description" content="Service resilience makes the service still available when the environment is unreliable.Technologies used include Timeouts, Retry, Rate Limiting, Circuit Breaker, Fault Injection, and Bulkhead."/>
+
+
+
+    
+      <link rel="canonical" href="https://jfeng45.github.io/en/posts/go_service_resilience/">
+    
+
+    
+       <meta name="description" content="Service resilience makes the service still available when the environment is unreliable.Technologies used include Timeouts, Retry, Rate Limiting, Circuit Breaker, Fault Injection, and Bulkhead.">
+    
+
+    <title>
+      
+        Service Resilience in Go Microservices | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-145409684-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/go_service_resilience/">Service Resilience in Go Microservices</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-10-01">2019-10-01</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/service-resilience">Service Resilience</a>
+    
+        <a class="badge badge-primary" href="/en/tags/microservice">Microservice</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>Service Resilience means that when the service&rsquo;s operating environment has problems, such as network failure, service overload or some microservice downtime, the program can still provide some level of the services. Then, we say that the service is resilient.
+It is a very important part of Microservices and is widely discussed. It improves the quality of a service by improving the resilience of services to compensate for environmental deficiencies.</p>
+
+<p>Service Resilience Improves the reliability of services through the following technologies:</p>
+
+<ul>
+<li>Timeout</li>
+<li>Retry</li>
+<li>Rate Limiting</li>
+<li>Circuit Breaker</li>
+<li>Fault Injection</li>
+<li>Bulkhead</li>
+</ul>
+
+<h3 id="code-implementation">Code Implementation：</h3>
+
+<p>Service resilience can be achieved in different ways, let&rsquo;s implement it in code first. The program is not complicated, but the problem is that the code of service resilience is mixed with the business code, which brings the following problems:</p>
+
+<ul>
+<li>Incidentally changing business logic: When modifying the code of service resilience, you may incidentally change the business logic.</li>
+<li>The system architecture is not flexible: It will be difficult to change to other architectures in the future. For example, if you switch the implementation from coding to infrastructure, then you need to extract the code of service resilience from business logic code, which will be troublesome.</li>
+<li>Program readability is poor: Because the code of business logic and non-functional requirements are mixed together, it is difficult to understand what functionality this program is trying to accomplish. Because you read the code a lot more than change it, this is a fatal problem.</li>
+<li>Increase the burden of testing: Whether you want to modify business logic or non-functional requirements, you have to carry out regression testing, which drastically increases the testing burden.</li>
+</ul>
+
+<p>In most cases, we already the business logic in place and want to add the above mentioned features later, and we don&rsquo;t want to modify the business logic code. The pattern we used is called the Decorator Pattern. In Go, it is also called the Middleware Pattern.
+The key to the Decorator Pattern is to define a set of decorators and each of them accomplishes a different feature, and their return types (which are Interfaces) are the same, so we can chain these decorators together.</p>
+
+<p>We use a simple gRPC Microservice to demonstrate the functionality of service resilience. The following diagram is the program structure, which is divided into client side and server side, and their internal structure is similar. The &ldquo;middleware&rdquo; package is a package that implements the service resilience features. The &ldquo;service&rdquo; package implements the business logic. On the server side,  the &ldquo;service&rdquo; package contains code of the business logic of the microservice. On the client side, the &ldquo;service&rdquo; package contains the functions that call the server.
+The &ldquo;middleware&rdquo; package under the &ldquo;client&rdquo; package contains four files, which implement three functions: service timeout, service retry, and Circuit Breaker. &ldquo;clientMiddleware.go&rdquo; is the entry point.
+The &ldquo;middleware&rdquo; package under the &ldquo;server&rdquo; package contains two files, which implement one function, rate limiting. &ldquo;serverMiddleware.go&rdquo; is the entry point.</p>
+
+<p><img src="/images/microservice/grpcService.png" alt="grpcService" /></p>
+
+<h4 id="decorator-pattern">Decorator Pattern：</h4>
+
+<p>There are different implementations of the Decoration Pattern. The one I used is from <a href="http://gokit.io/examples/stringsvc.html">Go kit</a>. It is the most flexible implementation of the Decorator Pattern I have seen.</p>
+
+<p>Below is the &ldquo;cacheClient.go&rdquo; in the &ldquo;service&rdquo; package, which is used to call the server function. &ldquo;CacheClient&rdquo; is an empty structure to implement the &ldquo;CallGet()&rdquo; function, which implements the &ldquo;callGetter&rdquo; interface (described below).
+It is the main function (the rest are decorators) in the pattern and includes all the business logic.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CacheClient</span> <span style="color:#66d9ef">struct</span> {
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">cc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheClient</span>) <span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">csc</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">getReq</span><span style="color:#f92672">:=&amp;</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>{<span style="color:#a6e22e">Key</span>:<span style="color:#a6e22e">key</span>}
+	<span style="color:#a6e22e">getResp</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span><span style="color:#a6e22e">csc</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">getReq</span> )
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+	}
+	<span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getResp</span>.<span style="color:#a6e22e">Value</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">cc</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheClient</span>) <span style="color:#a6e22e">CallStore</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">value</span> []<span style="color:#66d9ef">byte</span>, <span style="color:#a6e22e">client</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">StoreResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">storeReq</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">StoreReq</span>{<span style="color:#a6e22e">Key</span>: <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">value</span>}
+	<span style="color:#a6e22e">storeResp</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">storeReq</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">storeResp</span>, <span style="color:#a6e22e">err</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>The following is the client&rsquo;s entry file &ldquo;clientMiddleware.go&rdquo;. It defines the &ldquo;callGetter&rdquo; interface, which is the core of the Decorator Pattern, and all decorators must implement this interface.
+There is only one function &ldquo;CallGet&rdquo; in the interface, which will be called by each decorator to pass the control to the next decorator. The signature of this function is defined by the business function. It also defines a struct &ldquo;CallGetMiddleware&rdquo;.
+There is only one member &ldquo;Next&rdquo; in it, and its type is the decorator interface (callGetter), so we can call the next decorator with &ldquo;Next&rdquo;. Each decoration function has a corresponding decorator struct, so we can chain them together to complete all the decoration functions.</p>
+
+<p>&ldquo;BuildGetMiddleware()&rdquo; is used to chain decorators together. &ldquo;CircuitBreakerCallGet&rdquo;, &ldquo;RetryCallGet&rdquo;, and &ldquo;TimeoutCallGet&rdquo; are the implementation struct of Circuit Breaker, service retry, and service timeout, respectively. They also have only one member &ldquo;Next&rdquo; in each of them.
+Pay attention to the order when creating them. The first created, &ldquo;CircuitBreakerCallGet&rdquo;, will be executed last. At the end of each decorator, &ldquo;Next.CallGet()&rdquo; is called, which passes control to the next decorator.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">callGetter</span> <span style="color:#66d9ef">interface</span> {
+	<span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">c</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>)
+}
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CallGetMiddleware</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span> <span style="color:#a6e22e">callGetter</span>
+}
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BuildGetMiddleware</span>(<span style="color:#a6e22e">cc</span> <span style="color:#a6e22e">callGetter</span>) <span style="color:#a6e22e">callGetter</span> {
+	<span style="color:#a6e22e">cbcg</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">CircuitBreakerCallGet</span>{<span style="color:#a6e22e">cc</span>}
+	<span style="color:#a6e22e">tcg</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">TimeoutCallGet</span>{<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cbcg</span>}
+	<span style="color:#a6e22e">rcg</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">RetryCallGet</span>{<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">tcg</span>}
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">rcg</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">cg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CallGetMiddleware</span>) <span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">csc</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">cg</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">csc</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<h4 id="service-retry">Service Retry：</h4>
+
+<p>When the network is unstable, the service may temporarily fail. This situation usually lasts for a short period of time and can be fixed by simply retry. The following is the program.
+Its logic is relatively simple. If there is a failure, it will keep calling &ldquo;tcg.Next.CallGet(ctx, key, csc)&rdquo; until the result is correct or the retry limit is reached. There is a retry interval (retry_interval) between each retry.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
+    <span style="color:#a6e22e">retry_count</span>    = <span style="color:#ae81ff">3</span>
+    <span style="color:#a6e22e">retry_interval</span> = <span style="color:#ae81ff">200</span>
+)
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">RetryCallGet</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span> <span style="color:#a6e22e">callGetter</span>
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tcg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">RetryCallGet</span>) <span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">csc</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">value</span> []<span style="color:#66d9ef">byte</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span>&lt;<span style="color:#a6e22e">retry_count</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+		<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">tcg</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">csc</span>)
+		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Retry number %v|error=%v&#34;</span>, <span style="color:#a6e22e">i</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#66d9ef">break</span>
+		}
+		<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Duration</span>(<span style="color:#a6e22e">retry_interval</span>)<span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>The difference between service retry and other features is that it has a lot of side effects, so use it with care. Because retrying can significantly increase the system load, and even bring it to a halt when there is a cascading effect. Please carefully choose the following two control parameters:</p>
+
+<ol>
+<li>Number of retries: Generally speaking, the number of retries should be limited to a small number to reduce system burden.</li>
+<li>Retry interval: The retry interval should increase with the number of retries, because with the number of retry increase, the possibility of failure increase too. You can use a Fibonacci sequence or exponential number and also introduce some randomization strategy to avoid collision. Of course, if the number of retry attempts is small, it may not need that complexity. In the example, the simplest strategy, constant interval is used, which is best not to be used in a production environment.</li>
+</ol>
+
+<p>Not all functions need retry feature, only important ones, which can&rsquo;t fail.</p>
+
+<h4 id="service-timeout">Service timeout</h4>
+
+<p>The service timeout sets a maximum time limit for each service. After the service is timeout, an error message is returned. First, it can reduce the user waiting time, because if a normal operation does not produce results after a few seconds, there is no reason to wait. Second, a request typically consumes system resources, such as threads, database connections. If there are a large number of waiting requests, it may exhaust system resources, causing application downtime or performance degradation. Ending the request early can release system resources as quickly as possible.
+The following is the program. It sets the timeout in the context and uses the channel selector to determine the result of the operation. When timed out, the channel of ctx is closed (ctx.Done()), the function stops running, and cancelFunc() is called to stop the downstream operation.
+If the timeout is not reached, the program completes normally.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">TimeoutCallGet</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span> <span style="color:#a6e22e">callGetter</span>
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tcg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">TimeoutCallGet</span>) <span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">c</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cancelFunc</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">CancelFunc</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ch</span> = make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">bool</span>)
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">value</span> []<span style="color:#66d9ef">byte</span>
+	<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancelFunc</span>= <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithTimeout</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">get_timeout</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>)
+	<span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span> () {
+		<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">tcg</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">c</span>)
+		<span style="color:#a6e22e">ch</span><span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">true</span>
+	} ()
+	<span style="color:#66d9ef">select</span> {
+		<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Done</span>():
+			<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;ctx timeout&#34;</span>)
+			<span style="color:#75715e">//ctx timeout, call cancelFunc to cancel all the sub-processes in the calling chain
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">cancelFunc</span>()
+			<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Err</span>()
+		<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ch</span>:
+			<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;call finished normally&#34;</span>)
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>So should this feature be set on the client side or server side? For service retry, there is no problem and it can only be set on the client side. The service timeout can be set on both the server and the client side, but it is better to set it on the client side, so the fate is in your own hands.</p>
+
+<p>The next question is the ordering. Are you doing service retry first or service timeout first? The result is different. When doing a service retry first, the timeout is set on all retry attempts; when doing the service timeout first, the timeout is set on each retry. Which one to choose depends on your specific needs. I set the timeout on every retry.</p>
+
+<h4 id="rate-limiting">Rate Limiting：</h4>
+
+<p>Rate limiting sets an upper limit on the number of requests based on the capabilities of the service, typically the number of requests per second. After that, all other requests return an error message. This guarantees the quality of the service, and even the requests won&rsquo;t be served can get the results back quickly.
+This feature is different from the others, it is defined on the server side. Of course, you can also limit the number on the client side, but in the end you have to limit it on the server as well.</p>
+
+<p>The following is the &ldquo;cacheServer.go&rdquo; in the server side &ldquo;service&rdquo; package, which defines the interface of the server. &ldquo;CacheService&rdquo; is its struct, which implements the &ldquo;Get&rdquo; function, which is the business logic of the server.
+All other decorators are complementary to it.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// CacheService struct
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CacheService</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Storage</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>][]<span style="color:#66d9ef">byte</span>
+}
+
+<span style="color:#75715e">// Get function
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheService</span>) <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;start server side Get called: &#34;</span>)
+	<span style="color:#75715e">//time.Sleep(3000*time.Millisecond)
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">GetKey</span>()
+	<span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Storage</span>[<span style="color:#a6e22e">key</span>]
+	<span style="color:#a6e22e">resp</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>{<span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">value</span>}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Get called with return of value: &#34;</span>, <span style="color:#a6e22e">value</span>)
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resp</span>, <span style="color:#66d9ef">nil</span>
+}
+<span style="color:#f92672">...</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>The following is &ldquo;serverMiddleware.go&rdquo;, which is the entry point for the server middleware. It defines the struct &ldquo;CacheServiceMiddleware&rdquo;, which has only one member &ldquo;Next&rdquo;, and its type is &ldquo;pb.CacheServiceServer&rdquo;, which is the interface of the gRPC server.
+Here we handled server side code differently from the client side. Instead of creating another interface, we used the server interface of gRPC directly. We created an interface for each function on the client side, so that the granularity of the control is finer, but the amount of code is larger. On the other handle, all functions on the server share one interface, the granularity of the control is coarser, but the amount of code is smaller.
+The reason for this is that the client needs preciser control. You can decide which strategy to choose according to the needs of the application. &ldquo;BuildGetMiddleware&rdquo; is a function that creates decorated structs on the server side. ThrottleMiddleware is the implementation struct of rate limiting. There is only one member &ldquo;Next&rdquo; in it.
+When you create the chain of middleware, you need to pass in them in turn and here we only have one, &ldquo;ThrottleMiddleware&rdquo;.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CacheServiceMiddleware</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceServer</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BuildGetMiddleware</span>(<span style="color:#a6e22e">cs</span>  <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceServer</span> ) <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceServer</span> {
+	<span style="color:#a6e22e">tm</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ThrottleMiddleware</span>{<span style="color:#a6e22e">cs</span>}
+	<span style="color:#a6e22e">csm</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">CacheServiceMiddleware</span>{<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">tm</span>}
+	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">csm</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">csm</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheServiceMiddleware</span>) <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">csm</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">req</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">csm</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheServiceMiddleware</span>) <span style="color:#a6e22e">Store</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">StoreReq</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">StoreResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">csm</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Store</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">req</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">csm</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheServiceMiddleware</span>) <span style="color:#a6e22e">Dump</span>(<span style="color:#a6e22e">dr</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">DumpReq</span>, <span style="color:#a6e22e">csds</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheService_DumpServer</span>) <span style="color:#66d9ef">error</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">csm</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Dump</span>(<span style="color:#a6e22e">dr</span>, <span style="color:#a6e22e">csds</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>The following is the implementation of rate limiting, which is slightly more complicated than the other functions. The control parameters used by other functions (such as the number of retries) are not modified during execution. In rate limiting, throttle can be read and written in parallel, so it needs to be controlled by &ldquo;sync.RWMutex&rdquo;.
+The logic of rate limiting is in the &ldquo;Get&rdquo; function. It first checks if the threshold is exceeded; If exceeded, it returns an error message, otherwise it proceeds to run the underlying function.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
+	<span style="color:#a6e22e">service_throttle</span> = <span style="color:#ae81ff">5</span>
+)
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">tm</span> <span style="color:#a6e22e">throttleMutex</span>
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ThrottleMiddleware</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span>  <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceServer</span>
+}
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">throttleMutex</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">mu</span>       <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">RWMutex</span>
+	<span style="color:#a6e22e">throttle</span> <span style="color:#66d9ef">int</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">throttleMutex</span> )<span style="color:#a6e22e">getThrottle</span> () <span style="color:#66d9ef">int</span> {
+	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">mu</span>.<span style="color:#a6e22e">RLock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">mu</span>.<span style="color:#a6e22e">RUnlock</span>()
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">throttle</span>
+}
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">throttleMutex</span>) <span style="color:#a6e22e">changeThrottle</span>(<span style="color:#a6e22e">delta</span> <span style="color:#66d9ef">int</span> ) {
+	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">mu</span>.<span style="color:#a6e22e">Lock</span>()
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">mu</span>.<span style="color:#a6e22e">Unlock</span>()
+	<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">throttle</span> =<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">throttle</span><span style="color:#f92672">+</span><span style="color:#a6e22e">delta</span>
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ThrottleMiddleware</span>) <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">tm</span>.<span style="color:#a6e22e">getThrottle</span>()<span style="color:#f92672">&gt;=</span><span style="color:#a6e22e">service_throttle</span> {
+		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Get throttle=%v reached\n&#34;</span>, <span style="color:#a6e22e">tm</span>.<span style="color:#a6e22e">getThrottle</span>())
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;service throttle reached, please try later&#34;</span>)
+	} <span style="color:#66d9ef">else</span> {
+		<span style="color:#a6e22e">tm</span>.<span style="color:#a6e22e">changeThrottle</span>(<span style="color:#ae81ff">1</span>)
+		<span style="color:#a6e22e">resp</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">tg</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">req</span>)
+		<span style="color:#a6e22e">tm</span>.<span style="color:#a6e22e">changeThrottle</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resp</span>, <span style="color:#a6e22e">err</span>
+	}
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<h4 id="circuit-breaker">Circuit Breaker：</h4>
+
+<p>The Circuit Breaker is the most complicated. Its main function is to block the service when the system detects that the downstream service is not available, thus reducing the load on the downstream service, and allowing it to recover. Related to it is the service downgrade. Generally speaking, a degrading function is defined, either by taking old data from the cache or directly returning a null value to the upstream function.</p>
+
+<p>The Circuit Breaker is managed by the State Machine, which monitors the failure of the calls to the downstream service to control the circuit by a failure threshold. It has three states: closed, open, and half open. The &ldquo;closed&rdquo; here is the close of the Circuit Breaker and the service is open.</p>
+
+<p>Normally, the Circuit Breaker is turned off. When the number of failed requests exceeds the threshold, the Circuit Breaker is turned on and the downstream service is turned off. There is a time limit for the Circuit Breaker to keep open, after which it automatically turns into a half-open state. In this state, only a small number of requests are allowed to pass. When the requests fail, it returns to the open state. When the number of successful requests exceeds the threshold, the Circuit Breaker is closed and the service returns to normal.
+The following is the diagram of it.</p>
+
+<p><img src="/images/microservice/circuitBreakerFull.png" alt="circuitBreakerFull" /></p>
+
+<p><a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker">Image Source</a></p>
+
+<p>When there are multiple decorator functions, at first glance, it seems that the Circuit Breaker should be the first one to execute. Because if the service has a problem, there is no reason to try others, such as service retry. However, if we are doing that, then the retry is not going through the Circuit Breaker, so the Circuit Breaker actually should be the last one. It is also determined by what decorating features you have.</p>
+
+<p>There are many different implementations of the Circuit Breaker, the most famous one is Netflix&rsquo;s &ldquo;Hystrix&rdquo;. I used a Go open source library called <a href="https://github.com/sony/gobreaker">gobreaker</a>, because it is simple and pure (Hystrix integrates many features together besides the Circuit Breaker). The following is the code for it. The &ldquo;cb&rdquo; is the instance of &ldquo;CircuitBreaker&rdquo;, which is created in &ldquo;init()&rdquo; so that it is created only once. When created, several parameters are set. &ldquo;MaxRequests&rdquo; is the maximum number of requests allowed to pass through in the half-open state. &ldquo;Timeout&rdquo; is the timeout period of the closed state (automatically turned into half-open after the timeout), which is not set here (The default value is 60 seconds). The &ldquo;ReadyToTrip&rdquo; function is used to control state transitions. When it returns true, the Circuit Breaker changes from off to on. The implementation code is in &ldquo;CallGet&rdquo;, and &ldquo;cb.Execute&rdquo; will execute the function passed in. If the Circuit Breaker is on, it returns the default value without calling downstream function, otherwise it executes the request as normal. The Circuit Breaker monitors the execution status of the requests and controls the switching based on the status.</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cb</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gobreaker</span>.<span style="color:#a6e22e">CircuitBreaker</span>
+
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">CircuitBreakerCallGet</span> <span style="color:#66d9ef">struct</span> {
+	<span style="color:#a6e22e">Next</span> <span style="color:#a6e22e">callGetter</span>
+}
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">st</span> <span style="color:#a6e22e">gobreaker</span>.<span style="color:#a6e22e">Settings</span>
+	<span style="color:#a6e22e">st</span>.<span style="color:#a6e22e">Name</span> = <span style="color:#e6db74">&#34;CircuitBreakerCallGet&#34;</span>
+	<span style="color:#a6e22e">st</span>.<span style="color:#a6e22e">MaxRequests</span> = <span style="color:#ae81ff">2</span>
+	<span style="color:#a6e22e">st</span>.<span style="color:#a6e22e">ReadyToTrip</span> = <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">counts</span> <span style="color:#a6e22e">gobreaker</span>.<span style="color:#a6e22e">Counts</span>) <span style="color:#66d9ef">bool</span> {
+		<span style="color:#a6e22e">failureRatio</span> <span style="color:#f92672">:=</span> float64(<span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">TotalFailures</span>) <span style="color:#f92672">/</span> float64(<span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">Requests</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">counts</span>.<span style="color:#a6e22e">Requests</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">failureRatio</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0.6</span>
+	}
+	<span style="color:#a6e22e">cb</span> = <span style="color:#a6e22e">gobreaker</span>.<span style="color:#a6e22e">NewCircuitBreaker</span>(<span style="color:#a6e22e">st</span>)
+}
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">tcg</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CircuitBreakerCallGet</span>) <span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">c</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">value</span> []<span style="color:#66d9ef">byte</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">serviceUp</span> <span style="color:#66d9ef">bool</span>
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;state:%v&#34;</span>, <span style="color:#a6e22e">cb</span>.<span style="color:#a6e22e">State</span>().<span style="color:#a6e22e">String</span>())
+	<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">cb</span>.<span style="color:#a6e22e">Execute</span>(<span style="color:#66d9ef">func</span>() (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+		<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">tcg</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">CallGet</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">c</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+		}
+		<span style="color:#a6e22e">serviceUp</span> = <span style="color:#66d9ef">true</span>
+		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#66d9ef">nil</span>
+	})
+	<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">serviceUp</span> {
+		<span style="color:#75715e">//return a default value here. You can also run a downgrade function here
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;circuit breaker return error:%v\n&#34;</span>, <span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span> []<span style="color:#66d9ef">byte</span>{<span style="color:#ae81ff">0</span>}, <span style="color:#66d9ef">nil</span>
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>In this example, the Circuit Breaker is set on the client side and monitors the request on the client side. But I think it is actually better to monitor the status on the server side.
+Because most of the problems that Circuit Breaker want to deal with is service downtime, so monitoring the server is more efficient than monitoring the client. Of course, the final action is still to shield the client requests to reduce the service load. Then it needs the coordination between the server and the client, so it is more difficult to do.</p>
+
+<p>Another problem is how to judge that the service is down. This is the key to the feature. If the service call returns an error, does it mean that the service is unavailable? It seems the server need to return a service unavailable error, which can include rate limiting exceeding and timeout error. Also, the client needs to have a timeout as well. Only those errors lead to service down.</p>
+
+<h4 id="fault-injection">Fault Injection</h4>
+
+<p>Fault injection simulates various faults and instabilities in a production environment by artificially injecting errors. You can simulate a 10% error rate, or a service response delay. The technique used is similar to what&rsquo;s described above. The service request can be monitored and controlled by applying the Decorator Pattern to achieve the purpose of simulating errors.
+Fault injection can be implemented either on the server side or on the client side.</p>
+
+<h4 id="bulkhead">Bulkhead</h4>
+
+<p>Bulkhead isolation technology refers to the isolation of system resources so that when a request fails, it does not bring down the entire system. The more common ones are the isolation of the Thread pool and the Connection pool.
+For example, if requests exceed the database connection limit, then all new requests will be in the wait state. If your system has both slow-running requests (such as reports) and fast-running requests (such as modifying a database field),
+then a good way is to set up two Connection Pools, one for the faster one and one for the slower one. This way, even when the slow requests occupy all the slow connections, it does not affect the fast requests. The following is a diagram of it, which uses the Thread Pool as an example.
+<img src="/images/microservice/bulkhead.png" alt="bulkhead" /></p>
+
+<p><a href="https://github.com/Netflix/Hystrix/wiki/How-it-Works">Image source</a></p>
+
+<p>Netflix&rsquo;s Hystrix integrates both the bulkhead isolation technology and the Circuit breaker to achieve isolation by restricting access to a service&rsquo;s resources (typically Thread). There are two ways to achieve it, the first is through the Thread Pool, and the second is Semaphore Isolation.
+For Semaphore Isolation, each request must be authorized to access the resource. For details, please refer to <a href="https://github.com/Netflix/Hystrix/wiki/How-it-Works">&ldquo;How it works&rdquo;</a> for detail.</p>
+
+<p>The practical application of bulkhead isolation is much broader than that of Hystrix. Bulkhead isolation is not restricted to one area, but can be applied in many different directions (read <a href="https://developers.redhat.com/blog/2017/05/16/it-takes-more-than-a-circuit-breaker-to-create-a-resilient-application/">here</a> for details) .</p>
+
+<h4 id="adaptive-concurrency-limit">Adaptive Concurrency Limit</h4>
+
+<p>The techniques described above are based on static thresholds, most of which are requests per second. But for large distributed systems with Auto-scaling, this approach may not apply. The automatically scaled cloud system adjusts the number of servers based on the service load so that the threshold of the service becomes dynamic rather than static. Netflix&rsquo;s next-generation technology builds dynamic thresholds called Adaptive Concurrency Limit.
+Its principle is to calculate the load based on the delay of the service, thereby dynamically finding the threshold of the service. Once the dynamic threshold is found, this technique is easy to be applied, and the hard part is how to figure out the threshold. This technique can be applied in the following areas:</p>
+
+<ul>
+<li>RPC (gRPC): Can be applied to both the client side and the server side and can be implemented using an interceptor.</li>
+<li>Servlet: Can be implemented using filters.</li>
+<li>Thread Pool: It automatically adjusts the size of the Thread Pool based on the service delay to achieve concurrency limits.</li>
+</ul>
+
+<p>Please refer <a href="https://github.com/Netflix/concurrency-limits">Netflix/concurrency-limits</a> for details.</p>
+
+<h4 id="implementation-by-service-mesh">Implementation by Service Mesh：</h4>
+
+<p>As can be seen from the above code implementation, each of the features is not complicated and does not intrude on business logic. But we only implemented service resilience for one function. If you have many Microservices, which have many functions,
+then you have a lot of code to write. How to simplify it? When I first encountered the service resilience, I used the Interceptor to make the code not intrusive.
+But it is not flexible enough until I found the Decorator Pattern. But the workload is still quite large. Finally, Service Mesh came to the rescue.
+Because most of the problems and solutions of service resilience are related to infrastructure, it is better to leave them to infrastructure rather than code.
+This should relief application code from those burdens and focus back on business logic.</p>
+
+<p>The emergence of container technologies (Docker and Kubernetes) greatly simplified the deployment of applications, especially Microservices. But initially, the service resilience is still archived by the application code.
+The most famous one is &ldquo;Netflix OSS&rdquo;. Now we have extracted those features out of application code and passed them to Service Mesh, of which the popular ones are <a href="https://istio.io/">Istio</a> and <a href="https://linkerd.io/">Linkerd</a>.
+By manipulating service requests, Service Mesh gained granular control of applications, while on the contrary the container can only control on the service level.</p>
+
+<p>When using Service Mesh to achieve service resilience, you only need to write some configuration files instead of coding. But it is not without its shortcomings.
+Writing a configuration file is another way of coding, which is error-prone when the file is large. There are already better IDEs that support container, but support for Service Mesh is not ideal. Service Mesh definitely has a bright future, and maybe it will be integrated into the container technology and become part of it in the future.</p>
+
+<h4 id="when-do-you-need-it">When do you need it?</h4>
+
+<p>No matter how you implement Service Resilience, there is a lot of work to do, especially when there are many services and the calling relationships are complex. So should you make all services having these features?
+My suggestion is to add these features to the most important services initially, while leaving other services for later consideration. After you deployed the application to the production environment for a period of time, you would have a better idea on which services are  problematic, and then decide what to do next.
+The benefit of applying the Decorator Pattern is that you can add or remove decorators without affecting the business logic code.</p>
+
+<h4 id="coculsion">Coculsion:</h4>
+
+<p>Service resilience is a very important technology in Microservices. It makes the service still available when the environment is unreliable, thus greatly improving the resilience of services. Technologies used include Timeouts, Retry, Rate Limiting, Circuit Breaker, Fault Injection, and Bulkhead.
+You can implement these features by code or Service Mash. Service Mesh is the future direction. But implementing them requires a lot of work, so you need to choose which services to apply the technology.</p>
+
+<h4 id="source-code">Source Code:</h4>
+
+<p>The complete code is in github: <a href="https://github.com/jfeng45/grpcservice">https://github.com/jfeng45/grpcservice</a></p>
+
+<h4 id="reference">Reference:</h4>
+
+<p>[1]Go kit
+<a href="http://gokit.io/examples/stringsvc.html">http://gokit.io/examples/stringsvc.html</a></p>
+
+<p>[2] Circuit Breaker Pattern
+<a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker">https://docs.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker</a></p>
+
+<p>[3]gobreaker
+<a href="https://github.com/sony/gobreaker">https://github.com/sony/gobreaker</a></p>
+
+<p>[4]Bulkhead pattern
+<a href="https://docs.microsoft.com/en-us/azure/architecture/patterns/bulkhead">https://docs.microsoft.com/en-us/azure/architecture/patterns/bulkhead</a></p>
+
+<p>[5]How it Works
+<a href="https://github.com/Netflix/Hystrix/wiki/How-it-Works">https://github.com/Netflix/Hystrix/wiki/How-it-Works</a></p>
+
+<p>[6]It takes more than a Circuit Breaker to create a resilient application
+<a href="https://developers.redhat.com/blog/2017/05/16/it-takes-more-than-a-circuit-breaker-to-create-a-resilient-application/">https://developers.redhat.com/blog/2017/05/16/it-takes-more-than-a-circuit-breaker-to-create-a-resilient-application/</a></p>
+
+<p>[7]Netflix/concurrency-limits
+<a href="https://github.com/Netflix/concurrency-limits">https://github.com/Netflix/concurrency-limits</a></p>
+
+<p>[8]Istio]
+<a href="https://istio.io/">https://istio.io/</a></p>
+
+<p>[9]Linkerd
+<a href="https://linkerd.io/">https://linkerd.io/</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/go_service_resilience/">zh: Go微服务容错与韧性(Service Resilience)</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/go_opentracing/">How to Do Tracing in Go Microservice?</a></li>
+        
+            <li><a href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></li>
+        
+            <li><a href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+            <li><a href="/en/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></li>
+        
+    </ul>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+    (function() {
+        
+        
+        if (window.location.hostname == "localhost")
+            return;
+
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'jfeng45';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/go_service_resilience/">Service Resilience</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_opentracing/">Go Distributed Tracing</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+            <a class="badge badge-primary" href="/en/tags/service-resilience">service-resilience</a>
+            
+            <a class="badge badge-primary" href="/en/tags/tracing">tracing</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

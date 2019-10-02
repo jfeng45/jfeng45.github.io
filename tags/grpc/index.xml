@@ -6,10 +6,19 @@
     <description>Recent content in Grpc on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-Hans</language>
-    <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/tags/grpc/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
+      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
+    </item>
     
     <item>
       <title>清晰架构（Clean Architecture）的Go微服务: 程序容器（Application Container）</title>
@@ -18,15 +27,6 @@
       
       <guid>https://jfeng45.github.io/posts/application_container/</guid>
       <description>清晰架构（Clean Architecture）的一个理念是隔离程序的框架，使框架不会接管你的应用程序，而是由你决定何时何地使用它们。在本程序</description>
-    </item>
-    
-    <item>
-      <title>清晰架构（Clean Architecture）的Go微服务</title>
-      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
-      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
     </item>
     
     <item>

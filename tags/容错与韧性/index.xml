@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>容错与韧性 on </title>
+    <link>https://jfeng45.github.io/tags/%E5%AE%B9%E9%94%99%E4%B8%8E%E9%9F%A7%E6%80%A7/</link>
+    <description>Recent content in 容错与韧性 on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://jfeng45.github.io/tags/%E5%AE%B9%E9%94%99%E4%B8%8E%E9%9F%A7%E6%80%A7/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go微服务容错与韧性(Service Resilience)</title>
+      <link>https://jfeng45.github.io/posts/go_service_resilience/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_service_resilience/</guid>
+      <description>Service Resilience是指当服务的的运行环境出现了问题，例如网络故障或服务过载或某些微服务宕机的情况下，程序仍能够提供部分或大部分服务，这时</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,10 +6,46 @@
     <description>Recent content on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-Hans</language>
-    <lastBuildDate>Mon, 29 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go微服务容错与韧性(Service Resilience)</title>
+      <link>https://jfeng45.github.io/posts/go_service_resilience/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_service_resilience/</guid>
+      <description>Service Resilience是指当服务的的运行环境出现了问题，例如网络故障或服务过载或某些微服务宕机的情况下，程序仍能够提供部分或大部分服务，这时</description>
+    </item>
+    
+    <item>
+      <title>Go微服务全链路跟踪详解</title>
+      <link>https://jfeng45.github.io/posts/go_opentracing/</link>
+      <pubDate>Sat, 21 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/go_opentracing/</guid>
+      <description>在微服务架构中，调用链是漫长而复杂的，要了解其中的每个环节及其性能，你需要全链路跟踪。 它的原理很简单，你可以在每个请求开始时生成一个唯一的I</description>
+    </item>
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
+      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
+    </item>
+    
+    <item>
+      <title>微服务之间的调用方式</title>
+      <link>https://jfeng45.github.io/posts/service_calling_each_other/</link>
+      <pubDate>Wed, 21 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/service_calling_each_other/</guid>
+      <description>在微服务架构中，需要调用很多服务才能完成一项功能。服务之间如何互相调用就变成微服务架构中的一个关键问题。服务调用有两种方式，一种是RPC方式</description>
+    </item>
     
     <item>
       <title>清晰架构（Clean Architecture）的Go微服务: 依赖注入（Dependency Injection）</title>
@@ -54,15 +90,6 @@
       
       <guid>https://jfeng45.github.io/posts/coding_style/</guid>
       <description>编码风格在编程中是一个相对乏味的主题，但是合适的编码风格对一个有效的程序员是至关重要的。 它有三个组成部分： 程序结构 （ application layout） 编码规则</description>
-    </item>
-    
-    <item>
-      <title>清晰架构（Clean Architecture）的Go微服务</title>
-      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
-      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
     </item>
     
     <item>
@@ -116,7 +143,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://jfeng45.github.io/introduction/</guid>
-      <description>文章: 类别: go 微服务 项目: 基于清晰架构（Clean Architecture）的Go微服务 Go gRPC 项目</description>
+      <description>文章: 类别: go 微服务 微服务设计 项目: 基于清晰架构（Clean Architecture）的Go微服务 Go微服务全链路跟踪和容错 Go gRPC 项目</description>
     </item>
     
   </channel>

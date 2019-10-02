@@ -6,10 +6,19 @@
     <description>Recent content in “微服务” on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-Hans</language>
-    <lastBuildDate>Thu, 25 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://jfeng45.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>清晰架构（Clean Architecture）的Go微服务</title>
+      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
+      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
+    </item>
     
     <item>
       <title>清晰架构（Clean Architecture）的Go微服务: 日志管理</title>
@@ -18,15 +27,6 @@
       
       <guid>https://jfeng45.github.io/posts/go_logging_and_error_handling/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>清晰架构（Clean Architecture）的Go微服务</title>
-      <link>https://jfeng45.github.io/posts/clean_architecture_with_go/</link>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jfeng45.github.io/posts/clean_architecture_with_go/</guid>
-      <description>我用Go和gRPC创建了一个微服务项目，并试图找出是最好的程序结构，它可以作为我其他项目的模板。我还将程序设计和编程的最佳实践应用于Go Mi</description>
     </item>
     
     <item>

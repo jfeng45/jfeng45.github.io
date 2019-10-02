@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="How to Do Tracing in Go Microservice?" />
+<meta property="og:description" content="Distributed tracing includes different scenarios, such as tracing inside a function, database tracing and cross-process tracing. If you want to design a better tracing solution or choose the best fit tools or libraries for your use case, you need to be aware of issues and solutions in each scenario." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jfeng45.github.io/en/posts/go_opentracing/" />
+<meta property="article:published_time" content="2019-08-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-08-28T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="How to Do Tracing in Go Microservice?"/>
+<meta name="twitter:description" content="Distributed tracing includes different scenarios, such as tracing inside a function, database tracing and cross-process tracing. If you want to design a better tracing solution or choose the best fit tools or libraries for your use case, you need to be aware of issues and solutions in each scenario."/>
+
+
+
+    
+      <link rel="canonical" href="https://medium.com/swlh/distributed-tracing-for-go-microservice-with-opentracing-1fc1aec76b3e">
+    
+
+    
+       <meta name="description" content="Distributed tracing includes different scenarios, such as tracing inside a function, database tracing and cross-process tracing. If you want to design a better tracing solution or choose the best fit tools or libraries for your use case, you need to be aware of issues and solutions in each scenario.">
+    
+
+    <title>
+      
+        How to Do Tracing in Go Microservice? | 
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://jfeng45.github.iocss/style.css" rel="stylesheet">
+
+    
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-145409684-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+    
+  </head>
+  <body>
+  <div id="container">
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/en">
+            
+Software Craftsman
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/introduction">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/posts">Posts</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/en/project/">Project</a>
+                    
+                </li>
+                
+            </ul>
+            
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        English
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/en/">English</a>
+                        
+                            <a class="dropdown-item" href="https://jfeng45.github.io/">中文</a>
+                        
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+    <div id="body">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 blog-main">
+
+            
+
+<header>
+    <h5 class="blog-post-title">
+    <a class="text-dark" href="/en/posts/go_opentracing/">How to Do Tracing in Go Microservice?</a>
+</h5>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-08-28">2019-08-28</time>
+    
+    
+       <span rel="author">Jin Feng</span>
+    
+</div>
+
+    
+<div class="blog-post-tags text-secondary">
+    <strong>Tags:</strong>
+    
+        <a class="badge badge-primary" href="/en/tags/golang">Golang</a>
+    
+        <a class="badge badge-primary" href="/en/tags/microservice">Microservice</a>
+    
+        <a class="badge badge-primary" href="/en/tags/tracing">Tracing</a>
+    
+</div>
+
+    
+<div class="blog-post-categories text-secondary">
+    <strong>Categories:</strong>
+    
+        <a class="badge badge-primary" href="/en/categories/go-microservice">Go Microservice</a>
+    
+</div>
+
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>In Microservice architecture, the calling chain is long and complex, to understand each component and the performance of it, you need something called distributed tracing. The idea is simple, you generate a unique ID at the beginning of each request, and carry it along the whole calling chain. The ID is called Correlation ID¹ and you can use it to trace the performance of the entire request. There are two problems need to be solved. First, how to make the ID available to every function you need to trace inside your application; second, how to pass the ID across the network when you need to call another Microservice.</p>
+
+<h2 id="what-is-opentracing">What is OpenTracing?</h2>
+
+<p>There are many tracing libraries, among which the most popular ones probably are “<a href="https://zipkin.io/">Zipkin</a>”² and “<a href="https://www.jaegertracing.io/">Jaeger</a>”³. Which library do you choose? That is always a headache because you can choose the most popular one at the moment, but what if later on there is a better one coming out? <a href="https://opentracing.io/docs/getting-started/">OpenTracing</a>⁴ tried to solve the problem by creating a common interface for tracing libraries, so you can switch to a different implementation library in the future without changing your code.</p>
+
+<h2 id="how-to-trace-server-endpoints"><strong>How to trace server endpoints?</strong></h2>
+
+<p>In our application, we use “Zipkin” as the tracing library and “OpenTracing” as the generic tracing API. There are usually four components in a tracing system, and I use Zipkin as an example:</p>
+
+<ul>
+<li><p>Recorder: which will record the trace data</p></li>
+
+<li><p>Reporter (or collecting agent): which collects the data from a recorder and send the data to UI app</p></li>
+
+<li><p>Tracer: which generates the trace data</p></li>
+
+<li><p>UI: which is responsible for presenting trace data in a graphic UI</p></li>
+</ul>
+
+<p><img src="/images/microservice/zipkin.png" alt="zipkin" /></p>
+
+<p>The above is the component diagram of Zipkin, and I took it from “<a href="https://zipkin.io/pages/architecture.html">Zipkin Architecture</a>”⁵.</p>
+
+<p>There are two different types of tracing, one is in-process tracing and the other is cross-process tracing. We will talk about cross-process tracing first.</p>
+
+<p><strong>The client side code:</strong></p>
+
+<p>We will use a simple gRPC program as an example, which has client side and server side code. We’d like to trace a request from the client side to the server side and return back. The following is the code to create a new tracer on the client side. First it creates the “HTTP Collector” (the agent), which collects the tracing data and sends it to the “Zipkin” UI. The “endpointUrl” is the URL for “Zipkin” UI. Second, it creates a recorder to record the information on an endpoint, the “hostUrl” is the URL for gRPC (client) call. Third, it creates a new tracer with the recorder we just created. Finally, it sets the “GlobalTracer” for “OpenTracing”, which can be accessed in the whole application.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> (
+	<span style="color:#a6e22e">endpoint_url</span> = <span style="color:#e6db74">&#34;http://localhost:9411/api/v1/spans&#34;</span>
+	<span style="color:#a6e22e">host_url</span> = <span style="color:#e6db74">&#34;localhost:5051&#34;</span>
+	<span style="color:#a6e22e">service_name_cache_client</span> = <span style="color:#e6db74">&#34;cache service client&#34;</span>
+	<span style="color:#a6e22e">service_name_call_get</span> = <span style="color:#e6db74">&#34;callGet&#34;</span>
+)
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newTracer</span> () (<span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">Tracer</span>, <span style="color:#a6e22e">zipkintracer</span>.<span style="color:#a6e22e">Collector</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">collector</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">openzipkin</span>.<span style="color:#a6e22e">NewHTTPCollector</span>(<span style="color:#a6e22e">endpoint_url</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+	}
+	<span style="color:#a6e22e">recorder</span> <span style="color:#f92672">:=</span><span style="color:#a6e22e">openzipkin</span>.<span style="color:#a6e22e">NewRecorder</span>(<span style="color:#a6e22e">collector</span>, <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">host_url</span>, <span style="color:#a6e22e">service_name_cache_client</span>)
+	<span style="color:#a6e22e">tracer</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">openzipkin</span>.<span style="color:#a6e22e">NewTracer</span>(
+		<span style="color:#a6e22e">recorder</span>,
+		<span style="color:#a6e22e">openzipkin</span>.<span style="color:#a6e22e">ClientServerSameSpan</span>(<span style="color:#66d9ef">true</span>))
+
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>,<span style="color:#66d9ef">nil</span>,<span style="color:#a6e22e">err</span>
+	}
+	<span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">SetGlobalTracer</span>(<span style="color:#a6e22e">tracer</span>)
+
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">tracer</span>,<span style="color:#a6e22e">collector</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the gRPC client code. It first calls the function “newTrace()” mentioned above to create the tracer, then, it creates the gRPC connection which includes the newly created tracer. Next, it creates the cache service gRPC client with the connection just created. Finally, it makes the “Get” call to the cache service through the gRPC client.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">key</span><span style="color:#f92672">:=</span><span style="color:#e6db74">&#34;123&#34;</span>
+	<span style="color:#a6e22e">tracer</span>, <span style="color:#a6e22e">collector</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span><span style="color:#a6e22e">newTracer</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">collector</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#a6e22e">connection</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">Dial</span>(<span style="color:#a6e22e">host_url</span>,
+		<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">WithInsecure</span>(), <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">WithUnaryInterceptor</span>(<span style="color:#a6e22e">otgrpc</span>.<span style="color:#a6e22e">OpenTracingClientInterceptor</span>(<span style="color:#a6e22e">tracer</span>, <span style="color:#a6e22e">otgrpc</span>.<span style="color:#a6e22e">LogPayloads</span>())),
+		)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">connection</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#a6e22e">client</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">NewCacheServiceClient</span>(<span style="color:#a6e22e">connection</span>)
+	<span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">callGet</span>(<span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">client</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p><strong>Trace and Span:</strong></p>
+
+<p>In OpenTracing, an important concept is called “trace”, which represents one calling chain of a request from beginning to end and the identifier is “traceID”. Under a trace, there are many spans, each captures a unit of work inside the calling chain and it is identified by “spanId”. Each span has one parent and all spans of a trace formed a directed acyclic graph(DAG). The following is the diagram of the relationships among spans. I took it from “<a href="https://opentracing.io/specification/">The OpenTracing Semantic Specification</a>”⁶.</p>
+
+<p><img src="/images/microservice/span.png" alt="span" /></p>
+
+<p>The following is the function “callGet”, which makes a call to the gRPC server. At the beginning of the function, it starts a span for this function call and at the end, it finishes the span.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">service_name_call_get</span> = <span style="color:#e6db74">&#34;callGet&#34;</span>
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">callGet</span>(<span style="color:#a6e22e">key</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">c</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">CacheServiceClient</span>) ( []<span style="color:#66d9ef">byte</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">span</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">StartSpan</span>(<span style="color:#a6e22e">service_name_call_get</span>)
+	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">span</span>.<span style="color:#a6e22e">Finish</span>()
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">5</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>)
+	<span style="color:#75715e">// Put root span in context so it will be used in our calls to the client.
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">ContextWithSpan</span>(<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>(), <span style="color:#a6e22e">span</span>)
+	<span style="color:#75715e">//ctx := context.Background()
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">getReq</span><span style="color:#f92672">:=&amp;</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>{<span style="color:#a6e22e">Key</span>:<span style="color:#a6e22e">key</span>}
+	<span style="color:#a6e22e">getResp</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span><span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">getReq</span> )
+	<span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getResp</span>.<span style="color:#a6e22e">Value</span>
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">err</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p><strong>The server side code:</strong></p>
+
+<p>The code is similar to the client side code, it also calls “newTracer()”(which is almost the same with the client side “newTracer()” function) to create a tracer. Then, it creates a “OpenTracingServerInterceptor”, which has the tracer inside it. Finally, it creates the gRPC server with the interceptor we just created.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">connection</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Listen</span>(<span style="color:#a6e22e">network</span>, <span style="color:#a6e22e">host_url</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#a6e22e">tracer</span>,<span style="color:#a6e22e">err</span>  <span style="color:#f92672">:=</span> <span style="color:#a6e22e">newTracer</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#a6e22e">opts</span> <span style="color:#f92672">:=</span> []<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">ServerOption</span>{
+		<span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">UnaryInterceptor</span>(
+			<span style="color:#a6e22e">otgrpc</span>.<span style="color:#a6e22e">OpenTracingServerInterceptor</span>(<span style="color:#a6e22e">tracer</span>,<span style="color:#a6e22e">otgrpc</span>.<span style="color:#a6e22e">LogPayloads</span>()),
+		),
+	}
+	<span style="color:#a6e22e">srv</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">NewServer</span>(<span style="color:#a6e22e">opts</span><span style="color:#f92672">...</span>)
+	<span style="color:#a6e22e">cs</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">initCache</span>()
+	<span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">RegisterCacheServiceServer</span>(<span style="color:#a6e22e">srv</span>, <span style="color:#a6e22e">cs</span>)
+
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">srv</span>.<span style="color:#a6e22e">Serve</span>(<span style="color:#a6e22e">connection</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		panic(<span style="color:#a6e22e">err</span>)
+	} <span style="color:#66d9ef">else</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;server listening on port 5051&#34;</span>)
+	}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the picture of the trace and the spans in Zipkin after you run the above code. One the server side, we didn’t need to write any code inside a function to generate the span, all we need to do is to create a trace and the server interceptor automatically generates the call span for us.</p>
+
+<p><img src="/images/microservice/callSpan.png" alt="callSpan" /></p>
+
+<h2 id="how-to-trace-inside-a-function"><strong>How to trace inside a function?</strong></h2>
+
+<p>The above picture didn’t give us what is going on inside a function. We need to write some code to do it.</p>
+
+<p>The following is the server side “get” function and we added trace code. It first gets the span from the context and then creates a new child span and using the one we just get as the parent span. Next, it does some action (for example, a database query) and then finishes the child span.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">service_name_db_query_user</span> = <span style="color:#e6db74">&#34;db query user&#34;</span>
+
+<span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">CacheService</span>) <span style="color:#a6e22e">Get</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">req</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetReq</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">5</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">parent</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">SpanFromContext</span>(<span style="color:#a6e22e">ctx</span>); <span style="color:#a6e22e">parent</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">pctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">parent</span>.<span style="color:#a6e22e">Context</span>()
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">tracer</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">GlobalTracer</span>(); <span style="color:#a6e22e">tracer</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">mysqlSpan</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">tracer</span>.<span style="color:#a6e22e">StartSpan</span>(<span style="color:#a6e22e">service_name_db_query_user</span>, <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">ChildOf</span>(<span style="color:#a6e22e">pctx</span>))
+			<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">mysqlSpan</span>.<span style="color:#a6e22e">Finish</span>()
+			<span style="color:#75715e">//do some operations
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span>)
+		}
+	}
+	<span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">GetKey</span>()
+	<span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">storage</span>[<span style="color:#a6e22e">key</span>]
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;get called with return of value: &#34;</span>, <span style="color:#a6e22e">value</span>)
+	<span style="color:#a6e22e">resp</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">GetResp</span>{<span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">value</span>}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resp</span>, <span style="color:#66d9ef">nil</span>
+
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>The following is the picture of it. Now it has a new span “db query user” on the server side, which we just added.</p>
+
+<p><img src="/images/microservice/serverSpan.png" alt="serverSpan" /></p>
+
+<p>The following is the data for it. You can see the client starts at 8.016ms and the server starts at the same time. It takes about 16ms for the server side to finish.</p>
+
+<p><img src="/images/microservice/traceBetweenServer.png" alt="traceBetweenServer" /></p>
+
+<h2 id="how-to-trace-a-database">How to trace a database?</h2>
+
+<p>What if you need to trace what is going on inside the database call? Then, database driver needs to support tracing and you need to pass the tracer into the database. What if the database driver doesn’t support tracing? There are several driver wrappers, which can wrap any database driver and make it supporting tracing. One of them is “<a href="https://github.com/ExpansiveWorlds/instrumentedsql">instrumentedsql</a>”⁷ (The others are “<a href="https://github.com/luna-duclos/instrumentedsql">luna-duclos/instrumentedsql</a>”⁸ and “<a href="https://github.com/opencensus-integrations/ocsql/blob/master/driver.go">ocsql/driver.go</a>”⁹). I briefly looked at the code of them and they all using the same approach. Basically, they all create a wrapper for each function of the underlying database and start a new span before each database operation and finish the span after the operation is done. However, all of those wrapped around “database/sql” interface, so no luck for NoSQL database. If you can’t find a driver supporting OpenTracing for your NoSQL database, you may need to write a wrap. It shouldn’t be difficult to do though.</p>
+
+<p>One question is “If I use OpenTracing with Zipkin and the database driver use OpenTracing with Jaeger, will that work? It turned out that won’t happen. Most of the wrapper I mentioned above supporting OpenTracing. In order to get the wrapper work, you need to register the wrapped SQL driver, which has the tracer in it. Inside the wrapper, all tracing functions are called on the OpenTracing interface, so it doesn’t even know whether the underlying implementation is Zipkin or Jaeger. Now, you see the benefit of using OpenTarcing. When you create the global tracer in your application, you do need to decide whether to use Zipkin or Jaeger, after that, each function in your application or third party libraries only call the OpenTracing interface and everything will work.</p>
+
+<h2 id="how-to-trace-a-client-call">How to trace a client call?</h2>
+
+<p>Let’s say we need to call a RESTFul service in our gRPC service, how to trace that?</p>
+
+<p>A simple answer is to use the HTTP header as the media to carry out the trace information. No matter the Microservice is gRPC or RESTFul, they all use the HTTP protocol. If it is a message queue, then put trace information in the message header. (There are two different types of headers for <a href="https://github.com/openzipkin/b3-propagation">Zipkin B3-propogation</a>, “single header” and “multiple header”, but JMS only supports single header)</p>
+
+<p>On important concept is “trace context”, which defines all the needed information to propagate a trace, such as traceID, parentId (parent spanId) and so on. For more information, please read “<a href="https://www.w3.org/TR/trace-context/">Trace Context</a>”¹⁰.</p>
+
+<p>OpenTracing provides two functions to propagate the trace context: “extract(format, carrier)” and “inject(SpanContext, format, carrier)”. “extarct()” retrieves the tracing context from a carrier, usually it is HTTP header. “inject” puts the tracing context into a carrier, so the tracing chain won’t broke. The following is the diagram for “<a href="https://github.com/openzipkin/b3-propagation">b3-propagation</a>”, which I took from Zipkin.</p>
+
+<p><img src="/images/microservice/b3PropogationWhite.png" alt="b3PropogationWhite" /></p>
+
+<p>But why didn’t we call those functions in our example? Let’s review the code. On the client side, when creating the gRPC client connection, we called a function named “OpenTracingClientInterceptor”. The following is the partial code for “OpenTracingClientInterceptor”, which I took from “client.go” in “<a href="http://github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc">otgrpc</a>”¹¹ package. It gets the trace context from the <a href="https://blog.golang.org/context">Go context</a>¹² and inject it into HTTP header, so we didn’t need to do it manually.</p>
+
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">OpenTracingClientInterceptor</span>(<span style="color:#a6e22e">tracer</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">Tracer</span>, <span style="color:#a6e22e">optFuncs</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">Option</span>) 
+  <span style="color:#a6e22e">grpc</span>.<span style="color:#a6e22e">UnaryClientInterceptor</span> {
+    <span style="color:#f92672">...</span>
+    <span style="color:#a6e22e">ctx</span> = <span style="color:#a6e22e">injectSpanContext</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">tracer</span>, <span style="color:#a6e22e">clientSpan</span>)
+    <span style="color:#f92672">...</span>
+  }
+  
+  <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">injectSpanContext</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">tracer</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">Tracer</span>, <span style="color:#a6e22e">clientSpan</span> <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">Span</span>) 
+    <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span> {
+      <span style="color:#a6e22e">md</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">metadata</span>.<span style="color:#a6e22e">FromOutgoingContext</span>(<span style="color:#a6e22e">ctx</span>)
+      <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">ok</span> {
+        <span style="color:#a6e22e">md</span> = <span style="color:#a6e22e">metadata</span>.<span style="color:#a6e22e">New</span>(<span style="color:#66d9ef">nil</span>)
+      } <span style="color:#66d9ef">else</span> {
+        <span style="color:#a6e22e">md</span> = <span style="color:#a6e22e">md</span>.<span style="color:#a6e22e">Copy</span>()
+      }
+      <span style="color:#a6e22e">mdWriter</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">metadataReaderWriter</span>{<span style="color:#a6e22e">md</span>}
+      <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">tracer</span>.<span style="color:#a6e22e">Inject</span>(<span style="color:#a6e22e">clientSpan</span>.<span style="color:#a6e22e">Context</span>(), <span style="color:#a6e22e">opentracing</span>.<span style="color:#a6e22e">HTTPHeaders</span>, <span style="color:#a6e22e">mdWriter</span>)
+      <span style="color:#75715e">// We have no better place to record an error than the Span itself :-/
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+        <span style="color:#a6e22e">clientSpan</span>.<span style="color:#a6e22e">LogFields</span>(<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;event&#34;</span>, <span style="color:#e6db74">&#34;Tracer.Inject() failed&#34;</span>), <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#a6e22e">err</span>))
+      }
+      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">metadata</span>.<span style="color:#a6e22e">NewOutgoingContext</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">md</span>)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<br/></p>
+
+<p>On the server side, we also called a function &ldquo;otgrpc.OpenTracingServerInterceptor&rdquo;, the code of which is similar to the client side &ldquo;OpenTracingClientInterceptor&rdquo;. Instead of injecting trace context, it extracts the trace context from the HTTP header and put it into Go context. That is why we don&rsquo;t need to manually call &ldquo;extract()&rdquo; again. In our code, we can directly extract the trace context from the Go context (opentracing.SpanFromContext(ctx)). But for other HTTP based service such as RESTFul service, that may not be the case, so we need to explicitly extract the trace context from HTTP header on the server side. Of course, you can use an Interceptor or a filter as well.</p>
+
+<h2 id="the-interoperability-between-trace-libraries"><strong>The interoperability between trace libraries</strong></h2>
+
+<p>One question is “If I use OpenTracing with Zipkin and the third party Microservice using OpenTracing with Jaeger, will that work?&rdquo; It looks similar to the database question we asked before, but they are very different. For the database one, because the application and the database are in the same process, they can share the same global tracer, so it is much easier to solve. For the Microservice one, generally speaking, it won’t work because OpenTracing only standardized the tracing API and it didn’t standardize on the trace context. The World Wide Web** **Consortium (W3C) is working on a standard for “<a href="https://w3c.github.io/trace-context/">trace context</a>”¹⁰, and it published a candidate recommendation on 2019–08–09. OpenTracing lets the vendor to decide which trace context they use. It seems each vendor choosing its own trace context. For example, Zipkin uses “X-B3-TraceId” as the trace ID and “Jaeger” uses “uber-trace-id”, so implementing OpenTracing doesn’t mean that a trace library can interoperate with another one across the wire. One good news for “Jaeger” is that you can choose to use “<a href="https://github.com/jaegertracing/jaeger-client-go/tree/master/zipkin">Zipkin compatibility features</a>”¹³ to generate Zipkin trace context when you create a Jaeger tracer, then they will be compatible with each other. For other situations, you need to do the manual translation (between the extract and the inject) yourself.</p>
+
+<h2 id="the-design-of-tracing"><strong>The design of tracing</strong></h2>
+
+<p><strong>Write less code for tracing</strong></p>
+
+<p>One requirement for tracing should be coding tracing as less as possible. Ideally, you don’t need to any code and a framework or library will take care of it. There are three levels of tracing:</p>
+
+<ul>
+<li><p>cross-process tracing</p></li>
+
+<li><p>database tracing</p></li>
+
+<li><p>in-process tracing</p></li>
+</ul>
+
+<p>It turned out that cross-process tracing is the easiest one. You can write a interceptor or a filter to trace every request, only minimum coding involved. Database tracing is also fine. If using the wrapper we talked above, you only need to register the driver wrapper and need to pass in go-context (to database functions), which has trace context inside. You can use Dependency Injection to do it with minimum coding.</p>
+
+<p>In-process tracing is the most difficult one because you have to write tracing code for each individual function. I am not aware a good way to write a generic function to trace every function in an application. (Interceptor won’t be a good choice because it needs every function has a generic type (interface{}) for parameters and returns). Fortunately, the first two levels probably is good enough for most people.</p>
+
+<p>Some people may implement distributed tracing with service mesh, such as <a href="https://istio.io/">Istio</a> or <a href="https://linkerd.io/">Linkerd</a>. Tracing is best implemented by infrastructure and rather than be mixed with your business logic code. You will face the same problems we just talked though. The service mesh will take care the cross-process tracing, but you still need to do in-function or database tracing yourself. Some service meshes make it easier to propagate the trace context through the wire by providing integration with popular tracing vendors.</p>
+
+<p><strong>Trace Design:</strong></p>
+
+<p>Carefully designed span, service name, tags play an important role in fully utilization of tracing power. please read “<a href="https://github.com/opentracing/specification/blob/master/semantic_conventions.md">Semantic Conventions</a>”¹⁴ for detail.</p>
+
+<p><strong>Logging Trace ID</strong></p>
+
+<p>It is a common requirement to integrate tracing with logging, basically to log the trace ID in logging message along a calling chain. Currently, OpenTracing doesn’t expose traceID. You can either convert the “OpenTracing.SpanContext” to vendor specific “SpanContext” (both Zipkin and Jaeger exposed traceID through their “SpanContext”) or convert the “OpenTracing.SpanContext” to a string and parse it to get the traceID. Converting to a string is better because it won’t mess up your dependency. You don’t need to worry about it in the future because OpenTracing will expose traceID, please read <a href="https://github.com/opentracing/specification/blob/master/rfc/trace_identifiers.md">here</a>.</p>
+
+<h2 id="opentracing-and-opencensus">OpenTracing and OpenCensus</h2>
+
+<p><a href="https://opencensus.io/">OpenCensus</a>¹⁵ is not another tracing interface, but a collection of libraries can integrate with other tracing libraries to finish the tracing job, so it is often compared with OpenTracing. The question is “If I use OpenTracing in my application and need to access the database which uses OpenCensus, will that work?” No, it won’t. So, you need to be careful when choosing tracing interface to make sure it is supported by other libraries you need. A good news is that you don’t need to make the choice in the future because they will “<a href="https://medium.com/opentracing/merging-opentracing-and-opencensus-f0fe9c7ca6f0">merge the project into one</a>”¹⁶, and the problem is gone.</p>
+
+<h2 id="conclusion">Conclusion:</h2>
+
+<p>Distributed tracing includes different scenarios, such as tracing inside a function, database tracing and cross-process tracing. If you want to design a better tracing solution or choose the best fit tools or libraries for your use case, you need to be aware of issues and solutions in each scenario.</p>
+
+<h2 id="source-code">Source Code:</h2>
+
+<p>The complete code is in github: <a href="https://github.com/jfeng45/grpcservice">https://github.com/jfeng45/grpcservice</a></p>
+
+<h2 id="reference">Reference:</h2>
+
+<p>[1]Correlation IDs for microservices architectures
+<a href="https://hilton.org.uk/blog/microservices-correlation-id">https://hilton.org.uk/blog/microservices-correlation-id</a></p>
+
+<p>[2]Zipkin
+<a href="https://zipkin.io/">https://zipkin.io</a></p>
+
+<p>[3]Jaeger: open source, end-to-end distributed tracing
+<a href="https://www.jaegertracing.io/">https://www.jaegertracing.io</a></p>
+
+<p>[4]OpenTracing
+<a href="https://opentracing.io/docs/getting-started/">https://opentracing.io/docs/getting-started</a></p>
+
+<p>[5]Zipkin Architecture
+<a href="https://zipkin.io/pages/architecture.html">https://zipkin.io/pages/architecture.html</a></p>
+
+<p>[6]The OpenTracing Semantic Specification
+<a href="https://opentracing.io/specification/">https://opentracing.io/specification/</a></p>
+
+<p>[7]instrumentedsql
+<a href="https://github.com/ExpansiveWorlds/instrumentedsql">https://github.com/ExpansiveWorlds/instrumentedsql</a></p>
+
+<p>[8]luna-duclos/instrumentedsql
+<a href="https://github.com/luna-duclos/instrumentedsql">https://github.com/luna-duclos/instrumentedsql</a></p>
+
+<p>[9]ocsql/driver.go
+<a href="https://github.com/opencensus-integrations/ocsql/blob/master/driver.go">https://github.com/opencensus-integrations/ocsql/blob/master/driver.go</a></p>
+
+<p>[10]Trace Context
+<a href="https://www.w3.org/TR/trace-context/">https://www.w3.org/TR/trace-context/</a></p>
+
+<p>[11]otgrpc
+<a href="http://github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc">http://github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc</a></p>
+
+<p>[12]Go Concurrency Patterns: Context
+<a href="https://blog.golang.org/context">https://blog.golang.org/context</a></p>
+
+<p>[13]Zipkin compatibility features
+<a href="https://github.com/jaegertracing/jaeger-client-go/tree/master/zipkin">https://github.com/jaegertracing/jaeger-client-go/tree/master/zipkin</a></p>
+
+<p>[14]Semantic Conventions
+<a href="https://github.com/opentracing/specification/blob/master/semantic_conventions.md">https://github.com/opentracing/specification/blob/master/semantic_conventions.md</a></p>
+
+<p>[15]OpenCensus
+<a href="https://opencensus.io/">https://opencensus.io/</a></p>
+
+<p>[16]merge the project into one
+<a href="https://medium.com/opentracing/merging-opentracing-and-opencensus-f0fe9c7ca6f0">https://medium.com/opentracing/merging-opentracing-and-opencensus-f0fe9c7ca6f0</a></p>
+
+
+    
+      <h4>Translations</h4>
+      <ul>
+        
+        <li>
+          <a href="/posts/go_opentracing/">zh: Go微服务全链路跟踪详解</a>
+        </li>
+        
+      </ul>
+    
+
+    
+
+    <h4>See also</h4>
+    <ul>
+        
+            <li><a href="/en/posts/clean_architecture_with_go/">Go Microservice with Clean Architecture</a></li>
+        
+            <li><a href="/en/posts/go_logging_and_error_handling/">Go Microservice with Clean Architecture: Application Logging</a></li>
+        
+            <li><a href="/en/posts/go_microservice_application_layout/">Go Microservice with Clean Architecture: Application Layout</a></li>
+        
+            <li><a href="/en/posts/application_container/">Go Microservice with Clean Architecture: Application Container</a></li>
+        
+            <li><a href="/en/posts/dependency_injection/">Go Microservice with Clean Architecture: Dependency Injection</a></li>
+        
+    </ul>
+
+    <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+    (function() {
+        
+        
+        if (window.location.hostname == "localhost")
+            return;
+
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'jfeng45';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+          </div>
+
+          <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+        
+
+
+<section>
+    <h4>Recent Posts</h4>
+    <ol class="list-unstyled">
+        
+        <li>
+            <a href="/en/posts/go_service_resilience/">Service Resilience</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_opentracing/">Go Distributed Tracing</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_with_go/">Go Microservice Series(*****)</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/application_container/">Application Container</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/dependency_injection/">Dependency Injection</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/go_logging_and_error_handling/">Logging and Error Handling</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/coding_style/">Coding Style</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/transaction_support/">Transaction Support</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_application_design/">Clean Architecture Design</a>
+        </li>
+        
+        <li>
+            <a href="/en/posts/clean_architecture_design_principle/">Design Principle</a>
+        </li>
+        
+    </ol>
+</section>
+
+    
+    
+        <section>
+    
+        
+        <h4>Categories</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/categories/go-microservice">go-microservice</a>
+            
+        </p>
+        
+    
+        
+        <h4>Tags</h4>
+        <p>
+            
+            <a class="badge badge-primary" href="/en/tags/application-container">application-container</a>
+            
+            <a class="badge badge-primary" href="/en/tags/application-layout">application-layout</a>
+            
+            <a class="badge badge-primary" href="/en/tags/clean-architecture">clean-architecture</a>
+            
+            <a class="badge badge-primary" href="/en/tags/coding-style">coding-style</a>
+            
+            <a class="badge badge-primary" href="/en/tags/database-transaction">database-transaction</a>
+            
+            <a class="badge badge-primary" href="/en/tags/dependency-injection">dependency-injection</a>
+            
+            <a class="badge badge-primary" href="/en/tags/error-handling">error-handling</a>
+            
+            <a class="badge badge-primary" href="/en/tags/golang">golang</a>
+            
+            <a class="badge badge-primary" href="/en/tags/grpc">grpc</a>
+            
+            <a class="badge badge-primary" href="/en/tags/logging">logging</a>
+            
+            <a class="badge badge-primary" href="/en/tags/microservice">microservice</a>
+            
+            <a class="badge badge-primary" href="/en/tags/service-resilience">service-resilience</a>
+            
+            <a class="badge badge-primary" href="/en/tags/tracing">tracing</a>
+            
+        </p>
+        
+    
+</section>
+    
+</aside>
+
+        </div>
+      </div>
+      
+    </div>
+    <div id="footer">
+      
+        
+
+
+
+
+
+
+
+<footer class="blog-footer-bs w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Powered by Hugo | Theme - Bootstrap | &copy;Jin Feng 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+      
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>
