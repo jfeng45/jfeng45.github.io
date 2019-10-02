@@ -19,7 +19,7 @@
 
 
     
-      <link rel="canonical" href="https://jfeng45.github.io/en/posts/go_service_resilience/">
+      <link rel="canonical" href="https://medium.com/@jfeng45/service-resilience-in-go-microservice-52001e441020">
     
 
     
@@ -761,7 +761,7 @@ Writing a configuration file is another way of coding, which is error-prone when
 My suggestion is to add these features to the most important services initially, while leaving other services for later consideration. After you deployed the application to the production environment for a period of time, you would have a better idea on which services are  problematic, and then decide what to do next.
 The benefit of applying the Decorator Pattern is that you can add or remove decorators without affecting the business logic code.</p>
 
-<h4 id="coculsion">Coculsion:</h4>
+<h4 id="conclusion">Conclusion:</h4>
 
 <p>Service resilience is a very important technology in Microservices. It makes the service still available when the environment is unreliable, thus greatly improving the resilience of services. Technologies used include Timeouts, Retry, Rate Limiting, Circuit Breaker, Fault Injection, and Bulkhead.
 You can implement these features by code or Service Mash. Service Mesh is the future direction. But implementing them requires a lot of work, so you need to choose which services to apply the technology.</p>
